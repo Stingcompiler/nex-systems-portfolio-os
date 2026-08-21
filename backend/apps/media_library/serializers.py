@@ -28,14 +28,10 @@ class MediaFileRefSerializer(serializers.ModelSerializer):
         fields = ["id", "url", "thumbnail_url", "alt", "width", "height"]
 
     def get_url(self, media: MediaFile) -> str:
-        return self._absolute(media.display_url)
+        return media.display_url
 
     def get_thumbnail_url(self, media: MediaFile) -> str:
-        return self._absolute(media.thumbnail.url if media.thumbnail else media.display_url)
-
-    def _absolute(self, url: str) -> str:
-        request = self.context.get("request")
-        return request.build_absolute_uri(url) if request and url else url
+        return media.thumbnail.url if media.thumbnail else media.display_url
 
 
 class MediaFileSerializer(MediaFileRefSerializer):

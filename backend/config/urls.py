@@ -1,8 +1,8 @@
 from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.http import HttpResponse
-from django.urls import include, path
+from django.urls import include, path, re_path
+from django.views.static import serve
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from apps.core.views import HealthView
@@ -74,4 +74,12 @@ urlpatterns = [
     path("", api_root, name="api-root"),
 ]
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# الحاوية واحدة بلا Nginx، فـ Django يقدّم الوسائط في الإنتاج أيضًا.
+# `conf.urls.static.static` تعود فارغة عندما DEBUG=False، فالمسار صريح هنا.
+urlpatterns += [
+    re_path(
+        r"^media/(?P<path>.*)$",
+        serve,
+        {"document_root": settings.MEDIA_ROOT},
+    ),
+]

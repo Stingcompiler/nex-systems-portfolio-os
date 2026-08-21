@@ -90,9 +90,7 @@ class RequestAttachmentSerializer(serializers.ModelSerializer):
         fields = ["id", "file_url", "original_name", "size", "mime_type", "created_at"]
 
     def get_file_url(self, obj) -> str:
-        request = self.context.get("request")
-        url = obj.file.url if obj.file else ""
-        return request.build_absolute_uri(url) if request and url else url
+        return obj.file.url if obj.file else ""
 
 
 class ProjectRequestAdminSerializer(serializers.ModelSerializer):
@@ -256,9 +254,7 @@ class CrmAttachmentSerializer(serializers.ModelSerializer):
         extra_kwargs = {"file": {"write_only": True}}
 
     def get_file_url(self, obj) -> str:
-        request = self.context.get("request")
-        url = obj.file.url if obj.file else ""
-        return request.build_absolute_uri(url) if request and url else url
+        return obj.file.url if obj.file else ""
 
 
 class KanbanColumnSerializer(serializers.Serializer):

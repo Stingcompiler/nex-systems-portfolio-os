@@ -3,7 +3,7 @@ set -e
 
 cd /app/backend
 python manage.py migrate --noinput
-python manage.py seed_content
+python manage.py seed_content --only-if-empty
 
 gunicorn config.wsgi:application \
   --bind 127.0.0.1:8000 \

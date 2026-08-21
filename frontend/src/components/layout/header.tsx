@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
 
 import { LocaleSwitcher } from '@/components/layout/locale-switcher';
@@ -22,9 +23,7 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
           className="flex shrink-0 items-center gap-2.5 text-lg font-bold"
           aria-label={settings?.site_name || 'NEXA SYSTEMS'}
         >
-          <span className="grid size-8 place-items-center rounded-lg bg-brand text-sm text-white shadow-[0_2px_10px_-2px_rgb(var(--primary)/0.5)]">
-            {(settings?.site_name || 'N').charAt(0).toUpperCase()}
-          </span>
+          <SiteMark settings={settings} />
           <span>{settings?.site_name || 'NEXA SYSTEMS'}</span>
         </Link>
 
@@ -64,5 +63,48 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
         </div>
       </Container>
     </header>
+  );
+}
+
+/**
+ * علامة الموقع: الشعار المرفوع إن وُجد، وإلا أول حرف من الاسم.
+ *
+ * النسختان الفاتحة والداكنة تُرسمان معًا وتتبادلان الظهور بالـ CSS —
+ * التخطيط عنصر خادم فلا يعرف السمة وقت التوليد، والتبديل بالصنف
+ * يتجنّب وميض الشعار الخاطئ عند التحميل.
+ */
+function SiteMark({ settings }: { settings: SiteSettings | null }) {
+  const name = settings?.site_name || 'NEXA SYSTEMS';
+  // إحدى النسختين تكفي: تُستخدم في الوضعين عند غياب الأخرى
+  const light = settings?.logo_light ?? settings?.logo_dark;
+  const dark = settings?.logo_dark ?? settings?.logo_light;
+
+  if (!light || !dark) {
+    return (
+      <span className="grid size-8 place-items-center rounded-lg bg-brand text-sm text-white shadow-[0_2px_10px_-2px_rgb(var(--primary)/0.5)]">
+        {name.charAt(0).toUpperCase()}
+      </span>
+    );
+  }
+
+  return (
+    <>
+      <Image
+        src={light.url}
+        alt={light.alt || name}
+        width={light.width ?? 32}
+        height={light.height ?? 32}
+        className="h-8 w-auto object-contain dark:hidden"
+        priority
+      />
+      <Image
+        src={dark.url}
+        alt={dark.alt || name}
+        width={dark.width ?? 32}
+        height={dark.height ?? 32}
+        className="hidden h-8 w-auto object-contain dark:block"
+        priority
+      />
+    </>
   );
 }

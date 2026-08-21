@@ -696,7 +696,7 @@ DRAFT_FAQS = [
 
 
 class Command(BaseCommand):
-    help = "زرع المحتوى الأولي الحقيقي (متكرر التنفيذ بأمان)"
+    help = "زرع المحتوى الأولي الحقيقي"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -704,9 +704,20 @@ class Command(BaseCommand):
             action="store_true",
             help="إعادة ضبط أقسام الصفحة الرئيسية إلى ترتيبها الافتراضي",
         )
+        parser.add_argument(
+            "--only-if-empty",
+            action="store_true",
+            help="لا يزرع إلا على قاعدة بيانات جديدة — يمنع طمس تعديلات اللوحة",
+        )
 
     @transaction.atomic
     def handle(self, *args, **options):
+        # الزرع يستخدم update_or_create، فتكراره يعيد كتابة ما حرّره المستخدم.
+        # في الإقلاع يُستدعى بهذا الخيار كي يعمل مرة واحدة على قاعدة فارغة.
+        if options["only_if_empty"] and Service.objects.exists():
+            self.stdout.write("المحتوى موجود — تخطّي الزرع")
+            return
+
         technologies = self._seed_technologies()
         self._seed_settings()
         self._seed_sections(reset=options["reset_sections"])
@@ -753,7 +764,7 @@ class Command(BaseCommand):
         if not site.whatsapp_default_message_ar:
             site.whatsapp_default_message_ar = "السلام عليكم، نرغب في مناقشة مشروع."
             site.whatsapp_default_message_en = "Hello, we would like to discuss a project."
-        site.default_language = "ar"
+        site.default_language = site.default_language or "ar"
         site.country = site.country or "SD"
         site.save()
 

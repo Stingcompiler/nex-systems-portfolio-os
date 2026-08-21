@@ -1,0 +1,19 @@
+[Unit]
+Description=stingdev Django API (Gunicorn)
+After=network.target
+
+[Service]
+Type=notify
+User=stingdev
+Group=stingdev
+WorkingDirectory=/srv/stingdev/backend
+Environment=DJANGO_SETTINGS_MODULE=config.settings.prod
+EnvironmentFile=/srv/stingdev/.env
+ExecStart=/srv/stingdev/backend/.venv/bin/gunicorn config.wsgi:application \
+    --config /srv/stingdev/deploy/gunicorn.conf.py
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

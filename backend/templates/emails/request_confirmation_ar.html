@@ -1,0 +1,24 @@
+{% extends "emails/base_ar.html" %}
+
+{% block title %}تأكيد استلام طلبك{% endblock %}
+
+{% block content %}
+<p style="margin:0 0 16px;">مرحبًا {{ user_name }},</p>
+<p style="margin:0 0 16px;">
+  وصلنا طلبك بخصوص «{{ project_type }}»، وسنراجعه ونعود إليك قريبًا بتصوّر مبدئي.
+</p>
+<p style="margin:0 0 24px;padding:12px 16px;background-color:#f1f5f9;border-radius:8px;">
+  رقمك المرجعي: <strong dir="ltr">{{ reference_code }}</strong><br />
+  <span style="color:#64748b;font-size:14px;">احتفظ به للمتابعة.</span>
+</p>
+<p style="margin:0 0 24px;text-align:center;">
+  <a href="{{ action_url }}"
+     style="display:inline-block;background-color:#2563eb;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:10px;font-weight:600;font-size:16px;">
+    زيارة الموقع
+  </a>
+</p>
+{% endblock %}
+
+{% block footer %}
+هذه رسالة تأكيد آلية. سنتواصل معك شخصيًا خلال وقت قصير.
+{% endblock %}

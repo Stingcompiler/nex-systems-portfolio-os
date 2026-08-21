@@ -1,0 +1,249 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ── الوضع الفاتح — «إنديغو + سماوي» ── */
+    --background: 248 250 252;
+    --surface: 255 255 255;
+    --surface-hover: 241 245 249;
+    --foreground: 15 23 42;
+    --foreground-muted: 100 116 139;
+    --border: 226 232 240;
+
+    --primary: 79 70 229; /* indigo-600 */
+    --primary-foreground: 255 255 255;
+    --accent: 6 182 212; /* cyan-500 */
+
+    /* [بند 2] درجات دلالية معدّلة للتباين: كنص على خلفية فاتحة
+       success 5 150 105 ≈ 4.6:1 · warning 180 111 8 ≈ 4.7:1 · danger 220 38 38 ≈ 4.8:1 */
+    --success: 5 150 105;
+    --warning: 180 111 8;
+    --danger: 220 38 38;
+    --ring: 79 70 229;
+
+    /* [بند 4] خلفيات هادئة صريحة — بديل التخفيف بالشفافية الذي ينهار بين الوضعين */
+    --primary-soft: 238 238 253;
+    --accent-soft: 224 247 250;
+    --success-soft: 220 246 236;
+    --warning-soft: 254 243 214;
+    --danger-soft: 254 232 232;
+
+    --gradient-brand: linear-gradient(
+      135deg,
+      rgb(79 70 229) 0%,
+      rgb(99 102 241) 45%,
+      rgb(6 182 212) 100%
+    );
+    --glow: 79 70 229;
+
+    --shadow-sm: 0 1px 2px rgb(15 23 42 / 0.05);
+    --shadow-md: 0 4px 20px -4px rgb(15 23 42 / 0.1), 0 2px 8px -4px rgb(15 23 42 / 0.06);
+    --shadow-lg: 0 12px 40px -8px rgb(15 23 42 / 0.16), 0 4px 12px -6px rgb(15 23 42 / 0.1);
+
+    --duration-fast: 150ms;
+    --duration-normal: 300ms;
+    --duration-slow: 400ms;
+
+    --line-height-body: 1.65;
+    --line-height-heading: 1.2;
+  }
+
+  .dark {
+    --background: 8 8 20;
+    --surface: 20 20 38;
+    --surface-hover: 32 32 56;
+    --foreground: 237 237 246;
+    --foreground-muted: 150 152 178;
+    --border: 38 38 64;
+
+    --primary: 129 140 248; /* indigo-400 */
+    --primary-foreground: 12 10 30;
+    --accent: 34 211 238; /* cyan-400 */
+
+    /* [بند 2] الدلالية تُفتَّح مثل الأساسي — الداكن على داكن لا يحقق AA */
+    --success: 52 211 153;
+    --warning: 251 191 36;
+    --danger: 248 113 113;
+    --ring: 129 140 248;
+
+    /* [بند 4] الخلفيات الهادئة في الداكن ألوان معتمة مشبعة، لا شفافية */
+    --primary-soft: 30 30 62;
+    --accent-soft: 16 42 54;
+    --success-soft: 12 44 36;
+    --warning-soft: 51 37 8;
+    --danger-soft: 56 20 24;
+
+    --gradient-brand: linear-gradient(
+      135deg,
+      rgb(99 102 241) 0%,
+      rgb(129 140 248) 45%,
+      rgb(34 211 238) 100%
+    );
+    --glow: 129 140 248;
+
+    /* [بند 3] الارتفاع في الداكن يُنقل بحدّ أوضح لا بظل أسود غير مرئي */
+    --shadow-sm: 0 0 0 1px rgb(255 255 255 / 0.06);
+    --shadow-md: 0 0 0 1px rgb(255 255 255 / 0.08), 0 8px 24px -8px rgb(0 0 0 / 0.6);
+    --shadow-lg: 0 0 0 1px rgb(255 255 255 / 0.1), 0 24px 64px -12px rgb(0 0 0 / 0.7);
+  }
+
+  /* العربية تحتاج مساحة رأسية أكبر */
+  :lang(ar) {
+    --line-height-body: 1.9;
+    --line-height-heading: 1.5;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans), system-ui, sans-serif;
+    line-height: var(--line-height-body);
+  }
+
+  /* [بند 1] العناوين تقرأ المتغيّر اللغوي — ولهذا حُذف lineHeight
+     من مقاييس display/h1/h2/h3 في tailwind.config.ts */
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: var(--line-height-heading);
+    text-wrap: balance;
+  }
+
+  /* [بند 5] القاعدة مربوطة باللغة لا بالاتجاه، وبلا !important —
+     فالجُزُر الإنجليزية داخل صفحة عربية تحتفظ بمقياسها */
+  :lang(ar) {
+    letter-spacing: 0;
+  }
+
+  :lang(ar) em,
+  :lang(ar) i {
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  :lang(ar) * {
+    word-break: normal;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  ::selection {
+    @apply bg-primary/20;
+  }
+}
+
+@layer components {
+  /* الأيقونات الاتجاهية فقط — لا الشعارات ولا لقطات الشاشة */
+  .flip-rtl {
+    @apply rtl:-scale-x-100;
+  }
+
+  .text-gradient {
+    background-image: var(--gradient-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero-surface {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  /* [بند 6] بؤرة التوهّج نسبة فيزيائية لا تتبع الاتجاه — تُقلب يدويًا،
+     واللون من الرمز لا خامًا */
+  .hero-surface::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background:
+      radial-gradient(60% 55% at 78% 12%, rgb(var(--glow) / 0.16) 0%, transparent 60%),
+      radial-gradient(50% 45% at 8% 4%, rgb(var(--accent) / 0.1) 0%, transparent 55%);
+  }
+
+  [dir='rtl'] .hero-surface::before {
+    background:
+      radial-gradient(60% 55% at 22% 12%, rgb(var(--glow) / 0.16) 0%, transparent 60%),
+      radial-gradient(50% 45% at 92% 4%, rgb(var(--accent) / 0.1) 0%, transparent 55%);
+  }
+
+  .hero-surface::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: radial-gradient(rgb(var(--foreground) / 0.05) 1px, transparent 1px);
+    background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(75% 75% at 50% 0%, #000 30%, transparent 100%);
+    mask-image: radial-gradient(75% 75% at 50% 0%, #000 30%, transparent 100%);
+  }
+
+  /* لوحة الدعوة تستعمل التدرّج وحده — بلا شبكة نقطية فوقه */
+  .brand-panel::after {
+    display: none;
+  }
+
+  .glow-ring {
+    box-shadow:
+      var(--shadow-lg),
+      0 0 0 1px rgb(var(--primary) / 0.08),
+      0 0 60px -12px rgb(var(--glow) / 0.35);
+  }
+
+  /* [بند 14] نص المقالات على اللون الكامل — لا نسب شفافية في النصوص */
+  .prose-content {
+    @apply max-w-prose text-foreground;
+  }
+
+  .prose-content p {
+    @apply mb-4;
+  }
+
+  .prose-content p:last-child {
+    @apply mb-0;
+  }
+
+  /* [بند 12] سطر واحد بلا قصّ للتشكيل — بديل line-clamp-1 في الجداول */
+  .truncate-line {
+    @apply block truncate;
+    line-height: 1.5;
+  }
+
+  /* أي مسار أو شيفرة أو معرّف لاتيني داخل نص عربي */
+  .code-inline {
+    direction: ltr;
+    unicode-bidi: isolate;
+    text-align: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0.01ms;
+    --duration-normal: 0.01ms;
+    --duration-slow: 0.01ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

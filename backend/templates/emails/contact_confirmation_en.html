@@ -1,0 +1,20 @@
+{% extends "emails/base_en.html" %}
+
+{% block title %}We received your message{% endblock %}
+
+{% block content %}
+<p style="margin:0 0 16px;">Hi {{ user_name }},</p>
+<p style="margin:0 0 24px;">
+  Thanks for reaching out. Your message has arrived and we will reply as soon as possible.
+</p>
+<p style="margin:0 0 24px;text-align:center;">
+  <a href="{{ action_url }}"
+     style="display:inline-block;background-color:#2563eb;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:10px;font-weight:600;font-size:16px;">
+    Visit the site
+  </a>
+</p>
+{% endblock %}
+
+{% block footer %}
+This is an automated confirmation.
+{% endblock %}

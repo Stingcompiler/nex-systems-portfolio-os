@@ -1,0 +1,84 @@
+databases:
+  - name: nexa-db
+    plan: free
+    databaseName: nexa
+    user: nexa
+
+services:
+  # ─── Django API ───────────────────────────────────────────────
+  - type: web
+    name: nexa-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: chmod +x build.sh && ./build.sh
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.prod
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+      - key: DB_ENGINE
+        value: postgres
+      - key: DB_NAME
+        fromDatabase:
+          name: nexa-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: nexa-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: nexa-db
+          property: password
+      - key: DB_HOST
+        fromDatabase:
+          name: nexa-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: nexa-db
+          property: port
+      - key: FRONTEND_URL
+        sync: false
+      - key: REVALIDATE_SECRET
+        generateValue: true
+      - key: COOKIE_SECURE
+        value: "True"
+      - key: COOKIE_SAMESITE
+        value: Lax
+      - key: SECURE_SSL_REDIRECT
+        value: "True"
+      - key: EMAIL_BACKEND
+        value: django.core.mail.backends.console.EmailBackend
+
+  # ─── Next.js Frontend ────────────────────────────────────────
+  - type: web
+    name: nexa-web
+    runtime: node
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: npx next start -H 0.0.0.0 -p $PORT
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+      - key: NEXT_PUBLIC_API_URL
+        value: /api/v1
+      - key: INTERNAL_API_URL
+        sync: false
+      - key: BACKEND_ORIGIN
+        sync: false
+      - key: REVALIDATE_SECRET
+        sync: false

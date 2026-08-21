@@ -1,0 +1,478 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "solutions": "Solutions",
+    "projects": "Work",
+    "caseStudies": "Case studies",
+    "blog": "Blog",
+    "technologies": "Technologies",
+    "process": "Process",
+    "contact": "Contact",
+    "requestQuote": "Start a project",
+    "menu": "Menu",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "breadcrumbs": "Breadcrumb"
+  },
+  "common": {
+    "skipToContent": "Skip to content",
+    "viewAll": "View all",
+    "all": "All",
+    "readMore": "Details",
+    "backTo": "Back to {page}",
+    "loading": "Loading…",
+    "retry": "Try again",
+    "home": "Home",
+    "language": "Language",
+    "switchToEnglish": "العربية",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "phone": "Phone",
+    "downloadCv": "Download CV",
+    "visitSite": "Visit site",
+    "viewCode": "Source code",
+    "googlePlay": "Google Play",
+    "appStore": "App Store",
+    "sector": "Sector",
+    "projectType": "Project type",
+    "status": "Status",
+    "client": "Client",
+    "completedAt": "Completed",
+    "technologies": "Technologies",
+    "results": "{count, plural, =0 {No results} one {# result} other {# results}}"
+  },
+  "states": {
+    "errorTitle": "This section could not be loaded",
+    "errorBody": "Something went wrong while fetching content. Try reloading, and get in touch if it keeps happening.",
+    "emptyTitle": "Nothing here yet",
+    "emptyBody": "This section is being prepared and will appear soon.",
+    "emptyServices": "No services published yet.",
+    "emptyProjects": "No projects published yet.",
+    "emptyCaseStudies": "No case studies published yet.",
+    "emptyTechnologies": "No technologies added yet.",
+    "emptySearch": "No results match your search."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The link you opened is not valid, or the page has moved.",
+    "suggestions": "Try one of these instead:"
+  },
+  "home": {
+    "ctaPrimary": "Start a project",
+    "ctaSecondary": "See the work",
+    "heroBadge": "Accepting new projects"
+  },
+  "sections": {
+    "intro": "About",
+    "stats": "By the numbers",
+    "services": "Services",
+    "solutions": "Solutions by sector",
+    "projects": "Selected work",
+    "case_studies": "Case studies",
+    "process": "How we work",
+    "technologies": "Technologies",
+    "testimonials": "Client feedback",
+    "posts": "Latest articles",
+    "newsletter": "Newsletter",
+    "cta": "Have a project?"
+  },
+  "services": {
+    "title": "Services",
+    "description": "Development services covering the full project cycle, from analysis to deployment and support.",
+    "features": "What the service includes",
+    "deliverables": "Deliverables",
+    "faq": "Frequently asked",
+    "relatedProjects": "Delivered projects",
+    "priceFrom": "From",
+    "duration": "Estimated duration",
+    "requestThis": "Request this service",
+    "allSectors": "All sectors",
+    "featured": "Featured",
+    "whatsappCta": "Chat with us on WhatsApp",
+    "notSureScope": "Not sure about the scope? Get in touch",
+    "forWholeProject": "for the whole project",
+    "languages": "Languages",
+    "languagesValue": "Arabic & English",
+    "whatIncluded": "What's included"
+  },
+  "solutions": {
+    "title": "Sector solutions",
+    "description": "Systems ready to be tailored to your field, built on real delivery experience."
+  },
+  "projects": {
+    "title": "Work",
+    "description": "Systems, websites, and applications built and delivered.",
+    "viewCaseStudy": "Read the case study",
+    "gallery": "System screenshots",
+    "links": "Links",
+    "anonymous": "Undisclosed client",
+    "featured": "Featured"
+  },
+  "caseStudies": {
+    "title": "Case studies",
+    "description": "How each problem was solved step by step: analysis, challenges, solution, and results.",
+    "overview": "Overview",
+    "problem": "The problem",
+    "requirements": "Requirements analysis",
+    "challenges": "Challenges",
+    "solution": "The solution",
+    "architecture": "Architecture",
+    "phases": "Development phases",
+    "results": "Results",
+    "lessons": "Lessons learned",
+    "metrics": "Measured results",
+    "testimonial": "Client testimonial",
+    "relatedServices": "Related services",
+    "viewProject": "Project page"
+  },
+  "technologies": {
+    "title": "Technologies",
+    "description": "The tools, languages, and frameworks used in delivery.",
+    "category": {
+      "language": "Languages",
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "mobile": "Mobile",
+      "desktop": "Desktop",
+      "database": "Databases",
+      "tool": "Tools"
+    }
+  },
+  "process": {
+    "title": "How we work",
+    "description": "Clear phases from the first session to handover and support.",
+    "deliverables": "Phase deliverables",
+    "duration": "Duration"
+  },
+  "about": {
+    "title": "About",
+    "description": "Who we are, how we work, and what we do well.",
+    "founder": "Founder & Developer",
+    "experience": "Experience",
+    "education": "Education",
+    "certifications": "Certifications",
+    "current": "Present",
+    "credential": "Verify credential"
+  },
+  "contact": {
+    "title": "Contact",
+    "description": "The fastest way to reach us, and the clearest way to start your project.",
+    "channels": "Contact channels",
+    "whatsappCta": "Message us on WhatsApp",
+    "preferWhatsapp": "WhatsApp usually gets the fastest reply.",
+    "formTitle": "Send a message",
+    "nameField": "Name",
+    "emailField": "Email",
+    "phoneField": "Phone",
+    "subjectField": "Subject",
+    "messageField": "Message",
+    "sendButton": "Send",
+    "sentTitle": "Your message arrived",
+    "sentBody": "We will reply as soon as possible.",
+    "startProjectTitle": "Have a specific project?",
+    "startProjectBody": "Use the project request form to send us sharper details.",
+    "startProjectCta": "Start a project"
+  },
+  "requestForm": {
+    "pageTitle": "Start a project",
+    "pageDescription": "Tell us about your project in three short steps, and we will come back with an initial outline.",
+    "steps": "Request steps",
+    "step1Title": "Project type",
+    "step2Title": "Scope & features",
+    "step3Title": "Budget & timeline",
+    "projectTypeLabel": "What kind of project?",
+    "sectorLabel": "Sector",
+    "sectorPlaceholder": "Choose a sector (optional)",
+    "requirementsLabel": "What does the project need?",
+    "descriptionLabel": "Project description",
+    "descriptionPlaceholder": "Briefly explain your idea…",
+    "budgetLabel": "Expected budget",
+    "budgetPlaceholder": "Choose a range (optional)",
+    "timelineLabel": "Expected timeline",
+    "timelinePlaceholder": "Choose a timeline (optional)",
+    "nameLabel": "Name",
+    "emailLabel": "Email",
+    "phoneLabel": "Phone",
+    "companyLabel": "Company",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit request",
+    "preferWhatsapp": "Prefer to talk directly? Message us on WhatsApp",
+    "successTitle": "Your request was sent",
+    "successBody": "We will review it and come back to you soon. Keep your reference number for follow-up.",
+    "reference": "Reference",
+    "projectType": {
+      "website": "Website",
+      "mobile": "Mobile app",
+      "desktop": "Desktop app",
+      "system": "Management system",
+      "existing": "Improve existing system",
+      "api": "REST API",
+      "hosting": "Hosting",
+      "consulting": "Consulting & analysis"
+    },
+    "sector": {
+      "education": "Education",
+      "retail": "Retail",
+      "restaurants": "Restaurants",
+      "accounting": "Accounting",
+      "hr": "Human resources",
+      "real_estate": "Real estate",
+      "pharmacy": "Pharmacy",
+      "ngo": "NGO",
+      "general": "Other"
+    },
+    "budget": {
+      "under_500": "Under $500",
+      "500_2000": "$500 – $2,000",
+      "2000_5000": "$2,000 – $5,000",
+      "5000_10000": "$5,000 – $10,000",
+      "over_10000": "Over $10,000",
+      "unsure": "Not sure"
+    },
+    "timeline": {
+      "urgent": "Urgent (under a month)",
+      "short": "1 – 3 months",
+      "medium": "3 – 6 months",
+      "flexible": "Flexible"
+    },
+    "requirement": {
+      "has_design": "I have a design",
+      "has_backend": "I have a backend",
+      "needs_android": "Needs Android",
+      "needs_ios": "Needs iOS",
+      "needs_offline": "Works offline",
+      "needs_notifications": "Notifications",
+      "needs_payments": "Online payments",
+      "needs_multi_branch": "Multiple branches"
+    },
+    "summaryTitle": "Your request",
+    "summaryFeatures": "Selected features",
+    "summaryCount": "{count} of {total}",
+    "replyPromise": "A reply within one business day",
+    "summaryPlaceholder": "Pick a project type to start.",
+    "summaryType": "Project type",
+    "stepName": {
+      "type": "Project type",
+      "scope": "Scope & features",
+      "budget": "Budget & timeline",
+      "contact": "Contact details"
+    },
+    "scopeLabel": "What does the project include?",
+    "scopeHelp": "Pick what you need now — scope can grow later without a rebuild.",
+    "detailsLabel": "Anything else to add?",
+    "budgetSectionLabel": "Budget range",
+    "budgetHelp": "A rough estimate only — non-binding, it just helps us suggest a realistic scope.",
+    "module": {
+      "marketing_site": {
+        "title": "Marketing site",
+        "desc": "Content & service pages"
+      },
+      "dashboard": {
+        "title": "Dashboard",
+        "desc": "Manage all content"
+      },
+      "members": {
+        "title": "Members system",
+        "desc": "Sign up, login, save"
+      },
+      "blog": {
+        "title": "Blog & comments",
+        "desc": "Publish & moderate"
+      },
+      "store": {
+        "title": "Store & payments",
+        "desc": "Catalog & cart"
+      },
+      "pwa": {
+        "title": "Installable PWA",
+        "desc": "Works offline"
+      }
+    },
+    "step4Title": "Contact details"
+  },
+  "blog": {
+    "title": "Blog",
+    "description": "Technical articles on systems analysis, web and mobile development, drawn from real delivery.",
+    "searchPlaceholder": "Search articles…",
+    "searchLabel": "Search the blog",
+    "clearSearch": "Clear search",
+    "allCategories": "All categories",
+    "popular": "Most read",
+    "related": "Related articles",
+    "readingTime": "{minutes} min read",
+    "share": "Share",
+    "copyLink": "Copy link",
+    "save": "Save",
+    "saved": "Saved",
+    "loginToSave": "Sign in to save",
+    "empty": "No articles yet",
+    "emptyBody": "The blog is being prepared and the first articles will appear soon.",
+    "noResults": "No results",
+    "noResultsBody": "No articles matched your search. Try different words."
+  },
+  "auth": {
+    "loginTitle": "Sign in",
+    "loginSubtitle": "Sign in to your account to continue.",
+    "registerTitle": "Create account",
+    "registerSubtitle": "Create an account to save articles and comment.",
+    "fullName": "Full name",
+    "email": "Email",
+    "password": "Password",
+    "passwordConfirm": "Confirm password",
+    "loginButton": "Sign in",
+    "registerButton": "Create account",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "No account?",
+    "haveAccount": "Already have an account?",
+    "registerLink": "Create one",
+    "loginLink": "Sign in",
+    "forgotTitle": "Reset password",
+    "forgotSubtitle": "Enter your email and we'll send a reset link.",
+    "forgotButton": "Send link",
+    "forgotSent": "If the email is registered, you'll receive a message shortly.",
+    "backToLogin": "Back to sign in",
+    "resetTitle": "New password",
+    "resetSubtitle": "Choose a strong new password.",
+    "newPassword": "New password",
+    "resetButton": "Set password",
+    "resetDone": "Password set. Redirecting to sign in…",
+    "verifyTitle": "Confirm email",
+    "verifying": "Verifying…",
+    "verifySuccess": "Your email has been confirmed.",
+    "verifyError": "The verification link is invalid or expired.",
+    "goToAccount": "Go to my account"
+  },
+  "member": {
+    "menu": "Account menu",
+    "logout": "Sign out",
+    "emailUnverified": "Email not verified",
+    "tabs": {
+      "overview": "Overview",
+      "saved": "Saved articles",
+      "comments": "My comments",
+      "settings": "Settings"
+    },
+    "profile": "Profile",
+    "fullName": "Full name",
+    "email": "Email",
+    "save": "Save",
+    "profileSaved": "Changes saved.",
+    "verifyPrompt": "Confirm your email to enable saving and commenting under your name.",
+    "resendVerification": "Resend verification link",
+    "verificationResent": "Verification link sent to your email.",
+    "noSaved": "No saved articles yet.",
+    "browseBlog": "Browse the blog",
+    "noComments": "No comments yet.",
+    "changePassword": "Change password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "updatePassword": "Update password",
+    "passwordChanged": "Password changed.",
+    "deleteAccount": "Delete account",
+    "deleteWarning": "Deleting your account is permanent: your data and saves are removed and your comments are anonymized.",
+    "confirmWithPassword": "Confirm with password",
+    "confirmDelete": "Delete permanently",
+    "accountDeleted": "Your account has been deleted.",
+    "cancel": "Cancel"
+  },
+  "comments": {
+    "title": "Comments",
+    "addComment": "Add a comment",
+    "yourComment": "Your comment",
+    "placeholder": "Share your thoughts…",
+    "name": "Name",
+    "email": "Email",
+    "submit": "Post comment",
+    "reply": "Reply",
+    "cancel": "Cancel",
+    "pendingReview": "Your comment is under review and will appear once approved.",
+    "closed": "Comments are closed on this article.",
+    "beFirst": "No comments yet — be the first.",
+    "you": "You",
+    "report": "Report",
+    "reportThanks": "Thanks for your report, we'll review it.",
+    "reason": {
+      "spam": "Spam",
+      "offensive": "Offensive",
+      "off_topic": "Off topic"
+    }
+  },
+  "offline": {
+    "title": "No internet connection",
+    "body": "You appear to be offline. Check your connection and try again.",
+    "retry": "Try again"
+  },
+  "legal": {
+    "privacyTitle": "Privacy policy",
+    "termsTitle": "Terms of use",
+    "pending": "This page is being prepared and will be edited from the dashboard."
+  },
+  "footer": {
+    "tagline": "Software solutions for web, mobile, and desktop.",
+    "navigation": "Links",
+    "legal": "Legal",
+    "social": "Social",
+    "rights": "All rights reserved.",
+    "platform": "Platform",
+    "knowledge": "Knowledge",
+    "connect": "Connect",
+    "messageMe": "Message us"
+  },
+  "dashboard": {
+    "yes": "Yes",
+    "no": "No",
+    "actions": {
+      "create": "Add",
+      "createFirst": "Add the first item",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "retry": "Try again",
+      "publish": "Publish",
+      "unpublish": "Unpublish",
+      "save": "Save"
+    },
+    "search": {
+      "label": "Search {resource}",
+      "placeholder": "Type to search"
+    },
+    "filters": {
+      "all": "All items"
+    },
+    "table": {
+      "actions": "Actions"
+    },
+    "states": {
+      "loading": "Loading",
+      "errorTitle": "Couldn't load the data",
+      "emptyTitle": "Nothing here yet",
+      "emptyBody": "Add the first item and it will show up here."
+    },
+    "pagination": {
+      "label": "Pagination",
+      "prev": "Previous page",
+      "next": "Next page",
+      "summary": "Page <ltr>{page}</ltr> of <ltr>{total}</ltr> — <ltr>{count}</ltr> items"
+    },
+    "confirmDelete": {
+      "title": "Confirm deletion",
+      "body": "This item will be permanently deleted and cannot be restored."
+    },
+    "toast": {
+      "deleted": "Item deleted",
+      "published": "Item published",
+      "unpublished": "Item unpublished"
+    }
+  },
+  "testimonials": {
+    "rating": "Rated {value} out of 5"
+  }
+}

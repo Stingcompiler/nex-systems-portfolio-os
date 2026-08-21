@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Django
+*.sqlite3
+*.sqlite3-journal
+backend/media/
+backend/staticfiles/
+backend/logs/
+
+# Environment — ملف واحد بجذر المستودع
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# مخرجات مولّدة
+schema.yml
+
+# Node
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store

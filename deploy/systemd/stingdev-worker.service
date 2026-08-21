@@ -1,0 +1,17 @@
+[Unit]
+Description=stingdev background worker (django-q2)
+After=network.target stingdev-api.service
+
+[Service]
+Type=simple
+User=stingdev
+Group=stingdev
+WorkingDirectory=/srv/stingdev/backend
+Environment=DJANGO_SETTINGS_MODULE=config.settings.prod
+EnvironmentFile=/srv/stingdev/.env
+ExecStart=/srv/stingdev/backend/.venv/bin/python manage.py qcluster
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,26 @@
+{% extends "emails/base_ar.html" %}
+
+{% block title %}تأكيد بريدك الإلكتروني{% endblock %}
+
+{% block content %}
+<p style="margin:0 0 16px;">مرحبًا {{ user_name }},</p>
+<p style="margin:0 0 24px;">
+  شكرًا لتسجيلك في {{ site_name }}. اضغط الزر أدناه لتأكيد بريدك الإلكتروني وتفعيل حسابك بالكامل.
+</p>
+<p style="margin:0 0 24px;text-align:center;">
+  <a href="{{ action_url }}"
+     style="display:inline-block;background-color:#2563eb;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:10px;font-weight:600;font-size:16px;">
+    تأكيد البريد الإلكتروني
+  </a>
+</p>
+<p style="margin:0 0 8px;color:#64748b;font-size:14px;">
+  الرابط صالح لمدة {{ expires_hours }} ساعة.
+</p>
+<p style="margin:0;color:#64748b;font-size:13px;word-break:break-all;">
+  إن لم يعمل الزر، انسخ هذا الرابط إلى المتصفح:<br />{{ action_url }}
+</p>
+{% endblock %}
+
+{% block footer %}
+إذا لم تُنشئ حسابًا لدينا فتجاهل هذه الرسالة، ولن يُفعَّل أي حساب.
+{% endblock %}

@@ -1,0 +1,12 @@
+[Unit]
+# وحدة النشر الواحدة: أمر واحد يشغّل المنصة كاملة أو يوقفها.
+#   sudo systemctl start   stingdev.target
+#   sudo systemctl stop    stingdev.target
+#   sudo systemctl restart stingdev.target
+#   sudo systemctl status  'stingdev-*'
+Description=stingdev platform
+Wants=stingdev-api.service stingdev-web.service stingdev-worker.service
+After=network-online.target
+
+[Install]
+WantedBy=multi-user.target

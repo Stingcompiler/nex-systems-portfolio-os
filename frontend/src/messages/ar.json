@@ -1,0 +1,478 @@
+{
+  "nav": {
+    "home": "الرئيسية",
+    "about": "نبذة",
+    "services": "الخدمات",
+    "solutions": "الحلول",
+    "projects": "المشاريع",
+    "caseStudies": "دراسات الحالة",
+    "blog": "المدونة",
+    "technologies": "التقنيات",
+    "process": "طريقة العمل",
+    "contact": "تواصل",
+    "requestQuote": "اطلب مشروعك",
+    "menu": "القائمة",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة",
+    "breadcrumbs": "مسار التنقل"
+  },
+  "common": {
+    "skipToContent": "تخطي إلى المحتوى",
+    "viewAll": "عرض الكل",
+    "all": "الكل",
+    "readMore": "التفاصيل",
+    "backTo": "العودة إلى {page}",
+    "loading": "جارٍ التحميل…",
+    "retry": "إعادة المحاولة",
+    "home": "الرئيسية",
+    "language": "اللغة",
+    "switchToEnglish": "English",
+    "theme": "المظهر",
+    "themeLight": "فاتح",
+    "themeDark": "داكن",
+    "themeSystem": "حسب النظام",
+    "whatsapp": "واتساب",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "downloadCv": "تحميل السيرة الذاتية",
+    "visitSite": "زيارة الموقع",
+    "viewCode": "الكود المصدري",
+    "googlePlay": "Google Play",
+    "appStore": "App Store",
+    "sector": "القطاع",
+    "projectType": "نوع المشروع",
+    "status": "الحالة",
+    "client": "العميل",
+    "completedAt": "تاريخ الإنجاز",
+    "technologies": "التقنيات",
+    "results": "{count, plural, =0 {لا نتائج} one {نتيجة واحدة} two {نتيجتان} few {# نتائج} many {# نتيجة} other {# نتيجة}}"
+  },
+  "states": {
+    "errorTitle": "تعذّر تحميل هذا القسم",
+    "errorBody": "حدث خطأ أثناء جلب المحتوى. جرّب إعادة التحميل، وإن تكرر الأمر تواصل معنا.",
+    "emptyTitle": "لا يوجد محتوى هنا بعد",
+    "emptyBody": "هذا القسم قيد الإعداد وسيظهر محتواه قريبًا.",
+    "emptyServices": "لم تُنشر أي خدمة بعد.",
+    "emptyProjects": "لم يُنشر أي مشروع بعد.",
+    "emptyCaseStudies": "لم تُنشر أي دراسة حالة بعد.",
+    "emptyTechnologies": "لم تُضف أي تقنية بعد.",
+    "emptySearch": "لا نتائج مطابقة لبحثك."
+  },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "body": "الرابط الذي فتحته غير صحيح أو أن الصفحة نُقلت.",
+    "suggestions": "جرّب أحد هذه المسارات:"
+  },
+  "home": {
+    "ctaPrimary": "اطلب مشروعك",
+    "ctaSecondary": "استعرض المشاريع",
+    "heroBadge": "نستقبل مشاريع جديدة"
+  },
+  "sections": {
+    "intro": "نبذة",
+    "stats": "بالأرقام",
+    "services": "الخدمات",
+    "solutions": "حلول حسب القطاع",
+    "projects": "مشاريع مختارة",
+    "case_studies": "دراسات حالة",
+    "process": "طريقة العمل",
+    "technologies": "التقنيات",
+    "testimonials": "آراء العملاء",
+    "posts": "أحدث المقالات",
+    "newsletter": "النشرة البريدية",
+    "cta": "لديك مشروع؟"
+  },
+  "services": {
+    "title": "الخدمات",
+    "description": "خدمات تطوير تغطي دورة المشروع كاملة، من التحليل حتى النشر والدعم.",
+    "features": "ما تتضمنه الخدمة",
+    "deliverables": "المخرجات",
+    "faq": "أسئلة شائعة",
+    "relatedProjects": "مشاريع منفّذة",
+    "priceFrom": "تبدأ من",
+    "duration": "المدة التقديرية",
+    "requestThis": "اطلب هذه الخدمة",
+    "allSectors": "كل القطاعات",
+    "featured": "مميّزة",
+    "whatsappCta": "تحدّث معنا على واتساب",
+    "notSureScope": "غير متأكّد من النطاق؟ تواصل معنا",
+    "forWholeProject": "لكامل المشروع",
+    "languages": "اللغات",
+    "languagesValue": "عربي وإنجليزي",
+    "whatIncluded": "ما تشمله الخدمة"
+  },
+  "solutions": {
+    "title": "الحلول القطاعية",
+    "description": "أنظمة جاهزة للتخصيص حسب مجال عملك، مبنية على تجارب تنفيذ فعلية."
+  },
+  "projects": {
+    "title": "المشاريع",
+    "description": "أنظمة ومواقع وتطبيقات نُفّذت وسُلّمت.",
+    "viewCaseStudy": "اقرأ دراسة الحالة",
+    "gallery": "لقطات من النظام",
+    "links": "روابط",
+    "anonymous": "عميل غير معلن",
+    "featured": "مميز"
+  },
+  "caseStudies": {
+    "title": "دراسات الحالة",
+    "description": "كيف حُلّت المشكلة خطوة بخطوة: التحليل والتحديات والحل والنتائج.",
+    "overview": "نبذة",
+    "problem": "المشكلة",
+    "requirements": "تحليل المتطلبات",
+    "challenges": "التحديات",
+    "solution": "الحل",
+    "architecture": "المعمارية",
+    "phases": "مراحل التطوير",
+    "results": "النتائج",
+    "lessons": "الدروس المستفادة",
+    "metrics": "أرقام النتائج",
+    "testimonial": "شهادة العميل",
+    "relatedServices": "خدمات ذات صلة",
+    "viewProject": "صفحة المشروع"
+  },
+  "technologies": {
+    "title": "التقنيات",
+    "description": "الأدوات واللغات وأطر العمل المستخدمة في التنفيذ.",
+    "category": {
+      "language": "لغات البرمجة",
+      "frontend": "الواجهة الأمامية",
+      "backend": "الواجهة الخلفية",
+      "mobile": "الموبايل",
+      "desktop": "سطح المكتب",
+      "database": "قواعد البيانات",
+      "tool": "الأدوات"
+    }
+  },
+  "process": {
+    "title": "طريقة العمل",
+    "description": "مراحل واضحة من أول جلسة حتى التسليم والدعم.",
+    "deliverables": "مخرجات المرحلة",
+    "duration": "المدة"
+  },
+  "about": {
+    "title": "نبذة",
+    "description": "من نحن، وكيف نعمل، وما الذي نُجيده.",
+    "founder": "المؤسس والمطور",
+    "experience": "الخبرات",
+    "education": "المؤهلات العلمية",
+    "certifications": "الشهادات",
+    "current": "حتى الآن",
+    "credential": "التحقق من الشهادة"
+  },
+  "contact": {
+    "title": "تواصل",
+    "description": "أسرع طريقة للوصول إلينا، وأوضح طريقة لبدء مشروعك.",
+    "channels": "قنوات التواصل",
+    "whatsappCta": "راسلنا على واتساب",
+    "preferWhatsapp": "الرد على واتساب عادة أسرع.",
+    "formTitle": "أرسل رسالة",
+    "nameField": "الاسم",
+    "emailField": "البريد الإلكتروني",
+    "phoneField": "الهاتف",
+    "subjectField": "الموضوع",
+    "messageField": "الرسالة",
+    "sendButton": "إرسال",
+    "sentTitle": "وصلتنا رسالتك",
+    "sentBody": "سنرد عليك في أقرب وقت ممكن.",
+    "startProjectTitle": "لديك مشروع محدد؟",
+    "startProjectBody": "استخدم نموذج طلب المشروع لتصلنا تفاصيل أدق.",
+    "startProjectCta": "اطلب مشروعك"
+  },
+  "requestForm": {
+    "pageTitle": "اطلب مشروعك",
+    "pageDescription": "أخبرنا عن مشروعك في ثلاث خطوات قصيرة، وسنعود إليك بتصوّر مبدئي.",
+    "steps": "خطوات الطلب",
+    "step1Title": "نوع المشروع",
+    "step2Title": "النطاق والمزايا",
+    "step3Title": "الميزانية والمدّة",
+    "projectTypeLabel": "ما نوع المشروع؟",
+    "sectorLabel": "القطاع",
+    "sectorPlaceholder": "اختر القطاع (اختياري)",
+    "requirementsLabel": "ما الذي يحتاجه المشروع؟",
+    "descriptionLabel": "وصف المشروع",
+    "descriptionPlaceholder": "اشرح فكرتك بإيجاز…",
+    "budgetLabel": "الميزانية المتوقعة",
+    "budgetPlaceholder": "اختر نطاقًا (اختياري)",
+    "timelineLabel": "المدة المتوقعة",
+    "timelinePlaceholder": "اختر مدة (اختياري)",
+    "nameLabel": "الاسم",
+    "emailLabel": "البريد الإلكتروني",
+    "phoneLabel": "الهاتف",
+    "companyLabel": "الشركة",
+    "back": "السابق",
+    "next": "التالي",
+    "submit": "إرسال الطلب",
+    "preferWhatsapp": "تفضّل الحديث مباشرة؟ راسلنا على واتساب",
+    "successTitle": "أُرسل طلبك بنجاح",
+    "successBody": "سنراجعه ونعود إليك قريبًا. احتفظ برقمك المرجعي للمتابعة.",
+    "reference": "الرقم المرجعي",
+    "projectType": {
+      "website": "موقع",
+      "mobile": "تطبيق موبايل",
+      "desktop": "سطح مكتب",
+      "system": "نظام إداري",
+      "existing": "تطوير نظام قائم",
+      "api": "واجهة برمجية",
+      "hosting": "استضافة",
+      "consulting": "استشارة وتحليل"
+    },
+    "sector": {
+      "education": "التعليم",
+      "retail": "التجارة",
+      "restaurants": "المطاعم",
+      "accounting": "المحاسبة",
+      "hr": "الموارد البشرية",
+      "real_estate": "العقارات",
+      "pharmacy": "الصيدليات",
+      "ngo": "المنظمات",
+      "general": "قطاع آخر"
+    },
+    "budget": {
+      "under_500": "أقل من 500$",
+      "500_2000": "500$ – 2000$",
+      "2000_5000": "2000$ – 5000$",
+      "5000_10000": "5000$ – 10000$",
+      "over_10000": "أكثر من 10000$",
+      "unsure": "غير محدد"
+    },
+    "timeline": {
+      "urgent": "عاجل (أقل من شهر)",
+      "short": "1 – 3 أشهر",
+      "medium": "3 – 6 أشهر",
+      "flexible": "مرن"
+    },
+    "requirement": {
+      "has_design": "لديّ تصميم جاهز",
+      "has_backend": "لديّ نظام خلفي",
+      "needs_android": "أحتاج Android",
+      "needs_ios": "أحتاج iOS",
+      "needs_offline": "العمل دون إنترنت",
+      "needs_notifications": "إشعارات",
+      "needs_payments": "دفع إلكتروني",
+      "needs_multi_branch": "تعدد الفروع"
+    },
+    "summaryTitle": "ملخّص طلبك",
+    "summaryFeatures": "المزايا المختارة",
+    "summaryCount": "{count} من {total}",
+    "replyPromise": "ردّ خلال يوم عمل واحد",
+    "summaryPlaceholder": "اختر نوع مشروعك لتبدأ.",
+    "summaryType": "نوع المشروع",
+    "stepName": {
+      "type": "نوع المشروع",
+      "scope": "النطاق والمزايا",
+      "budget": "الميزانية والمدّة",
+      "contact": "بيانات التواصل"
+    },
+    "scopeLabel": "ما الذي يشمله المشروع؟",
+    "scopeHelp": "اختر ما تحتاجه الآن — يمكن توسيع النطاق لاحقًا بلا إعادة بناء.",
+    "detailsLabel": "أي تفاصيل تودّ إضافتها؟",
+    "budgetSectionLabel": "نطاق الميزانية",
+    "budgetHelp": "تقدير مبدئي فقط — لا يُلزمك بشيء، ويساعدنا على اقتراح نطاق واقعي.",
+    "module": {
+      "marketing_site": {
+        "title": "موقع تعريفي",
+        "desc": "صفحات محتوى وخدمات"
+      },
+      "dashboard": {
+        "title": "لوحة تحكّم",
+        "desc": "إدارة كل المحتوى"
+      },
+      "members": {
+        "title": "نظام أعضاء",
+        "desc": "تسجيل ودخول وحفظ"
+      },
+      "blog": {
+        "title": "مدوّنة وتعليقات",
+        "desc": "نشر وإشراف"
+      },
+      "store": {
+        "title": "متجر ومدفوعات",
+        "desc": "كتالوج وسلة"
+      },
+      "pwa": {
+        "title": "تطبيق مثبّت PWA",
+        "desc": "يعمل دون اتصال"
+      }
+    },
+    "step4Title": "بيانات التواصل"
+  },
+  "blog": {
+    "title": "المدونة",
+    "description": "مقالات تقنية عن تحليل النظم وتطوير الويب والموبايل، من واقع التنفيذ.",
+    "searchPlaceholder": "ابحث في المقالات…",
+    "searchLabel": "بحث في المدونة",
+    "clearSearch": "مسح البحث",
+    "allCategories": "كل التصنيفات",
+    "popular": "الأكثر قراءة",
+    "related": "مقالات ذات صلة",
+    "readingTime": "{minutes} دقيقة قراءة",
+    "share": "شارك",
+    "copyLink": "نسخ الرابط",
+    "save": "حفظ",
+    "saved": "محفوظ",
+    "loginToSave": "سجّل الدخول للحفظ",
+    "empty": "لا مقالات بعد",
+    "emptyBody": "المدونة قيد الإعداد وستُنشر أولى المقالات قريبًا.",
+    "noResults": "لا نتائج",
+    "noResultsBody": "لم نجد مقالات تطابق بحثك. جرّب كلمات أخرى."
+  },
+  "auth": {
+    "loginTitle": "تسجيل الدخول",
+    "loginSubtitle": "ادخل إلى حسابك لمتابعة نشاطك.",
+    "registerTitle": "إنشاء حساب",
+    "registerSubtitle": "أنشئ حسابًا لحفظ المقالات والتعليق.",
+    "fullName": "الاسم الكامل",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "passwordConfirm": "تأكيد كلمة المرور",
+    "loginButton": "دخول",
+    "registerButton": "إنشاء الحساب",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "noAccount": "ليس لديك حساب؟",
+    "haveAccount": "لديك حساب بالفعل؟",
+    "registerLink": "أنشئ حسابًا",
+    "loginLink": "سجّل الدخول",
+    "forgotTitle": "استعادة كلمة المرور",
+    "forgotSubtitle": "أدخل بريدك وسنرسل لك رابط الاستعادة.",
+    "forgotButton": "إرسال الرابط",
+    "forgotSent": "إن كان البريد مسجلًا لدينا فستصلك رسالة خلال دقائق.",
+    "backToLogin": "العودة لتسجيل الدخول",
+    "resetTitle": "كلمة مرور جديدة",
+    "resetSubtitle": "اختر كلمة مرور قوية جديدة.",
+    "newPassword": "كلمة المرور الجديدة",
+    "resetButton": "تعيين كلمة المرور",
+    "resetDone": "تم تعيين كلمة المرور. سننقلك لتسجيل الدخول…",
+    "verifyTitle": "تأكيد البريد الإلكتروني",
+    "verifying": "جارٍ التحقق…",
+    "verifySuccess": "تم تأكيد بريدك الإلكتروني بنجاح.",
+    "verifyError": "رابط التحقق غير صالح أو منتهي الصلاحية.",
+    "goToAccount": "الذهاب إلى حسابي"
+  },
+  "member": {
+    "menu": "قائمة الحساب",
+    "logout": "تسجيل الخروج",
+    "emailUnverified": "بريدك غير مؤكَّد",
+    "tabs": {
+      "overview": "نظرة عامة",
+      "saved": "المقالات المحفوظة",
+      "comments": "تعليقاتي",
+      "settings": "الإعدادات"
+    },
+    "profile": "الملف الشخصي",
+    "fullName": "الاسم الكامل",
+    "email": "البريد الإلكتروني",
+    "save": "حفظ",
+    "profileSaved": "حُفظت التعديلات.",
+    "verifyPrompt": "أكّد بريدك الإلكتروني لتفعيل الحفظ والتعليق باسمك.",
+    "resendVerification": "إعادة إرسال رابط التحقق",
+    "verificationResent": "أُرسل رابط التحقق إلى بريدك.",
+    "noSaved": "لا مقالات محفوظة بعد.",
+    "browseBlog": "تصفّح المدونة",
+    "noComments": "لا تعليقات بعد.",
+    "changePassword": "تغيير كلمة المرور",
+    "currentPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "updatePassword": "تحديث كلمة المرور",
+    "passwordChanged": "تم تغيير كلمة المرور.",
+    "deleteAccount": "حذف الحساب",
+    "deleteWarning": "حذف الحساب نهائي: تُحذف بياناتك ومحفوظاتك، وتُجهَّل تعليقاتك.",
+    "confirmWithPassword": "أكّد بكلمة المرور",
+    "confirmDelete": "حذف نهائي",
+    "accountDeleted": "تم حذف حسابك.",
+    "cancel": "إلغاء"
+  },
+  "comments": {
+    "title": "التعليقات",
+    "addComment": "أضف تعليقًا",
+    "yourComment": "تعليقك",
+    "placeholder": "شاركنا رأيك…",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "submit": "إرسال التعليق",
+    "reply": "رد",
+    "cancel": "إلغاء",
+    "pendingReview": "تعليقك قيد المراجعة وسيظهر بعد الاعتماد.",
+    "closed": "التعليقات مغلقة على هذا المقال.",
+    "beFirst": "لا تعليقات بعد — كن أول من يعلّق.",
+    "you": "أنت",
+    "report": "إبلاغ",
+    "reportThanks": "شكرًا لبلاغك، سنراجعه.",
+    "reason": {
+      "spam": "سبام",
+      "offensive": "مسيء",
+      "off_topic": "خارج الموضوع"
+    }
+  },
+  "offline": {
+    "title": "لا يوجد اتصال بالإنترنت",
+    "body": "يبدو أنك غير متصل. تحقّق من اتصالك وحاول مجددًا.",
+    "retry": "إعادة المحاولة"
+  },
+  "legal": {
+    "privacyTitle": "سياسة الخصوصية",
+    "termsTitle": "شروط الاستخدام",
+    "pending": "هذه الصفحة قيد الإعداد وستُحرَّر من لوحة التحكم."
+  },
+  "footer": {
+    "tagline": "حلول برمجية للويب والموبايل وسطح المكتب.",
+    "navigation": "روابط",
+    "legal": "قانوني",
+    "social": "تواصل اجتماعي",
+    "rights": "جميع الحقوق محفوظة.",
+    "platform": "المنصّة",
+    "knowledge": "المعرفة",
+    "connect": "التواصل",
+    "messageMe": "راسلنا"
+  },
+  "dashboard": {
+    "yes": "نعم",
+    "no": "لا",
+    "actions": {
+      "create": "إضافة",
+      "createFirst": "أضف أول عنصر",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "cancel": "إلغاء",
+      "retry": "إعادة المحاولة",
+      "publish": "نشر",
+      "unpublish": "إلغاء النشر",
+      "save": "حفظ"
+    },
+    "search": {
+      "label": "بحث في {resource}",
+      "placeholder": "اكتب كلمة للبحث"
+    },
+    "filters": {
+      "all": "كل العناصر"
+    },
+    "table": {
+      "actions": "إجراءات"
+    },
+    "states": {
+      "loading": "جارٍ التحميل",
+      "errorTitle": "تعذّر جلب البيانات",
+      "emptyTitle": "لا توجد عناصر بعد",
+      "emptyBody": "ابدأ بإضافة أول عنصر ليظهر هنا."
+    },
+    "pagination": {
+      "label": "ترقيم الصفحات",
+      "prev": "الصفحة السابقة",
+      "next": "الصفحة التالية",
+      "summary": "صفحة <ltr>{page}</ltr> من <ltr>{total}</ltr> — <ltr>{count}</ltr> عنصرًا"
+    },
+    "confirmDelete": {
+      "title": "تأكيد الحذف",
+      "body": "سيُحذف العنصر نهائيًا ولا يمكن التراجع."
+    },
+    "toast": {
+      "deleted": "حُذف العنصر",
+      "published": "نُشر العنصر",
+      "unpublished": "أُلغي النشر"
+    }
+  },
+  "testimonials": {
+    "rating": "التقييم {value} من 5"
+  }
+}

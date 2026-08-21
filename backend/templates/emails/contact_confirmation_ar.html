@@ -1,0 +1,20 @@
+{% extends "emails/base_ar.html" %}
+
+{% block title %}استلمنا رسالتك{% endblock %}
+
+{% block content %}
+<p style="margin:0 0 16px;">مرحبًا {{ user_name }},</p>
+<p style="margin:0 0 24px;">
+  شكرًا لتواصلك. وصلتنا رسالتك وسنرد عليك في أقرب وقت ممكن.
+</p>
+<p style="margin:0 0 24px;text-align:center;">
+  <a href="{{ action_url }}"
+     style="display:inline-block;background-color:#2563eb;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:10px;font-weight:600;font-size:16px;">
+    زيارة الموقع
+  </a>
+</p>
+{% endblock %}
+
+{% block footer %}
+هذه رسالة تأكيد آلية.
+{% endblock %}

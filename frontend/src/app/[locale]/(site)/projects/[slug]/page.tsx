@@ -100,12 +100,16 @@ export default async function ProjectDetailPage({
             <h1 className="text-h1 font-semibold">{project.title}</h1>
             <p className="mt-4 max-w-prose text-lg text-muted">{project.summary}</p>
 
+            {/* لقطة المشروع بنسبتها الأصلية وجودة أعلى: القص إلى 16/10
+                كان يبتر الواجهة، والضغط الافتراضي يُشوّش النصوص داخلها */}
             <CoverImage
               media={project.cover_image}
               alt={project.title}
+              natural
+              quality={90}
               priority
               sizes="(max-width: 1024px) 100vw, 66vw"
-              className="mt-8"
+              className="mt-8 rounded-xl border border-border shadow-card"
             />
 
             <div className="mt-8">
@@ -196,7 +200,15 @@ export default async function ProjectDetailPage({
             {project.images.map((image) => (
               <li key={image.id}>
                 <figure>
-                  <CoverImage media={image.image} alt={image.caption || project.title} />
+                  {/* شبكة موحّدة النسبة، لكن اللقطة تُعرض كاملة داخلها */}
+                  <CoverImage
+                    media={image.image}
+                    alt={image.caption || project.title}
+                    fit="contain"
+                    quality={90}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="rounded-xl border border-border"
+                  />
                   {image.caption ? (
                     <figcaption className="mt-2 text-sm text-muted">
                       {image.caption}

@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { LocaleSwitcher } from '@/components/layout/locale-switcher';
 import { MemberMenu } from '@/components/layout/member-menu';
 import { MobileNav } from '@/components/layout/mobile-nav';
+import { NavLinks } from '@/components/layout/nav-links';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { ButtonLink } from '@/components/ui/button';
 import { Container } from '@/components/ui/container';
@@ -27,19 +28,10 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
           <span>{settings?.site_name || 'NEXA SYSTEMS'}</span>
         </Link>
 
-        <nav aria-label={t('menu')} className="hidden flex-1 justify-center lg:flex">
-          <ul className="flex items-center gap-0.5">
-            {items.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="inline-flex min-h-9 items-center rounded-lg px-2.5 text-[0.8125rem] font-medium text-muted transition-colors duration-fast hover:bg-surface-hover hover:text-foreground"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+        {/* ثمانية روابط لا تتسع مع الشعار وزر الطلب قبل 1280px،
+            فالقائمة الكاملة تبدأ من xl والدرج يغطي ما دونها */}
+        <nav aria-label={t('menu')} className="hidden min-w-0 flex-1 justify-center xl:flex">
+          <NavLinks items={items} />
         </nav>
 
         <div className="ms-auto flex items-center gap-1">
@@ -50,12 +42,12 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
           </div>
           <div
             aria-hidden="true"
-            className="mx-2 hidden h-5 w-px bg-border/60 lg:block"
+            className="mx-2 hidden h-5 w-px bg-border/60 sm:block"
           />
           <ButtonLink
             href="/request-quote"
             size="sm"
-            className="hidden shadow-[0_2px_12px_-3px_rgb(var(--primary)/0.4)] lg:inline-flex"
+            className="hidden shadow-[0_2px_12px_-3px_rgb(var(--primary)/0.4)] sm:inline-flex"
           >
             {t('requestQuote')}
           </ButtonLink>

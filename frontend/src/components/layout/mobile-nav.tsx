@@ -1,26 +1,27 @@
 'use client';
 
-import { Menu, X } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { ArrowLeft, ArrowRight, Menu, X } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { LocaleSwitcher } from '@/components/layout/locale-switcher';
 import { MemberMenu } from '@/components/layout/member-menu';
+import { isActivePath, type NavLinkItem } from '@/components/layout/nav-links';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { Link, usePathname } from '@/lib/i18n/navigation';
 import { cn } from '@/lib/utils/cn';
 
-interface Item {
-  href: string;
-  label: string;
-}
-
-export function MobileNav({ items, ctaLabel }: { items: Item[]; ctaLabel: string }) {
+export function MobileNav({ items, ctaLabel }: { items: NavLinkItem[]; ctaLabel: string }) {
   const t = useTranslations('nav');
+  const locale = useLocale();
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => setMounted(true), []);
 
   // إغلاق القائمة عند الانتقال إلى صفحة أخرى
   useEffect(() => {
@@ -49,6 +50,96 @@ export function MobileNav({ items, ctaLabel }: { items: Item[]; ctaLabel: string
     };
   }, [open]);
 
+  // الدرج يفتح من جهة البداية، فالسهم يشير إلى الخارج بحسب الاتجاه
+  const AwayArrow = locale === 'ar' ? ArrowLeft : ArrowRight;
+
+  /*
+    الدرج يُركَّب على <body> عبر portal ولا يبقى داخل الترويسة:
+    الترويسة تحمل backdrop-blur، و backdrop-filter يجعل العنصر كتلة
+    احتواء لأي سليل ثابت — فكان `inset-y-0` يُحسب على ارتفاع الترويسة
+    (64px) لا على الشاشة، ويتقلّص الدرج إلى شريط.
+  */
+  const drawer = (
+    <>
+      <div
+        className="fixed inset-0 z-40 bg-background/70 backdrop-blur-sm xl:hidden"
+        onClick={() => setOpen(false)}
+        aria-hidden="true"
+      />
+
+      {/*
+        درج جانبي بارتفاع الشاشة بدل قائمة منسدلة من الأعلى: ثمانية روابط
+        بمساحات لمس مريحة تتجاوز ارتفاع الشاشة الصغيرة، والدرج يمرّر
+        محتواه بينما تبقى الخلفية ثابتة.
+      */}
+      <div
+        id="mobile-nav-panel"
+        ref={panelRef}
+        className={cn(
+          'fixed inset-y-0 start-0 z-50 flex w-[min(20rem,85vw)] flex-col',
+          'border-e border-border bg-surface shadow-card xl:hidden',
+        )}
+      >
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-border px-4">
+          <span className="text-sm font-semibold text-muted">{t('menu')}</span>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            aria-label={t('closeMenu')}
+            className="inline-flex size-10 items-center justify-center rounded-lg text-muted transition-colors hover:bg-surface-hover hover:text-foreground"
+          >
+            <X className="size-5" aria-hidden="true" />
+          </button>
+        </div>
+
+        <nav aria-label={t('menu')} className="min-h-0 flex-1 overflow-y-auto p-3">
+          <ul className="flex flex-col gap-0.5">
+            {items.map((item) => {
+              const active = isActivePath(pathname, item.href);
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    aria-current={active ? 'page' : undefined}
+                    className={cn(
+                      'flex min-h-11 items-center justify-between gap-3 rounded-lg px-3',
+                      'text-base font-medium transition-colors',
+                      active
+                        ? 'bg-primary-soft text-primary'
+                        : 'text-foreground hover:bg-surface-hover',
+                    )}
+                  >
+                    {item.label}
+                    <AwayArrow
+                      className={cn('size-4 shrink-0', active ? 'opacity-70' : 'opacity-0')}
+                      aria-hidden="true"
+                    />
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        <div className="shrink-0 border-t border-border p-3">
+          <Link
+            href="/request-quote"
+            className="flex min-h-11 items-center justify-center rounded-lg bg-primary px-5 font-medium text-primary-foreground shadow-[0_2px_12px_-3px_rgb(var(--primary)/0.4)]"
+          >
+            {ctaLabel}
+          </Link>
+          <div className="mt-3 flex items-center justify-between gap-1 sm:hidden">
+            <ThemeToggle />
+            <div className="flex items-center gap-1">
+              <LocaleSwitcher />
+              <MemberMenu />
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <>
       <button
@@ -58,7 +149,7 @@ export function MobileNav({ items, ctaLabel }: { items: Item[]; ctaLabel: string
         aria-expanded={open}
         aria-controls="mobile-nav-panel"
         aria-label={open ? t('closeMenu') : t('openMenu')}
-        className="inline-flex size-11 items-center justify-center rounded text-foreground hover:bg-surface-hover lg:hidden"
+        className="inline-flex size-11 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-surface-hover xl:hidden"
       >
         {open ? (
           <X className="size-5" aria-hidden="true" />
@@ -67,48 +158,7 @@ export function MobileNav({ items, ctaLabel }: { items: Item[]; ctaLabel: string
         )}
       </button>
 
-      {open ? (
-        <div
-          className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm lg:hidden"
-          onClick={() => setOpen(false)}
-          aria-hidden="true"
-        />
-      ) : null}
-
-      <div
-        id="mobile-nav-panel"
-        ref={panelRef}
-        hidden={!open}
-        className={cn(
-          'fixed inset-x-0 top-16 z-50 border-b border-border bg-surface p-4 shadow-card lg:hidden',
-        )}
-      >
-        <nav aria-label={t('menu')}>
-          <ul className="flex flex-col gap-1">
-            {items.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="flex min-h-11 items-center rounded px-3 text-base font-medium hover:bg-surface-hover"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <Link
-            href="/request-quote"
-            className="mt-3 flex min-h-11 items-center justify-center rounded bg-primary px-5 font-medium text-primary-foreground"
-          >
-            {ctaLabel}
-          </Link>
-        </nav>
-        <div className="mt-3 flex items-center gap-1 border-t border-border pt-3 sm:hidden">
-          <ThemeToggle />
-          <LocaleSwitcher />
-          <MemberMenu />
-        </div>
-      </div>
+      {mounted && open ? createPortal(drawer, document.body) : null}
     </>
   );
 }

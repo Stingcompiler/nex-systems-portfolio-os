@@ -177,6 +177,135 @@ function MediaField({ field, values, setValue, errors }: FieldProps) {
   );
 }
 
+// --------------------------------------------------------------- معرض الصور
+
+interface GalleryItem {
+  id?: number;
+  image: number;
+  image_detail?: MediaItem | null;
+  caption_ar?: string;
+  caption_en?: string;
+}
+
+/**
+ * معرض صور مرتّب — الترتيب في المصفوفة هو `display_order` في الخادم.
+ *
+ * الحقل يرسل القائمة كاملة عند الحفظ، وغيابها يعني «لا تمسّ المعرض».
+ */
+function MediaListField({ field, values, setValue, errors }: FieldProps) {
+  const [open, setOpen] = useState(false);
+  const items = (values[field.name] as GalleryItem[]) ?? [];
+
+  function move(index: number, direction: -1 | 1) {
+    const target = index + direction;
+    if (target < 0 || target >= items.length) return;
+    const next = [...items];
+    [next[index], next[target]] = [next[target], next[index]];
+    setValue(field.name, next);
+  }
+
+  function updateItem(index: number, key: keyof GalleryItem, value: unknown) {
+    setValue(
+      field.name,
+      items.map((item, position) =>
+        position === index ? { ...item, [key]: value } : item,
+      ),
+    );
+  }
+
+  return (
+    <Wrapper
+      id={`field-${field.name}`}
+      label={field.label}
+      help={field.help}
+      error={firstError(errors, field.name)}
+    >
+      <div className="flex flex-col gap-3">
+        {items.map((item, index) => (
+          <div
+            key={item.id ?? `${item.image}-${index}`}
+            className="rounded border border-border bg-background p-3"
+          >
+            <div className="flex items-start gap-3">
+              <MediaThumb
+                media={item.image_detail}
+                className="size-16 shrink-0 border border-border"
+              />
+
+              <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-2">
+                <input
+                  value={item.caption_ar ?? ''}
+                  onChange={(event) => updateItem(index, 'caption_ar', event.target.value)}
+                  placeholder="التعليق (عربي)"
+                  className={INPUT}
+                />
+                <input
+                  dir="ltr"
+                  value={item.caption_en ?? ''}
+                  onChange={(event) => updateItem(index, 'caption_en', event.target.value)}
+                  placeholder="Caption (English)"
+                  className={cn(INPUT, 'text-start')}
+                />
+              </div>
+
+              <div className="flex shrink-0 gap-1">
+                <button
+                  type="button"
+                  onClick={() => move(index, -1)}
+                  disabled={index === 0}
+                  aria-label="تحريك لأعلى"
+                  className="rounded px-2 py-1 text-xs text-muted hover:bg-surface-hover disabled:opacity-40"
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  onClick={() => move(index, 1)}
+                  disabled={index === items.length - 1}
+                  aria-label="تحريك لأسفل"
+                  className="rounded px-2 py-1 text-xs text-muted hover:bg-surface-hover disabled:opacity-40"
+                >
+                  ↓
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setValue(field.name, items.filter((_, position) => position !== index))
+                  }
+                  aria-label="حذف الصورة"
+                  className="rounded px-2 py-1 text-muted hover:text-danger"
+                >
+                  <Trash2 className="size-4" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded border border-dashed border-border px-4 text-sm text-muted hover:bg-surface-hover hover:text-foreground"
+        >
+          <Plus className="size-4" aria-hidden="true" />
+          إضافة صورة
+        </button>
+      </div>
+
+      <MediaPickerDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        onSelect={(picked) =>
+          setValue(field.name, [
+            ...items,
+            { image: picked.id, image_detail: picked, caption_ar: '', caption_en: '' },
+          ])
+        }
+      />
+    </Wrapper>
+  );
+}
+
 // --------------------------------------------------------------- العلاقات
 
 function RelationField({ field, values, setValue, errors }: FieldProps) {
@@ -390,6 +519,8 @@ export function ResourceField(props: FieldProps) {
       return <BilingualField {...props} multiline />;
     case 'media':
       return <MediaField {...props} />;
+    case 'media-list':
+      return <MediaListField {...props} />;
     case 'relation':
       return <RelationField {...props} />;
     case 'json-list':

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.core.fields import TranslatedField, TranslatedJSONField
+from apps.media_library.models import MediaFile
 from apps.media_library.serializers import MediaFileRefSerializer
 from apps.portfolio.models import (
     CaseStudy,
@@ -166,13 +167,58 @@ class ProjectDetailSerializer(ProjectListSerializer):
         return build_seo_payload(project, self.context, fallback_description="summary")
 
 
+class ProjectImageAdminSerializer(serializers.ModelSerializer):
+    """صورة معرض واحدة كما تُكتب من اللوحة — الوسيط بمعرّفه لا ككائن."""
+
+    image = serializers.PrimaryKeyRelatedField(queryset=MediaFile.objects.all())
+    #: القراءة تحتاج الرابط لعرض مصغّرة في اللوحة، والكتابة تحتاج المعرّف وحده
+    image_detail = MediaFileRefSerializer(source="image", read_only=True)
+
+    class Meta:
+        model = ProjectImage
+        fields = ["id", "image", "image_detail", "caption_ar", "caption_en"]
+
+
 class ProjectAdminSerializer(serializers.ModelSerializer):
-    images = ProjectImageSerializer(many=True, read_only=True)
+    images = ProjectImageAdminSerializer(many=True, required=False)
 
     class Meta:
         model = Project
         fields = "__all__"
         read_only_fields = ["view_count", "search_text", "created_by", "updated_by"]
+
+    def create(self, validated_data):
+        images = validated_data.pop("images", None)
+        project = super().create(validated_data)
+        if images is not None:
+            self._sync_images(project, images)
+        return project
+
+    def update(self, instance, validated_data):
+        # الغياب يعني «لم يُرسل هذا الحقل» لا «احذف كل الصور»: اللوحة تحفظ
+        # تبويبًا واحدًا أحيانًا، فالحذف الضمني يفقد المعرض بلا قصد.
+        images = validated_data.pop("images", None)
+        project = super().update(instance, validated_data)
+        if images is not None:
+            self._sync_images(project, images)
+        return project
+
+    @staticmethod
+    def _sync_images(project: Project, images: list[dict]) -> None:
+        """يجعل معرض المشروع مطابقًا للقائمة المرسلة، وترتيبها هو ترتيبها."""
+        project.images.all().delete()
+        ProjectImage.objects.bulk_create(
+            [
+                ProjectImage(
+                    project=project,
+                    image=item["image"],
+                    caption_ar=item.get("caption_ar", ""),
+                    caption_en=item.get("caption_en", ""),
+                    display_order=order,
+                )
+                for order, item in enumerate(images)
+            ]
+        )
 
 
 # --------------------------------------------------------------- دراسات الحالة

@@ -27,6 +27,7 @@ function blankValues(config: ResourceConfig): FormValues {
         values[field.name] = false;
         break;
       case 'json-list':
+      case 'media-list':
         values[field.name] = [];
         break;
       case 'relation':

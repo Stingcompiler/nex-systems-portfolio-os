@@ -13,6 +13,7 @@ export type FieldType =
   | 'url'
   | 'email'
   | 'media'
+  | 'media-list'
   | 'relation'
   | 'json-list'
   | 'readonly';

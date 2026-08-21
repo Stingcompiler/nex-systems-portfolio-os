@@ -171,6 +171,8 @@ export const projectsConfig: ResourceConfig = {
     { name: 'summary', label: 'وصف مختصر', type: 'bilingual-textarea', tab: 'main' },
     { name: 'description', label: 'الوصف الكامل', type: 'bilingual-textarea', tab: 'main' },
     { name: 'cover_image', label: 'صورة الغلاف', type: 'media', tab: 'main' },
+    { name: 'images', label: 'معرض الصور', type: 'media-list', tab: 'main', full: true,
+      help: 'تظهر أسفل صفحة المشروع بالترتيب هنا. التعليق اختياري.' },
 
     { name: 'sector', label: 'القطاع', type: 'select', options: SECTORS, tab: 'details' },
     { name: 'project_type', label: 'نوع المشروع', type: 'select', options: PROJECT_TYPES, tab: 'details' },

@@ -1,9 +1,12 @@
+import { getLocale } from 'next-intl/server';
 import type { ReactNode } from 'react';
 
 import { Container } from '@/components/ui/container';
+import { getSiteSettings } from '@/lib/api/queries';
 import { Link } from '@/lib/i18n/navigation';
+import type { Locale } from '@/lib/i18n/routing';
 
-export function AuthShell({
+export async function AuthShell({
   title,
   subtitle,
   children,
@@ -14,6 +17,9 @@ export function AuthShell({
   children: ReactNode;
   footer?: ReactNode;
 }) {
+  const settings = await getSiteSettings((await getLocale()) as Locale);
+  const siteName = settings?.site_name || 'NEXA SYSTEMS';
+
   return (
     <div className="hero-surface">
       <Container className="grid min-h-[80vh] place-items-center py-16">
@@ -23,10 +29,10 @@ export function AuthShell({
               href="/"
               className="mx-auto mb-4 inline-flex items-center gap-2 text-lg font-bold"
             >
-              <span className="grid size-9 place-items-center rounded-lg bg-brand text-white shadow-[0_2px_12px_-2px_rgb(var(--primary)/0.6)]">
-                N
+              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand text-white shadow-[0_2px_12px_-2px_rgb(var(--primary)/0.6)]">
+                {siteName.charAt(0).toUpperCase()}
               </span>
-              NEXA SYSTEMS
+              {siteName}
             </Link>
             <h1 className="text-h2 font-semibold">{title}</h1>
             {subtitle ? <p className="mt-2 text-sm text-muted">{subtitle}</p> : null}

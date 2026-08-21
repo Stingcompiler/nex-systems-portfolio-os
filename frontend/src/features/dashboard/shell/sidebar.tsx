@@ -30,6 +30,7 @@ import {
   Wrench,
   type LucideIcon,
 } from 'lucide-react';
+import NextImage from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
@@ -45,6 +46,38 @@ interface NavActivity {
   pending_comments: number;
   reported_comments: number;
   follow_ups_today: unknown[];
+}
+
+interface MediaRefLite {
+  url: string;
+  alt: string;
+  width: number | null;
+  height: number | null;
+}
+
+interface SiteIdentity {
+  site_name: string;
+  logo_light: MediaRefLite | null;
+  logo_dark: MediaRefLite | null;
+}
+
+/**
+ * هوية الموقع كما يضبطها المستخدم في الإعدادات.
+ *
+ * اللوحة عربية دائمًا فاللغة صريحة. النقطة عامة، ونتيجتها تُخزَّن طويلًا
+ * لأن الاسم والشعار نادرا التغيّر.
+ */
+function useSiteIdentity() {
+  return useQuery({
+    queryKey: ['site-identity'],
+    staleTime: 5 * 60_000,
+    queryFn: async () => {
+      const { data } = await api.get<SiteIdentity>('/settings/', {
+        params: { lang: 'ar' },
+      });
+      return data;
+    },
+  });
 }
 
 /** أعداد «بحاجة انتباه» بجانب عناصر القائمة — من ملخّص اللوحة المخزَّن مؤقتًا. */
@@ -98,6 +131,60 @@ const ICONS: Record<string, LucideIcon> = {
   History,
 };
 
+/**
+ * علامة الموقع في اللوحة — تتبع الإعدادات لا اسمًا مكتوبًا في الشيفرة.
+ *
+ * النسختان الفاتحة والداكنة تتبادلان الظهور بالـ CSS كما في ترويسة الموقع.
+ * أثناء التحميل يظهر هيكل صامت: عرض اسم افتراضي ثم استبداله يُربك القارئ.
+ */
+function SidebarBrand() {
+  const { data, isPending } = useSiteIdentity();
+
+  if (isPending) {
+    return (
+      <span className="flex items-center gap-2" aria-hidden="true">
+        <span className="size-8 shrink-0 animate-pulse rounded-lg bg-surface-hover" />
+        <span className="h-4 w-24 animate-pulse rounded bg-surface-hover" />
+      </span>
+    );
+  }
+
+  const name = data?.site_name || 'لوحة التحكم';
+  const light = data?.logo_light ?? data?.logo_dark;
+  const dark = data?.logo_dark ?? data?.logo_light;
+
+  if (!light || !dark) {
+    return (
+      <>
+        <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-brand text-white shadow-[0_2px_10px_-2px_rgb(var(--primary)/0.6)]">
+          {name.charAt(0).toUpperCase()}
+        </span>
+        <span className="truncate">{name}</span>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <NextImage
+        src={light.url}
+        alt={light.alt || name}
+        width={light.width ?? 32}
+        height={light.height ?? 32}
+        className="h-8 w-auto object-contain dark:hidden"
+      />
+      <NextImage
+        src={dark.url}
+        alt={dark.alt || name}
+        width={dark.width ?? 32}
+        height={dark.height ?? 32}
+        className="hidden h-8 w-auto object-contain dark:block"
+      />
+      <span className="sr-only">{name}</span>
+    </>
+  );
+}
+
 export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const { can } = useAuth();
@@ -110,10 +197,7 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
         onClick={onNavigate}
         className="flex items-center gap-2 px-2 text-lg font-bold"
       >
-        <span className="grid size-8 place-items-center rounded-lg bg-brand text-white shadow-[0_2px_10px_-2px_rgb(var(--primary)/0.6)]">
-          N
-        </span>
-        NEXA
+        <SidebarBrand />
       </Link>
 
       <div className="flex flex-1 flex-col gap-6 overflow-y-auto">

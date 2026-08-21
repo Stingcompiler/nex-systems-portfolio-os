@@ -5,17 +5,11 @@ databases:
     user: nexa
 
 services:
-  # ─── Django API ───────────────────────────────────────────────
   - type: web
-    name: nexa-api
-    runtime: python
+    name: nexa
+    runtime: docker
     plan: free
-    rootDir: backend
-    buildCommand: chmod +x build.sh && ./build.sh
-    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
     envVars:
-      - key: PYTHON_VERSION
-        value: "3.12.0"
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings.prod
       - key: SECRET_KEY
@@ -62,25 +56,11 @@ services:
         value: "NEXA SYSTEMS <no-reply@stingdev.pro>"
       - key: EMAIL_BACKEND
         value: django.core.mail.backends.console.EmailBackend
-
-  # ─── Next.js Frontend ────────────────────────────────────────
-  - type: web
-    name: nexa-web
-    runtime: node
-    plan: free
-    rootDir: frontend
-    buildCommand: npm install && npm run build
-    startCommand: npx next start -H 0.0.0.0 -p $PORT
-    envVars:
-      - key: NODE_VERSION
-        value: "20"
       - key: NEXT_PUBLIC_SITE_URL
         value: https://stingdev.pro
       - key: NEXT_PUBLIC_API_URL
         value: /api/v1
       - key: INTERNAL_API_URL
-        sync: false
+        value: http://127.0.0.1:8000/api/v1
       - key: BACKEND_ORIGIN
-        sync: false
-      - key: REVALIDATE_SECRET
-        sync: false
+        value: http://127.0.0.1:8000

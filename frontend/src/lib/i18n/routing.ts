@@ -10,7 +10,7 @@ export const routing = defineRouting({
   defaultLocale,
   // البادئة ظاهرة دائمًا: /ar و /en — أوضح للزائر ولمحركات البحث
   localePrefix: 'always',
-  localeDetection: true,
+  localeDetection: false,
 });
 
 export function isLocale(value: string | undefined): value is Locale {

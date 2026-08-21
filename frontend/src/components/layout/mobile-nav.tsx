@@ -4,6 +4,9 @@ import { Menu, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 
+import { LocaleSwitcher } from '@/components/layout/locale-switcher';
+import { MemberMenu } from '@/components/layout/member-menu';
+import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { Link, usePathname } from '@/lib/i18n/navigation';
 import { cn } from '@/lib/utils/cn';
 
@@ -100,6 +103,11 @@ export function MobileNav({ items, ctaLabel }: { items: Item[]; ctaLabel: string
             {ctaLabel}
           </Link>
         </nav>
+        <div className="mt-3 flex items-center gap-1 border-t border-border pt-3 sm:hidden">
+          <ThemeToggle />
+          <LocaleSwitcher />
+          <MemberMenu />
+        </div>
       </div>
     </>
   );

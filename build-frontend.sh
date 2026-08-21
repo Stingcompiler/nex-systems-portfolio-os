@@ -9,8 +9,9 @@ export DB_ENGINE=sqlite
 export ALLOWED_HOSTS=localhost,127.0.0.1
 export SECURE_SSL_REDIRECT=False
 
+# قاعدة فارغة عمدًا: البناء لا يخبز محتوى بعد الآن (الصفحات تُبنى عند
+# الطلب)، وزرع بيانات تجريبية هنا كان يجعلها تظهر للزوار بعد كل نشر.
 python manage.py migrate --noinput
-python manage.py seed_content
 
 python manage.py runserver 127.0.0.1:8000 &
 DJANGO_PID=$!

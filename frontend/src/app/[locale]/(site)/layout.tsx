@@ -8,6 +8,19 @@ import { WhatsAppButton } from '@/components/layout/whatsapp-button';
 import { getSiteSettings } from '@/lib/api/queries';
 import { isLocale, type Locale } from '@/lib/i18n/routing';
 
+/**
+ * صفحات الموقع تُبنى عند الطلب لا وقت بناء الصورة.
+ *
+ * التوليد الثابت كان يخبز محتوى قاعدة البيانات داخل صورة Docker، فيعود
+ * الموقع بعد كل نشر إلى بيانات لحظة البناء — أسماء افتراضية وصور مفقودة —
+ * حتى تنتهي مهلة إعادة التحقق. البناء عند الطلب يقرأ القاعدة الحقيقية دائمًا.
+ *
+ * `fetchCache` يُبقي ذاكرة البيانات عاملة: الصفحة تُبنى لكل طلب، لكن
+ * النداءات تُخدَم من التخزين المؤقت بمهلها المعلنة فلا يُثقَل Django.
+ */
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'default-cache';
+
 export default async function SiteLayout({
   children,
   params,

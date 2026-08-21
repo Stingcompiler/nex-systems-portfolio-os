@@ -36,7 +36,7 @@ RUN chmod +x build-frontend.sh && ./build-frontend.sh
 
 RUN cd backend && SECRET_KEY=build-only-key DJANGO_SETTINGS_MODULE=config.settings.prod \
     ALLOWED_HOSTS=localhost SECURE_SSL_REDIRECT=False \
-    python manage.py collectstatic --noinput 2>/dev/null || true
+    python manage.py collectstatic --noinput
 
 RUN chmod +x start.sh
 

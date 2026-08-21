@@ -17,7 +17,7 @@ services:
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: stingdev.pro,www.stingdev.pro,.onrender.com
+        value: stingdev.pro,www.stingdev.pro,.onrender.com,localhost,127.0.0.1
       - key: CSRF_TRUSTED_ORIGINS
         value: https://stingdev.pro,https://www.stingdev.pro
       - key: DB_ENGINE
@@ -51,7 +51,7 @@ services:
       - key: COOKIE_SAMESITE
         value: Lax
       - key: SECURE_SSL_REDIRECT
-        value: "True"
+        value: "False"
       - key: DEFAULT_FROM_EMAIL
         value: "NEXA SYSTEMS <no-reply@stingdev.pro>"
       - key: EMAIL_BACKEND

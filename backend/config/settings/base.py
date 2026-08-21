@@ -176,7 +176,7 @@ EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="NEXA SYSTEMS <no-reply@localhost>")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="NEXA SYSTEMS <no-reply@stingdev.pro>")
 
 EMAIL_VERIFICATION_HOURS = env.int("EMAIL_VERIFICATION_HOURS", default=24)
 PASSWORD_RESET_HOURS = env.int("PASSWORD_RESET_HOURS", default=2)

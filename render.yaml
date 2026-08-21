@@ -23,9 +23,9 @@ services:
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        sync: false
+        value: stingdev.pro,www.stingdev.pro,.onrender.com
       - key: CSRF_TRUSTED_ORIGINS
-        sync: false
+        value: https://stingdev.pro,https://www.stingdev.pro
       - key: DB_ENGINE
         value: postgres
       - key: DB_NAME
@@ -49,7 +49,7 @@ services:
           name: nexa-db
           property: port
       - key: FRONTEND_URL
-        sync: false
+        value: https://stingdev.pro
       - key: REVALIDATE_SECRET
         generateValue: true
       - key: COOKIE_SECURE
@@ -58,6 +58,8 @@ services:
         value: Lax
       - key: SECURE_SSL_REDIRECT
         value: "True"
+      - key: DEFAULT_FROM_EMAIL
+        value: "NEXA SYSTEMS <no-reply@stingdev.pro>"
       - key: EMAIL_BACKEND
         value: django.core.mail.backends.console.EmailBackend
 
@@ -73,7 +75,7 @@ services:
       - key: NODE_VERSION
         value: "20"
       - key: NEXT_PUBLIC_SITE_URL
-        sync: false
+        value: https://stingdev.pro
       - key: NEXT_PUBLIC_API_URL
         value: /api/v1
       - key: INTERNAL_API_URL

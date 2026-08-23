@@ -151,6 +151,8 @@ class ProjectDetailSerializer(ProjectListSerializer):
     images = ProjectImageSerializer(many=True, read_only=True)
     case_study_slug = serializers.SerializerMethodField()
     seo = serializers.SerializerMethodField()
+    #: يتجاوز عمود view_count عمدًا — انظر get_view_count
+    view_count = serializers.SerializerMethodField()
 
     class Meta(ProjectListSerializer.Meta):
         fields = ProjectListSerializer.Meta.fields + [
@@ -162,6 +164,29 @@ class ProjectDetailSerializer(ProjectListSerializer):
     def get_case_study_slug(self, project: Project) -> str | None:
         case_study = getattr(project, "case_study", None)
         return case_study.slug if case_study and case_study.is_published else None
+
+    def get_view_count(self, project: Project) -> int:
+        """المشاهدات الحقيقية من سجل الزيارات.
+
+        عمود `view_count` الموروث لا يُزاد إلا في المدونة، فيبقى صفرًا
+        للمشاريع مهما زارها الناس. المنارة تسجّل كل زيارة متصفّح حقيقية
+        وتستبعد الزواحف، فهي المصدر الصحيح. النتيجة مخزَّنة مؤقتًا لأن
+        كل عرض للصفحة يطلبها.
+        """
+        from django.core.cache import cache
+
+        from apps.analytics.models import PageView
+
+        key = f"project-views:{project.slug}"
+        cached = cache.get(key)
+        if cached is not None:
+            return cached
+
+        count = PageView.objects.filter(
+            content_type="projects", object_slug=project.slug
+        ).count()
+        cache.set(key, count, 300)
+        return count
 
     def get_seo(self, project: Project) -> dict:
         return build_seo_payload(project, self.context, fallback_description="summary")

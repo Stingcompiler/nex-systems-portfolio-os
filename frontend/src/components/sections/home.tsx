@@ -86,7 +86,9 @@ export async function HeroSection({
           <h1 className="text-display font-bold [text-wrap:balance]">
             {highlight ? (
               <>
-                {lead} <span className="text-gradient">{highlight}</span>
+                {/* لون كامل لا تدرّج: العنوان الممتلئ بالتدرّج القُطري
+                    أوضح ما يجعل الصفحة تبدو قالبًا جاهزًا */}
+                {lead} <span className="text-primary">{highlight}</span>
               </>
             ) : (
               title

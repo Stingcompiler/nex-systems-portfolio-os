@@ -76,8 +76,9 @@ export async function generateMetadata({
 
 export const viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f8fafc' },
-    { media: '(prefers-color-scheme: dark)', color: '#020617' },
+    // يطابق --background في globals.css — شريط المتصفح يمتدّ من الصفحة
+    { media: '(prefers-color-scheme: light)', color: '#f7f8f5' },
+    { media: '(prefers-color-scheme: dark)', color: '#0b120e' },
   ],
 };
 

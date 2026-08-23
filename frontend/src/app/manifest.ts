@@ -13,8 +13,9 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'حلول برمجية متكاملة للويب والموبايل وسطح المكتب',
     start_url: '/ar',
     display: 'standalone',
-    background_color: '#f8fafc',
-    theme_color: '#2563eb',
+    // يطابقان --background و--primary في globals.css
+    background_color: '#f7f8f5',
+    theme_color: '#1e6a4f',
     dir: 'rtl',
     lang: 'ar',
     orientation: 'portrait',

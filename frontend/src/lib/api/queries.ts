@@ -301,3 +301,19 @@ export function getTags(locale: Locale) {
     [],
   );
 }
+
+// --------------------------------------------------------------- الزيارات
+
+/**
+ * أرقام الزيارة المعروضة في التذييل.
+ *
+ * مهلة قصيرة: الرقم يتحرّك باستمرار، والخادم نفسه يخزّنه خمس دقائق.
+ * الارتداد صفر — عدّاد معطّل أهون من صفحة ساقطة.
+ */
+export function getPublicStats(locale: Locale) {
+  return apiGetSafe<{ total_views: number; unique_visitors: number }>(
+    'analytics/public-stats/',
+    { locale, revalidate: 300 },
+    { total_views: 0, unique_visitors: 0 },
+  );
+}

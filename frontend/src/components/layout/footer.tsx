@@ -1,9 +1,12 @@
-import { getTranslations } from 'next-intl/server';
+import { Eye } from 'lucide-react';
+import { getLocale, getTranslations } from 'next-intl/server';
 
 import { Container } from '@/components/ui/container';
+import { getPublicStats } from '@/lib/api/queries';
 import type { SiteSettings } from '@/lib/api/types';
 import { Link } from '@/lib/i18n/navigation';
-import { whatsappLink } from '@/lib/utils/format';
+import type { Locale } from '@/lib/i18n/routing';
+import { formatNumber, whatsappLink } from '@/lib/utils/format';
 
 const PLATFORM_LINKS = [
   { href: '/services', key: 'services' },
@@ -19,11 +22,13 @@ const KNOWLEDGE_LINKS = [
 ] as const;
 
 export async function Footer({ settings }: { settings: SiteSettings | null }) {
-  const [t, tNav, tLegal, tCommon] = await Promise.all([
+  const locale = (await getLocale()) as Locale;
+  const [t, tNav, tLegal, tCommon, stats] = await Promise.all([
     getTranslations('footer'),
     getTranslations('nav'),
     getTranslations('legal'),
     getTranslations('common'),
+    getPublicStats(locale),
   ]);
 
   const year = new Date().getFullYear();
@@ -134,13 +139,36 @@ export async function Footer({ settings }: { settings: SiteSettings | null }) {
           </nav>
         </div>
 
-        <div className="mt-12 flex flex-col gap-2 border-t border-border pt-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-3 border-t border-border pt-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {year} {siteName}. {t('rights')}
           </p>
-          <Link href="/terms" className={linkClass}>
-            {tLegal('termsTitle')}
-          </Link>
+
+          <div className="flex items-center gap-4">
+            {/* عدّاد صامت: يظهر فقط بعد تسجيل زيارة حقيقية، فلا يعلن «0 زائر» */}
+            {stats.unique_visitors > 0 ? (
+              <p className="flex items-center gap-1.5">
+                <Eye className="size-4 shrink-0" aria-hidden="true" />
+                <span>
+                  <span className="font-medium text-foreground" dir="ltr">
+                    {formatNumber(stats.unique_visitors, locale)}
+                  </span>{' '}
+                  {t('visitors')}
+                </span>
+                <span aria-hidden="true" className="text-border">·</span>
+                <span>
+                  <span className="font-medium text-foreground" dir="ltr">
+                    {formatNumber(stats.total_views, locale)}
+                  </span>{' '}
+                  {t('pageViews')}
+                </span>
+              </p>
+            ) : null}
+
+            <Link href="/terms" className={linkClass}>
+              {tLegal('termsTitle')}
+            </Link>
+          </div>
         </div>
       </Container>
     </footer>

@@ -45,7 +45,8 @@
     "client": "Client",
     "completedAt": "Completed",
     "technologies": "Technologies",
-    "results": "{count, plural, =0 {No results} one {# result} other {# results}}"
+    "results": "{count, plural, =0 {No results} one {# result} other {# results}}",
+    "views": "Views"
   },
   "states": {
     "errorTitle": "This section could not be loaded",
@@ -424,7 +425,9 @@
     "platform": "Platform",
     "knowledge": "Knowledge",
     "connect": "Connect",
-    "messageMe": "Message us"
+    "messageMe": "Message us",
+    "visitors": "visitors",
+    "pageViews": "views"
   },
   "dashboard": {
     "yes": "Yes",

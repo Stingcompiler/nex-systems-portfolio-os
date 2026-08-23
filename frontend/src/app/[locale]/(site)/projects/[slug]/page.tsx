@@ -1,4 +1,4 @@
-import { Apple, ExternalLink, Github, Play } from 'lucide-react';
+import { Apple, ExternalLink, Eye, Github, Play } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
@@ -13,7 +13,7 @@ import { getProjects, getSeoSettings, getSiteSettings } from '@/lib/api/queries'
 import { locales, type Locale } from '@/lib/i18n/routing';
 import { breadcrumbJsonLd, creativeWorkJsonLd } from '@/lib/seo/json-ld';
 import { buildMetadata } from '@/lib/seo/metadata';
-import { formatDate } from '@/lib/utils/format';
+import { formatDate, formatNumber } from '@/lib/utils/format';
 
 export async function generateStaticParams() {
   const projects = await getProjects('ar', { page_size: 100 });
@@ -141,6 +141,15 @@ export default async function ProjectDetailPage({
                       <time dateTime={project.completed_at}>
                         {formatDate(project.completed_at, locale)}
                       </time>
+                    </dd>
+                  </div>
+                ) : null}
+                {project.view_count > 0 ? (
+                  <div>
+                    <dt className="text-muted">{tCommon('views')}</dt>
+                    <dd className="flex items-center gap-1.5 font-medium">
+                      <Eye className="size-4 shrink-0 text-muted" aria-hidden="true" />
+                      <span dir="ltr">{formatNumber(project.view_count, locale)}</span>
                     </dd>
                   </div>
                 ) : null}

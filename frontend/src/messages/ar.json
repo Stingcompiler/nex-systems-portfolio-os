@@ -45,7 +45,8 @@
     "client": "العميل",
     "completedAt": "تاريخ الإنجاز",
     "technologies": "التقنيات",
-    "results": "{count, plural, =0 {لا نتائج} one {نتيجة واحدة} two {نتيجتان} few {# نتائج} many {# نتيجة} other {# نتيجة}}"
+    "results": "{count, plural, =0 {لا نتائج} one {نتيجة واحدة} two {نتيجتان} few {# نتائج} many {# نتيجة} other {# نتيجة}}",
+    "views": "المشاهدات"
   },
   "states": {
     "errorTitle": "تعذّر تحميل هذا القسم",
@@ -424,7 +425,9 @@
     "platform": "المنصّة",
     "knowledge": "المعرفة",
     "connect": "التواصل",
-    "messageMe": "راسلنا"
+    "messageMe": "راسلنا",
+    "visitors": "زائر",
+    "pageViews": "زيارة"
   },
   "dashboard": {
     "yes": "نعم",

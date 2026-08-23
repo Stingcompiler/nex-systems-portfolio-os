@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.core.cache import cache
 from django.db.models import Count
 from django.utils import timezone
 from drf_spectacular.types import OpenApiTypes
@@ -68,6 +69,38 @@ class PageViewBeaconView(APIView):
             session_hash=anonymous_session_hash(ip, user_agent),
         )
         return Response(status=status.HTTP_202_ACCEPTED)
+
+
+class PublicStatsView(APIView):
+    """أرقام الزيارة المعروضة للزائر.
+
+    مجاميع فقط: لا مسارات ولا مصادر ولا دول — تلك بيانات تشغيلية تبقى
+    خلف صلاحية اللوحة. النتيجة مخزَّنة مؤقتًا لأن كل صفحة عامة تطلبها.
+    """
+
+    permission_classes = [AllowAny]
+    authentication_classes: list = []
+
+    CACHE_KEY = "analytics:public-stats"
+    CACHE_SECONDS = 300
+
+    @extend_schema(summary="أرقام الزيارة العامة", responses={200: OpenApiTypes.OBJECT})
+    def get(self, _request):
+        cached = cache.get(self.CACHE_KEY)
+        if cached is not None:
+            return Response(cached)
+
+        payload = {
+            "total_views": PageView.objects.count(),
+            "unique_visitors": (
+                PageView.objects.exclude(session_hash="")
+                .values("session_hash")
+                .distinct()
+                .count()
+            ),
+        }
+        cache.set(self.CACHE_KEY, payload, self.CACHE_SECONDS)
+        return Response(payload)
 
 
 class AnalyticsView(APIView):

@@ -6,6 +6,7 @@ app_name = "analytics"
 
 urlpatterns = [
     path("view/", views.PageViewBeaconView.as_view(), name="view-beacon"),
+    path("public-stats/", views.PublicStatsView.as_view(), name="public-stats"),
     path("overview/", views.OverviewView.as_view(), name="overview"),
     path("traffic/", views.TrafficView.as_view(), name="traffic"),
     path("top-content/", views.TopContentView.as_view(), name="top-content"),

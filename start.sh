@@ -62,4 +62,8 @@ cd /app/frontend
 # حتى يتجاوز الحدّ ويُقتل. السقف الصريح يجعله يكنس داخل ما هو متاح فعلًا،
 # والباقي من الـ512MB لـ Django.
 export NODE_OPTIONS="--max-old-space-size=224"
-exec npx next start -H 0.0.0.0 -p "$PORT"
+# يُنفَّذ الخادم مباشرة لا عبر npx: الغلاف كان يضيف عمليتَي npm وsh بين
+# النظام وNode، فلا تصل إشارة الإيقاف إلى Next نظيفة — تظهر في السجل
+# كخطأ SIGTERM من npm ويتأخّر الإغلاق. Node هنا هو العملية الأولى فيتلقّى
+# الإشارة بنفسه، مع توفير عمليتين من ذاكرة الحاوية.
+exec node ./node_modules/next/dist/bin/next start -H 0.0.0.0 -p "$PORT"

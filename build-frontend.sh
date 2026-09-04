@@ -13,7 +13,10 @@ export SECURE_SSL_REDIRECT=False
 # الطلب)، وزرع بيانات تجريبية هنا كان يجعلها تظهر للزوار بعد كل نشر.
 python manage.py migrate --noinput
 
-python manage.py runserver 127.0.0.1:8000 &
+# `runserver` هنا هو الأمر المخصّص في apps/cli، وهو يشغّل واجهة Next
+# إلى جانب Django ويعلّق البناء عند محاولة إيقافها. البناء لا يحتاج إلا
+# الـ API، و--noreload يمنع عملية المراقبة التي تنجو من الإيقاف.
+python manage.py runserver 127.0.0.1:8000 --no-frontend --no-browser --noreload &
 DJANGO_PID=$!
 
 for i in $(seq 1 30); do

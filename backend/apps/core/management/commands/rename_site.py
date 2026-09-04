@@ -26,9 +26,11 @@ class Command(BaseCommand):
     help = "يستبدل اسم الموقع في الإعدادات وإعدادات SEO"
 
     def add_arguments(self, parser):
-        parser.add_argument("--from", dest="old_en", required=True)
+        # يقبل التكرار: التحرير اليدوي يخلّف صيغًا متعددة للاسم القديم
+        # («StingSystems» و«STINSYSTEMS—»)، وتمريرها معًا يصلحها بمرة واحدة.
+        parser.add_argument("--from", dest="old_en", action="append", required=True)
         parser.add_argument("--to", dest="new_en", required=True)
-        parser.add_argument("--from-ar", dest="old_ar", default="")
+        parser.add_argument("--from-ar", dest="old_ar", action="append", default=[])
         parser.add_argument("--to-ar", dest="new_ar", default="")
         parser.add_argument(
             "--dry-run",
@@ -45,9 +47,12 @@ class Command(BaseCommand):
         def swap(value: str) -> str:
             if not value:
                 return value
-            value = value.replace(old_en, new_en)
-            if old_ar:
-                value = value.replace(old_ar, new_ar)
+            # الأطول أولًا: استبدال «StingSystem» قبل «StingSystems» يترك
+            # حرفًا يتيمًا، والترتيب بالطول يمنع ذلك
+            for old in sorted(old_en, key=len, reverse=True):
+                value = value.replace(old, new_en)
+            for old in sorted(old_ar, key=len, reverse=True):
+                value = value.replace(old, new_ar or new_en)
             return value
 
         changes: list[tuple[str, str, str]] = []

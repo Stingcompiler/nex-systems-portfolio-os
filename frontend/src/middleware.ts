@@ -16,8 +16,12 @@ export default function middleware(request: NextRequest) {
    * `/api` و`/media` و`/static` أصلًا، فالتوحيد يطبَّق على صفحات الموقع وحدها.
    */
   if (pathname.length > 1 && pathname.endsWith('/')) {
-    const url = request.nextUrl.clone();
-    url.pathname = pathname.replace(/\/+$/, '');
+    const stripped = pathname.replace(/\/+$/, '');
+    // عنوان عادي لا `nextUrl`: هذا الأخير يعرف بادئة اللغة، فإسناد «/ar»
+    // إليه يُقرأ «لغة ar بمسار جذر» ويُعاد تسلسله «/ar/» — فيصير التحويل
+    // إلى المسار نفسه وتدور حلقة لا تنتهي على كل رابط ينتهي بشرطة.
+    const url = new URL(request.url);
+    url.pathname = stripped || '/';
     return NextResponse.redirect(url, 308);
   }
 

@@ -65,6 +65,21 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
  * التخطيط عنصر خادم فلا يعرف السمة وقت التوليد، والتبديل بالصنف
  * يتجنّب وميض الشعار الخاطئ عند التحميل.
  */
+/** ارتفاع العلامة المعروض — يقابل `h-8` في الأصناف. */
+const MARK_HEIGHT = 32;
+
+/**
+ * أبعاد العرض لا أبعاد الملف.
+ *
+ * تمرير أبعاد الأصل يجعل Next يبني مجموعة مصادر بمقاسات الشاشات كاملة —
+ * حُمّل شعار بعرض 1920 بكسل ليُعرض بارتفاع 32. الاشتقاق من الارتفاع
+ * المعروض يبقي الصورة في حدود ما يظهر فعلًا.
+ */
+function markSize(media: { width: number | null; height: number | null }) {
+  const ratio = media.width && media.height ? media.width / media.height : 1;
+  return { width: Math.max(1, Math.round(MARK_HEIGHT * ratio)), height: MARK_HEIGHT };
+}
+
 function SiteMark({ settings }: { settings: SiteSettings | null }) {
   const name = settings?.site_name || 'StingSystem';
   // إحدى النسختين تكفي: تُستخدم في الوضعين عند غياب الأخرى
@@ -79,23 +94,31 @@ function SiteMark({ settings }: { settings: SiteSettings | null }) {
     );
   }
 
+  // شعار واحد مرفوع: رسم نسختين متطابقتين يضاعف التحميل بلا فائدة
+  if (light.url === dark.url) {
+    return (
+      <Image
+        src={light.url}
+        alt={light.alt || name}
+        {...markSize(light)}
+        className="h-8 w-auto object-contain"
+      />
+    );
+  }
+
   return (
     <>
       <Image
         src={light.url}
         alt={light.alt || name}
-        width={light.width ?? 32}
-        height={light.height ?? 32}
+        {...markSize(light)}
         className="h-8 w-auto object-contain dark:hidden"
-        priority
       />
       <Image
         src={dark.url}
         alt={dark.alt || name}
-        width={dark.width ?? 32}
-        height={dark.height ?? 32}
+        {...markSize(dark)}
         className="hidden h-8 w-auto object-contain dark:block"
-        priority
       />
     </>
   );

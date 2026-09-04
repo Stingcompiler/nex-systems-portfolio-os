@@ -31,10 +31,14 @@ const latin = Inter({
   display: 'swap',
 });
 
+// الخط البرمجي لا يظهر في أول رسم — يخدم مقاطع الشيفرة والمعرّفات
+// اللاتينية داخل النص. تحميله مسبقًا كان يزاحم خط المتن على عرض الشبكة
+// في الجوال بلا مقابل، فيُترك ليُحمَّل عند الحاجة مع ارتداد swap.
 const mono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
   display: 'swap',
+  preload: false,
 });
 
 export function generateStaticParams() {

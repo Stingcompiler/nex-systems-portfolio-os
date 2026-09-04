@@ -131,6 +131,18 @@ const ICONS: Record<string, LucideIcon> = {
   History,
 };
 
+/** ارتفاع العلامة المعروض — يقابل `h-8`. */
+const MARK_HEIGHT = 32;
+
+/**
+ * أبعاد العرض لا أبعاد الملف: تمرير أبعاد الأصل يجعل Next يبني مجموعة
+ * مصادر بمقاسات الشاشات كاملة لصورة تُعرض بارتفاع 32 بكسل.
+ */
+function markSize(media: { width: number | null; height: number | null }) {
+  const ratio = media.width && media.height ? media.width / media.height : 1;
+  return { width: Math.max(1, Math.round(MARK_HEIGHT * ratio)), height: MARK_HEIGHT };
+}
+
 /**
  * علامة الموقع في اللوحة — تتبع الإعدادات لا اسمًا مكتوبًا في الشيفرة.
  *
@@ -164,20 +176,33 @@ function SidebarBrand() {
     );
   }
 
+  // شعار واحد مرفوع: نسختان متطابقتان تعنيان تحميلًا مضاعفًا بلا فائدة
+  if (light.url === dark.url) {
+    return (
+      <>
+        <NextImage
+          src={light.url}
+          alt={light.alt || name}
+          {...markSize(light)}
+          className="h-8 w-auto object-contain"
+        />
+        <span className="sr-only">{name}</span>
+      </>
+    );
+  }
+
   return (
     <>
       <NextImage
         src={light.url}
         alt={light.alt || name}
-        width={light.width ?? 32}
-        height={light.height ?? 32}
+        {...markSize(light)}
         className="h-8 w-auto object-contain dark:hidden"
       />
       <NextImage
         src={dark.url}
         alt={dark.alt || name}
-        width={dark.width ?? 32}
-        height={dark.height ?? 32}
+        {...markSize(dark)}
         className="hidden h-8 w-auto object-contain dark:block"
       />
       <span className="sr-only">{name}</span>

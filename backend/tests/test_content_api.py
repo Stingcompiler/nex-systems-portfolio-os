@@ -232,7 +232,7 @@ def test_public_settings_never_leak_internal_fields(api_client, content):
     response = api_client.get(SETTINGS_URL, **AR)
 
     assert response.status_code == 200
-    assert response.data["site_name"] == "نيكسا سيستمز"
+    assert response.data["site_name"] == "ستينج سيستم"
     for hidden in ("email_from_address", "email_from_name", "id"):
         assert hidden not in response.data
 
@@ -241,7 +241,7 @@ def test_settings_are_not_editable_by_anonymous_visitors(api_client, content):
     response = api_client.patch(SETTINGS_URL, {"site_name_ar": "مخترق"}, format="json")
 
     assert response.status_code in (401, 403)
-    assert SiteSettings.load().site_name_ar == "نيكسا سيستمز"
+    assert SiteSettings.load().site_name_ar == "ستينج سيستم"
 
 
 def test_superuser_sees_the_full_settings_record(api_client, content, make_user):

@@ -40,12 +40,12 @@ _SUBJECTS = {
 def send_template_email(template: str, to_email: str, language: str, context: dict) -> bool:
     """يرسل رسالة HTML مع نسخة نصية بديلة. لا يرفع استثناء."""
     language = language if language in ("ar", "en") else "ar"
-    subject = _SUBJECTS.get(template, {}).get(language, "NEXA SYSTEMS")
+    subject = _SUBJECTS.get(template, {}).get(language, "StingSystem")
 
     payload = {
         "language": language,
         "direction": "rtl" if language == "ar" else "ltr",
-        "site_name": "NEXA SYSTEMS",
+        "site_name": "StingSystem",
         "frontend_url": settings.FRONTEND_URL,
         **context,
     }

@@ -57,7 +57,7 @@ export async function generateMetadata({
   const base = buildMetadata({
     locale,
     path: '/',
-    title: seoSettings?.default_seo_title || settings?.site_name || 'NEXA SYSTEMS',
+    title: seoSettings?.default_seo_title || settings?.site_name || 'StingSystem',
     description: seoSettings?.default_seo_description || settings?.tagline,
     settings,
     seoSettings,
@@ -65,8 +65,8 @@ export async function generateMetadata({
 
   return {
     ...base,
-    applicationName: 'NEXA SYSTEMS',
-    appleWebApp: { capable: true, statusBarStyle: 'default', title: 'NEXA SYSTEMS' },
+    applicationName: 'StingSystem',
+    appleWebApp: { capable: true, statusBarStyle: 'default', title: 'StingSystem' },
     icons: {
       icon: '/icons/icon-192.png',
       apple: '/icons/apple-icon-180.png',

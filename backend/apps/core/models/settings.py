@@ -25,8 +25,8 @@ class SiteSettings(TranslatableMixin, SingletonModel, TimeStampedModel):
     )
 
     # ---- الهوية
-    site_name_ar = models.CharField("اسم الموقع (عربي)", max_length=120, default="نيكسا سيستمز", blank=True)
-    site_name_en = models.CharField("اسم الموقع (إنجليزي)", max_length=120, default="NEXA SYSTEMS", blank=True)
+    site_name_ar = models.CharField("اسم الموقع (عربي)", max_length=120, default="ستينج سيستم", blank=True)
+    site_name_en = models.CharField("اسم الموقع (إنجليزي)", max_length=120, default="StingSystem", blank=True)
     tagline_ar = models.CharField("الشعار النصي (عربي)", max_length=200, blank=True)
     tagline_en = models.CharField("الشعار النصي (إنجليزي)", max_length=200, blank=True)
     logo_light = models.ForeignKey(

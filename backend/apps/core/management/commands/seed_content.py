@@ -755,9 +755,9 @@ class Command(BaseCommand):
 
     def _seed_settings(self) -> None:
         site = SiteSettings.load()
-        if not site.site_name_ar or site.site_name_ar in ("stingdev", "NEXA SYSTEMS"):
-            site.site_name_ar = "نيكسا سيستمز"
-            site.site_name_en = "NEXA SYSTEMS"
+        if not site.site_name_ar or site.site_name_ar in ("stingdev", "StingSystem"):
+            site.site_name_ar = "ستينج سيستم"
+            site.site_name_en = "StingSystem"
         if not site.tagline_ar:
             site.tagline_ar = "حلول برمجية متكاملة للويب والموبايل وسطح المكتب"
             site.tagline_en = "Complete software solutions for web, mobile, and desktop"
@@ -770,8 +770,8 @@ class Command(BaseCommand):
 
         seo = SEOSettings.load()
         if not seo.default_seo_title_ar or "stingdev" in seo.default_seo_title_ar.lower():
-            seo.default_seo_title_ar = "NEXA SYSTEMS — حلول برمجية للويب والموبايل وسطح المكتب"
-            seo.default_seo_title_en = "NEXA SYSTEMS — Software solutions for web, mobile, and desktop"
+            seo.default_seo_title_ar = "StingSystem — حلول برمجية للويب والموبايل وسطح المكتب"
+            seo.default_seo_title_en = "StingSystem — Software solutions for web, mobile, and desktop"
             seo.default_seo_description_ar = (
                 "نحلل ونصمم ونبني أنظمة وتطبيقات قابلة للتوسع: مواقع، تطبيقات موبايل، "
                 "أنظمة إدارية، وواجهات برمجية."

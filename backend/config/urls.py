@@ -8,8 +8,8 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from apps.core.views import HealthView
 
 # عنوان لوحة الإدارة العربي
-admin.site.site_header = "إدارة NEXA SYSTEMS"
-admin.site.site_title = "NEXA SYSTEMS"
+admin.site.site_header = "إدارة StingSystem"
+admin.site.site_title = "StingSystem"
 admin.site.index_title = "لوحة إدارة Django"
 
 api_v1 = [
@@ -38,7 +38,7 @@ def api_root(_request):
     html = f"""<!doctype html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NEXA SYSTEMS — خادم الـ API</title>
+<title>StingSystem — خادم الـ API</title>
 <style>
  body{{font-family:system-ui,'Segoe UI',Tahoma,sans-serif;background:#f8fafc;color:#0f172a;
  margin:0;min-height:100vh;display:grid;place-items:center;padding:24px}}
@@ -50,7 +50,7 @@ def api_root(_request):
  a:hover{{border-color:#2563eb;background:#f1f5f9}} .k{{color:#2563eb;font-weight:600}}
  code{{background:#f1f5f9;padding:2px 6px;border-radius:6px;font-size:13px}}
 </style></head><body><div class="card">
-<h1>خادم NEXA SYSTEMS API</h1>
+<h1>خادم StingSystem API</h1>
 <p>هذا منفذ الـ API (المنفذ <code>8000</code>). صفحات الموقع تُقدَّم من منفذ الواجهة.</p>
 <a href="/admin/"><span class="k">لوحة إدارة Django</span><span>/admin/</span></a>
 <a href="/api/schema/swagger-ui/"><span class="k">توثيق الـ API</span><span>/api/schema/swagger-ui/</span></a>

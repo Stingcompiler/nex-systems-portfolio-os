@@ -15,7 +15,7 @@ export function websiteJsonLd(settings: SiteSettings | null, locale: Locale): Js
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: settings?.site_name || 'NEXA SYSTEMS',
+    name: settings?.site_name || 'StingSystem',
     url: absoluteUrl(`/${locale}`),
     inLanguage: locale,
     description: settings?.tagline || undefined,
@@ -26,7 +26,7 @@ export function organizationJsonLd(settings: SiteSettings | null, locale: Locale
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: settings?.site_name || 'NEXA SYSTEMS',
+    name: settings?.site_name || 'StingSystem',
     url: absoluteUrl(`/${locale}`),
     logo: settings?.logo_light?.url ? absoluteUrl(settings.logo_light.url) : undefined,
     email: settings?.email || undefined,
@@ -50,7 +50,7 @@ export function personJsonLd(
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    name: settings?.owner_name || settings?.site_name || 'NEXA SYSTEMS',
+    name: settings?.owner_name || settings?.site_name || 'StingSystem',
     jobTitle: settings?.owner_title || undefined,
     description: settings?.owner_bio || undefined,
     url: absoluteUrl(`/${locale}/about`),
@@ -68,7 +68,7 @@ export function professionalServiceJsonLd(
   return {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
-    name: settings?.site_name || 'NEXA SYSTEMS',
+    name: settings?.site_name || 'StingSystem',
     description: settings?.tagline || undefined,
     url: absoluteUrl(`/${locale}`),
     email: settings?.email || undefined,
@@ -93,7 +93,7 @@ export function serviceJsonLd(
     serviceType: service.sector_display,
     provider: {
       '@type': 'Organization',
-      name: settings?.site_name || 'NEXA SYSTEMS',
+      name: settings?.site_name || 'StingSystem',
       url: absoluteUrl(`/${locale}`),
     },
     areaServed: 'Worldwide',
@@ -137,7 +137,7 @@ export function articleJsonLd(
     inLanguage: locale,
     author: {
       '@type': 'Person',
-      name: settings?.owner_name || settings?.site_name || 'NEXA SYSTEMS',
+      name: settings?.owner_name || settings?.site_name || 'StingSystem',
     },
     image: caseStudy.project?.cover_image?.url
       ? absoluteUrl(caseStudy.project.cover_image.url)
@@ -161,11 +161,11 @@ export function articleFromPostJsonLd(
     wordCount: undefined,
     author: {
       '@type': 'Person',
-      name: post.author_name || settings?.owner_name || settings?.site_name || 'NEXA SYSTEMS',
+      name: post.author_name || settings?.owner_name || settings?.site_name || 'StingSystem',
     },
     publisher: {
       '@type': 'Organization',
-      name: settings?.site_name || 'NEXA SYSTEMS',
+      name: settings?.site_name || 'StingSystem',
     },
     image: post.cover_image?.url ? absoluteUrl(post.cover_image.url) : undefined,
     articleSection: post.category?.name || undefined,

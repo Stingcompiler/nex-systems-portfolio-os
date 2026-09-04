@@ -41,7 +41,7 @@ export function buildMetadata({
   seoSettings,
   noIndex = false,
 }: BuildMetadataInput): Metadata {
-  const siteName = settings?.site_name || 'NEXA SYSTEMS';
+  const siteName = settings?.site_name || 'StingSystem';
   const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
   const resolvedDescription =
     description?.trim() || seoSettings?.default_seo_description || settings?.tagline || '';

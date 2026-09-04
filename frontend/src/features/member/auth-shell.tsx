@@ -18,7 +18,7 @@ export async function AuthShell({
   footer?: ReactNode;
 }) {
   const settings = await getSiteSettings((await getLocale()) as Locale);
-  const siteName = settings?.site_name || 'NEXA SYSTEMS';
+  const siteName = settings?.site_name || 'StingSystem';
 
   return (
     <div className="hero-surface">

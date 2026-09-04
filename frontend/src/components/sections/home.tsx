@@ -137,7 +137,7 @@ export async function HeroSection({
               <span className="size-2 rounded-full bg-warning/50 sm:size-2.5" />
               <span className="size-2 rounded-full bg-success/50 sm:size-2.5" />
               <span className="ms-2 flex-1 rounded-md bg-surface-hover px-2 py-0.5 text-[9px] text-muted sm:ms-3 sm:text-[10px]">
-                app.nexasystems.com
+                app.stingsystem.com
               </span>
             </div>
 

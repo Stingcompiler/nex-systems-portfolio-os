@@ -32,7 +32,7 @@ export async function Footer({ settings }: { settings: SiteSettings | null }) {
   ]);
 
   const year = new Date().getFullYear();
-  const siteName = settings?.site_name || 'NEXA SYSTEMS';
+  const siteName = settings?.site_name || 'StingSystem';
   const socialLinks = settings?.social_links ?? [];
   const waLink = settings?.whatsapp
     ? whatsappLink(settings.whatsapp, settings.whatsapp_default_message)

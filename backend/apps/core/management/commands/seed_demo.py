@@ -337,9 +337,9 @@ STATS = [
 # ---------------------------------------------------------------  روابط التواصل
 
 SOCIAL_LINKS = [
-    (SocialLink.Platform.GITHUB, "GitHub", "https://github.com/nexasystems"),
-    (SocialLink.Platform.LINKEDIN, "LinkedIn", "https://linkedin.com/company/nexasystems"),
-    (SocialLink.Platform.X, "X", "https://x.com/nexasystems"),
+    (SocialLink.Platform.GITHUB, "GitHub", "https://github.com/stingsystem"),
+    (SocialLink.Platform.LINKEDIN, "LinkedIn", "https://linkedin.com/company/stingsystem"),
+    (SocialLink.Platform.X, "X", "https://x.com/stingsystem"),
     (SocialLink.Platform.WHATSAPP, "WhatsApp", "https://wa.me/249900000000"),
     (SocialLink.Platform.EMAIL, "البريد", "mailto:musabsting277@gmail.com"),
 ]

@@ -22,10 +22,10 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
         <Link
           href="/"
           className="flex shrink-0 items-center gap-2.5 text-lg font-bold"
-          aria-label={settings?.site_name || 'NEXA SYSTEMS'}
+          aria-label={settings?.site_name || 'StingSystem'}
         >
           <SiteMark settings={settings} />
-          <span>{settings?.site_name || 'NEXA SYSTEMS'}</span>
+          <span>{settings?.site_name || 'StingSystem'}</span>
         </Link>
 
         {/* ثمانية روابط لا تتسع مع الشعار وزر الطلب قبل 1280px،
@@ -66,7 +66,7 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
  * يتجنّب وميض الشعار الخاطئ عند التحميل.
  */
 function SiteMark({ settings }: { settings: SiteSettings | null }) {
-  const name = settings?.site_name || 'NEXA SYSTEMS';
+  const name = settings?.site_name || 'StingSystem';
   // إحدى النسختين تكفي: تُستخدم في الوضعين عند غياب الأخرى
   const light = settings?.logo_light ?? settings?.logo_dark;
   const dark = settings?.logo_dark ?? settings?.logo_light;

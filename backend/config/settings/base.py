@@ -176,7 +176,7 @@ EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="NEXA SYSTEMS <no-reply@stingdev.pro>")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="StingSystem <no-reply@stingdev.pro>")
 
 EMAIL_VERIFICATION_HOURS = env.int("EMAIL_VERIFICATION_HOURS", default=24)
 PASSWORD_RESET_HOURS = env.int("PASSWORD_RESET_HOURS", default=2)
@@ -248,8 +248,8 @@ CSRF_TRUSTED_ORIGINS = env.list(
 # ---------------------------------------------------------------- التوثيق
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "NEXA SYSTEMS API",
-    "DESCRIPTION": "واجهة برمجية لمنصة NEXA SYSTEMS — الخدمات والمشاريع والمدونة وإدارة العملاء.",
+    "TITLE": "StingSystem API",
+    "DESCRIPTION": "واجهة برمجية لمنصة StingSystem — الخدمات والمشاريع والمدونة وإدارة العملاء.",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "COMPONENT_SPLIT_REQUEST": True,
@@ -279,7 +279,7 @@ SPECTACULAR_SETTINGS = {
 # ---------------------------------------------------------------- المهام الخلفية
 
 Q_CLUSTER = {
-    "name": "nexa",
+    "name": "stingsystem",
     "workers": 2,
     "recycle": 500,
     "timeout": 300,

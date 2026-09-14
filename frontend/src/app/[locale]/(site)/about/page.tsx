@@ -41,7 +41,8 @@ export async function generateMetadata({
     path: '/about',
     title: settings?.site_name ? `${t('title')} — ${settings.site_name}` : t('title'),
     description: settings?.tagline || t('description'),
-    image: settings?.logo_light?.url ?? settings?.owner_photo?.url ?? null,
+    // لا الشعار: بطاقة اللغة الافتراضية أنسب كمعاينة من شعار خام
+    image: settings?.owner_photo?.url ?? null,
     settings,
     seoSettings,
   });

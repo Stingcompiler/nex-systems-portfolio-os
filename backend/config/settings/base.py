@@ -161,6 +161,11 @@ STATICFILES_DIRS = [d for d in [BASE_DIR / "static"] if d.exists()]
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+# معالجة الصور (الأبعاد والمصغّرة وWebP) داخل طلب الرفع نفسه. الإنتاج
+# يعمل بحاوية واحدة بلا عامل qcluster، فالمعالجة الخلفية كانت لا تجري
+# أبدًا وتبقى كل صورة خامًا (شعار بحجم 1MB مثلًا). اضبطه False فقط حين
+# يوجد عامل فعلي.
+MEDIA_PROCESS_INLINE = env.bool("MEDIA_PROCESS_INLINE", default=True)
 
 MAX_UPLOAD_SIZE_MB = env.int("MAX_UPLOAD_SIZE_MB", default=10)
 DATA_UPLOAD_MAX_MEMORY_SIZE = MAX_UPLOAD_SIZE_MB * 1024 * 1024

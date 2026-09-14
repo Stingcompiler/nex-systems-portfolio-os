@@ -10,7 +10,7 @@ import { getSeoSettings, getSiteSettings } from '@/lib/api/queries';
 import type { Locale } from '@/lib/i18n/routing';
 import { breadcrumbJsonLd, professionalServiceJsonLd } from '@/lib/seo/json-ld';
 import { buildMetadata } from '@/lib/seo/metadata';
-import { whatsappLink } from '@/lib/utils/format';
+import { formatPhone, toE164, whatsappLink } from '@/lib/utils/format';
 
 export async function generateMetadata({
   params,
@@ -59,7 +59,12 @@ export default async function ContactPage({
       ? { icon: Mail, label: tCommon('email'), value: settings.email, href: `mailto:${settings.email}` }
       : null,
     settings?.phone
-      ? { icon: Phone, label: tCommon('phone'), value: settings.phone, href: `tel:${settings.phone}` }
+      ? {
+          icon: Phone,
+          label: tCommon('phone'),
+          value: formatPhone(settings.phone),
+          href: `tel:${toE164(settings.phone)}`,
+        }
       : null,
     settings?.city || settings?.address
       ? {

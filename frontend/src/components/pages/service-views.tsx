@@ -93,10 +93,12 @@ export async function ServiceDetailView({
 
         <div className="grid gap-10 lg:grid-cols-[1.6fr_1fr]">
           <div>
-            <div className="mb-4 flex flex-wrap items-center gap-2">
-              {service.is_featured ? <Badge tone="primary">{t('featured')}</Badge> : null}
-              <Badge>{service.sector_display}</Badge>
-            </div>
+            {/* شارة «مميّزة» تحكم الترتيب فقط، و«عام» هو القطاع الافتراضي */}
+            {service.sector !== 'general' ? (
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                <Badge>{service.sector_display}</Badge>
+              </div>
+            ) : null}
 
             <h1 className="text-h1 font-semibold">{service.title}</h1>
             <p className="mt-4 max-w-prose text-body-lg text-muted">
@@ -136,10 +138,12 @@ export async function ServiceDetailView({
                   <dt className="text-muted">{t('languages')}</dt>
                   <dd className="font-medium">{t('languagesValue')}</dd>
                 </div>
-                <div className="flex items-center justify-between gap-3">
-                  <dt className="text-muted">{tCommon('sector')}</dt>
-                  <dd className="font-medium">{service.sector_display}</dd>
-                </div>
+                {service.sector !== 'general' ? (
+                  <div className="flex items-center justify-between gap-3">
+                    <dt className="text-muted">{tCommon('sector')}</dt>
+                    <dd className="font-medium">{service.sector_display}</dd>
+                  </div>
+                ) : null}
               </dl>
 
               <div className="mt-6 flex flex-col gap-2">

@@ -2,19 +2,23 @@ import { Download, ExternalLink } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
+import { TechBadge } from '@/components/content/cards';
 import { CoverImage } from '@/components/content/media';
-import { ExternalButtonLink } from '@/components/ui/button';
+import { PageCta } from '@/components/content/page-cta';
+import { ButtonLink, ExternalButtonLink } from '@/components/ui/button';
 import { Container } from '@/components/ui/container';
 import { Breadcrumbs, Card, JsonLd, Prose } from '@/components/ui/misc';
-import { EmptyState } from '@/components/ui/states';
 import {
   getCertifications,
   getEducation,
   getExperiences,
+  getProcessSteps,
   getSeoSettings,
+  getServices,
   getSiteSettings,
   getTechnologies,
 } from '@/lib/api/queries';
+import { Link } from '@/lib/i18n/navigation';
 import type { Locale } from '@/lib/i18n/routing';
 import { breadcrumbJsonLd, organizationJsonLd, personJsonLd } from '@/lib/seo/json-ld';
 import { buildMetadata } from '@/lib/seo/metadata';
@@ -52,25 +56,32 @@ export default async function AboutPage({
   setRequestLocale(rawLocale);
   const locale = rawLocale as Locale;
 
-  const [t, tNav, tCommon, tStates, settings, experiences, education, certifications, technologies] =
-    await Promise.all([
-      getTranslations('about'),
-      getTranslations('nav'),
-      getTranslations('common'),
-      getTranslations('states'),
-      getSiteSettings(locale),
-      getExperiences(locale),
-      getEducation(locale),
-      getCertifications(locale),
-      getTechnologies(locale),
-    ]);
+  const [
+    t,
+    tNav,
+    tCommon,
+    settings,
+    services,
+    steps,
+    experiences,
+    education,
+    certifications,
+    technologies,
+  ] = await Promise.all([
+    getTranslations('about'),
+    getTranslations('nav'),
+    getTranslations('common'),
+    getSiteSettings(locale),
+    getServices(locale, { page_size: 6 }),
+    getProcessSteps(locale),
+    getExperiences(locale),
+    getEducation(locale),
+    getCertifications(locale),
+    getTechnologies(locale),
+  ]);
 
   const cv = locale === 'ar' ? settings?.cv_ar : settings?.cv_en;
-  const isEmpty =
-    !settings?.owner_bio &&
-    !experiences.results.length &&
-    !education.results.length &&
-    !certifications.results.length;
+  const featuredTechnologies = technologies.results.filter((item) => item.is_featured);
 
   return (
     <>
@@ -95,61 +106,130 @@ export default async function AboutPage({
       <Container className="py-12 sm:py-16">
         <Breadcrumbs items={[{ name: tNav('home'), href: '/' }, { name: t('title') }]} label={tNav('breadcrumbs')} />
 
-        {/* Company intro */}
-        <div className="mb-16">
-          <h1 className="text-h1 font-semibold">
-            {settings?.site_name || t('title')}
-          </h1>
+        {/* من نحن: سطر واحد ثابت عن طبيعة الاستوديو — الـtagline من اللوحة تحته */}
+        <header className="mb-16 max-w-prose">
+          <h1 className="text-h1 font-semibold">{settings?.site_name || t('title')}</h1>
           {settings?.tagline ? (
             <p className="mt-2 text-lg text-primary">{settings.tagline}</p>
           ) : null}
-          {settings?.owner_bio ? (
-            <div className="mt-6">
-              <Prose text={settings.owner_bio} />
-            </div>
-          ) : null}
-        </div>
+          <p className="mt-6 text-body-lg text-muted">{t('intro')}</p>
+        </header>
 
-        {/* Founder / Developer card */}
-        {settings?.owner_name ? (
+        {/* ماذا نبني: الخدمات الفعلية لا وصف عام */}
+        {services.results.length ? (
           <section className="mb-16">
-            <h2 className="mb-6 text-h2 font-semibold">{t('founder')}</h2>
-            <div className="grid gap-10 lg:grid-cols-[2fr_1fr]">
-              <div>
-                <h3 className="text-h3 font-semibold">{settings.owner_name}</h3>
-                {settings.owner_title ? (
-                  <p className="mt-2 text-lg text-primary">{settings.owner_title}</p>
-                ) : null}
-
-                {cv?.url ? (
-                  <ExternalButtonLink href={cv.url} className="mt-6" variant="secondary">
-                    <Download className="size-4" aria-hidden="true" />
-                    {tCommon('downloadCv')}
-                  </ExternalButtonLink>
-                ) : null}
+            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div className="max-w-prose">
+                <h2 className="text-h2 font-semibold">{t('whatWeBuild')}</h2>
+                <p className="mt-2 text-muted">{t('whatWeBuildBody')}</p>
               </div>
-
-              <div className="lg:order-first lg:col-start-2 lg:row-start-1">
-                <CoverImage
-                  media={settings.owner_photo}
-                  alt={settings.owner_name}
-                  ratio="aspect-square"
-                  sizes="(max-width: 1024px) 100vw, 33vw"
-                  className="rounded-xl"
-                />
-              </div>
+              <ButtonLink href="/services" variant="secondary" size="sm">
+                {t('allServices')}
+              </ButtonLink>
             </div>
+            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {services.results.map((service) => (
+                <li key={service.id}>
+                  <Link
+                    href={`/services/${service.slug}`}
+                    className="block h-full rounded-lg border border-border bg-surface p-5 transition-colors hover:border-primary/40"
+                  >
+                    <h3 className="font-semibold">{service.title}</h3>
+                    <p className="mt-1.5 text-sm text-muted">{service.short_description}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </section>
         ) : null}
 
-        {isEmpty ? (
-          <div className="mt-12">
-            <EmptyState title={tStates('emptyTitle')} body={tStates('emptyBody')} />
-          </div>
+        {/* كيف نعمل: المراحل الست مختصرة — الترتيب هنا معلومة حقيقية */}
+        {steps.length ? (
+          <section className="mb-16">
+            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div className="max-w-prose">
+                <h2 className="text-h2 font-semibold">{t('howWeWork')}</h2>
+                <p className="mt-2 text-muted">{t('howWeWorkBody')}</p>
+              </div>
+              <ButtonLink href="/process" variant="secondary" size="sm">
+                {t('fullProcess')}
+              </ButtonLink>
+            </div>
+            <ol className="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+              {steps.map((step, index) => (
+                <li key={step.id} className="flex gap-4">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary-soft text-sm font-bold text-primary">
+                    <span className="code-inline inline">{index + 1}</span>
+                  </span>
+                  <div>
+                    <h3 className="font-semibold">{step.title}</h3>
+                    {step.description ? (
+                      <p className="mt-1 text-sm text-muted">{step.description}</p>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ) : null}
+
+        {/* المؤسس: الاسم والوجه والنبذة الشخصية في مكان واحد */}
+        {settings?.owner_name ? (
+          <section className="mb-16">
+            <h2 className="mb-6 text-h2 font-semibold">{t('founder')}</h2>
+            <Card>
+              <div className="grid gap-8 lg:grid-cols-[1fr_2.4fr]">
+                {settings.owner_photo ? (
+                  <CoverImage
+                    media={settings.owner_photo}
+                    alt={settings.owner_name}
+                    ratio="aspect-square"
+                    sizes="(max-width: 1024px) 100vw, 25vw"
+                    className="rounded-xl"
+                  />
+                ) : null}
+                <div>
+                  <h3 className="text-h3 font-semibold">{settings.owner_name}</h3>
+                  {settings.owner_title ? (
+                    <p className="mt-1 text-primary">{settings.owner_title}</p>
+                  ) : null}
+                  {settings.owner_bio ? (
+                    <div className="mt-4">
+                      <Prose text={settings.owner_bio} />
+                    </div>
+                  ) : null}
+                  {cv?.url ? (
+                    <ExternalButtonLink href={cv.url} className="mt-6" variant="secondary" size="sm">
+                      <Download className="size-4" aria-hidden="true" />
+                      {tCommon('downloadCv')}
+                    </ExternalButtonLink>
+                  ) : null}
+                </div>
+              </div>
+            </Card>
+          </section>
+        ) : null}
+
+        {featuredTechnologies.length ? (
+          <section className="mb-16">
+            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <h2 className="text-h2 font-semibold">{t('stack')}</h2>
+              <ButtonLink href="/technologies" variant="secondary" size="sm">
+                {t('allTechnologies')}
+              </ButtonLink>
+            </div>
+            <ul className="flex flex-wrap gap-2">
+              {featuredTechnologies.map((technology) => (
+                <li key={technology.id}>
+                  <TechBadge technology={technology} />
+                </li>
+              ))}
+            </ul>
+          </section>
         ) : null}
 
         {experiences.results.length ? (
-          <section className="mt-16">
+          <section className="mb-16">
             <h2 className="mb-6 text-h2 font-semibold">{t('experience')}</h2>
             <ol className="space-y-4">
               {experiences.results.map((experience) => (
@@ -177,7 +257,7 @@ export default async function AboutPage({
         ) : null}
 
         {education.results.length ? (
-          <section className="mt-12">
+          <section className="mb-16">
             <h2 className="mb-6 text-h2 font-semibold">{t('education')}</h2>
             <ol className="space-y-4">
               {education.results.map((item) => (
@@ -196,7 +276,7 @@ export default async function AboutPage({
         ) : null}
 
         {certifications.results.length ? (
-          <section className="mt-12">
+          <section className="mb-16">
             <h2 className="mb-6 text-h2 font-semibold">{t('certifications')}</h2>
             <ul className="grid gap-4 sm:grid-cols-2">
               {certifications.results.map((certification) => (
@@ -221,6 +301,8 @@ export default async function AboutPage({
             </ul>
           </section>
         ) : null}
+
+        <PageCta />
       </Container>
     </>
   );

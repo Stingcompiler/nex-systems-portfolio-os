@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { IBM_Plex_Sans_Arabic, Inter, JetBrains_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono, Readex_Pro } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
@@ -24,11 +24,10 @@ import { buildMetadata } from '@/lib/seo/metadata';
 // في الصفحة (inlineCss)، فالمتصفح يكتشف @font-face فورًا ويجلب الأوجه
 // المستخدمة فقط؛ وارتداد next/font المضبوط المقاسات يمنع قفز التخطيط.
 //
-// العربية: IBM Plex Sans Arabic — هندسي محايد يوازي Inter في ارتفاع الحروف،
-// فتتجاور الجُزُر اللاتينية داخل النص العربي بلا قفزة في الوزن البصري.
-const arabic = IBM_Plex_Sans_Arabic({
+// العربية: Readex Pro — كوفي حديث هندسي (Modern Kufic / Geometric Sans)،
+// متغيّر الوزن فيأتي بملف واحد لكل مجموعة حروف بدل ملف لكل وزن.
+const arabic = Readex_Pro({
   subsets: ['arabic'],
-  weight: ['400', '500', '600', '700'],
   variable: '--font-arabic',
   display: 'swap',
   preload: false,

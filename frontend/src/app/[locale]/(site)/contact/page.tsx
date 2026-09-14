@@ -64,8 +64,10 @@ export default async function ContactPage({
     settings?.city || settings?.address
       ? {
           icon: MapPin,
-          label: tCommon('sector'),
-          value: [settings?.address, settings?.city].filter(Boolean).join(' — '),
+          label: tCommon('location'),
+          value: [settings?.address, settings?.city]
+            .filter(Boolean)
+            .join(locale === 'ar' ? '، ' : ', '),
           href: null,
         }
       : null,

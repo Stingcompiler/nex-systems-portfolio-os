@@ -22,10 +22,10 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
         <Link
           href="/"
           className="flex shrink-0 items-center gap-2.5 text-lg font-bold"
-          aria-label={settings?.site_name || 'StingSystem'}
+          aria-label={settings?.site_name || 'StingSystems'}
         >
           <SiteMark settings={settings} />
-          <span>{settings?.site_name || 'StingSystem'}</span>
+          <span>{settings?.site_name || 'StingSystems'}</span>
         </Link>
 
         {/* ثمانية روابط لا تتسع مع الشعار وزر الطلب قبل 1280px،
@@ -81,7 +81,7 @@ function markSize(media: { width: number | null; height: number | null }) {
 }
 
 function SiteMark({ settings }: { settings: SiteSettings | null }) {
-  const name = settings?.site_name || 'StingSystem';
+  const name = settings?.site_name || 'StingSystems';
   // إحدى النسختين تكفي: تُستخدم في الوضعين عند غياب الأخرى
   const light = settings?.logo_light ?? settings?.logo_dark;
   const dark = settings?.logo_dark ?? settings?.logo_light;

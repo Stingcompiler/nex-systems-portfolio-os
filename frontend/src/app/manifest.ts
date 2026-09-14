@@ -8,8 +8,8 @@ import type { MetadataRoute } from 'next';
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'StingSystem',
-    short_name: 'StingSystem',
+    name: 'StingSystems',
+    short_name: 'StingSystems',
     description: 'حلول برمجية متكاملة للويب والموبايل وسطح المكتب',
     start_url: '/ar',
     display: 'standalone',

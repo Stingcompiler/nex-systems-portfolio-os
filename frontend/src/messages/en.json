@@ -40,6 +40,7 @@
     "googlePlay": "Google Play",
     "appStore": "App Store",
     "sector": "Sector",
+    "location": "Location",
     "projectType": "Project type",
     "status": "Status",
     "client": "Client",
@@ -182,7 +183,7 @@
   },
   "requestForm": {
     "pageTitle": "Start a project",
-    "pageDescription": "Tell us about your project in three short steps, and we will come back with an initial outline.",
+    "pageDescription": "Tell us about your project in four short steps, and we will come back with an initial outline.",
     "steps": "Request steps",
     "step1Title": "Project type",
     "step2Title": "Scope & features",

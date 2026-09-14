@@ -40,6 +40,7 @@
     "googlePlay": "Google Play",
     "appStore": "App Store",
     "sector": "القطاع",
+    "location": "الموقع",
     "projectType": "نوع المشروع",
     "status": "الحالة",
     "client": "العميل",
@@ -182,7 +183,7 @@
   },
   "requestForm": {
     "pageTitle": "اطلب مشروعك",
-    "pageDescription": "أخبرنا عن مشروعك في ثلاث خطوات قصيرة، وسنعود إليك بتصوّر مبدئي.",
+    "pageDescription": "أخبرنا عن مشروعك في أربع خطوات قصيرة، وسنعود إليك بتصوّر مبدئي.",
     "steps": "خطوات الطلب",
     "step1Title": "نوع المشروع",
     "step2Title": "النطاق والمزايا",

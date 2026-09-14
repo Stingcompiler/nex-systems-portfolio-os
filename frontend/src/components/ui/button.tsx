@@ -10,8 +10,8 @@ type Size = 'sm' | 'md' | 'lg' | 'icon';
 
 const VARIANTS: Record<Variant, string> = {
   primary:
-    'bg-primary text-primary-foreground shadow-[0_4px_16px_-6px_rgb(var(--primary)/0.6)] ' +
-    'hover:bg-primary/90 hover:shadow-[0_8px_24px_-8px_rgb(var(--primary)/0.7)] hover:-translate-y-0.5',
+    'bg-primary text-primary-foreground shadow-brand ' +
+    'hover:bg-primary/90 hover:shadow-brand-lg hover:-translate-y-0.5',
   secondary:
     'bg-surface text-foreground border border-border shadow-subtle ' +
     'hover:bg-surface-hover hover:border-primary/30',

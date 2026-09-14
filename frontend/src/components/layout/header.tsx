@@ -47,7 +47,7 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
           <ButtonLink
             href="/request-quote"
             size="sm"
-            className="hidden shadow-[0_2px_12px_-3px_rgb(var(--primary)/0.4)] sm:inline-flex"
+            className="hidden shadow-brand sm:inline-flex"
           >
             {t('requestQuote')}
           </ButtonLink>
@@ -88,7 +88,7 @@ function SiteMark({ settings }: { settings: SiteSettings | null }) {
 
   if (!light || !dark) {
     return (
-      <span className="grid size-8 place-items-center rounded-lg bg-brand text-sm text-white shadow-[0_2px_10px_-2px_rgb(var(--primary)/0.5)]">
+      <span className="grid size-8 place-items-center rounded-lg bg-brand text-sm text-white shadow-brand">
         {name.charAt(0).toUpperCase()}
       </span>
     );

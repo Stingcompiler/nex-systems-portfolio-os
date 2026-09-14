@@ -29,7 +29,7 @@ export async function AuthShell({
               href="/"
               className="mx-auto mb-4 inline-flex items-center gap-2 text-lg font-bold"
             >
-              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand text-white shadow-[0_2px_12px_-2px_rgb(var(--primary)/0.6)]">
+              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand text-white shadow-brand">
                 {siteName.charAt(0).toUpperCase()}
               </span>
               {siteName}

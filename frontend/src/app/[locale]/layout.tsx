@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Cairo, Inter, JetBrains_Mono } from 'next/font/google';
+import { IBM_Plex_Sans_Arabic, Inter, JetBrains_Mono } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
@@ -17,8 +17,9 @@ import { buildMetadata } from '@/lib/seo/metadata';
 
 // الخطوط تُستضاف ذاتيًا: Next.js ينزّلها وقت البناء ويقدّمها من نطاقنا،
 // فلا يوجد أي طلب خارجي وقت التشغيل.
-// العربية: Cairo — خط عصري واضح مصمم للعربية.
-const arabic = Cairo({
+// العربية: IBM Plex Sans Arabic — هندسي محايد يوازي Inter في ارتفاع الحروف،
+// فتتجاور الجُزُر اللاتينية داخل النص العربي بلا قفزة في الوزن البصري.
+const arabic = IBM_Plex_Sans_Arabic({
   subsets: ['arabic'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-arabic',

@@ -61,7 +61,7 @@ export async function generateMetadata({
   const base = buildMetadata({
     locale,
     path: '/',
-    title: seoSettings?.default_seo_title || settings?.site_name || 'StingSystem',
+    title: seoSettings?.default_seo_title || settings?.site_name || 'StingSystems',
     description: seoSettings?.default_seo_description || settings?.tagline,
     settings,
     seoSettings,
@@ -69,8 +69,8 @@ export async function generateMetadata({
 
   return {
     ...base,
-    applicationName: 'StingSystem',
-    appleWebApp: { capable: true, statusBarStyle: 'default', title: 'StingSystem' },
+    applicationName: 'StingSystems',
+    appleWebApp: { capable: true, statusBarStyle: 'default', title: 'StingSystems' },
     icons: {
       icon: '/icons/icon-192.png',
       apple: '/icons/apple-icon-180.png',

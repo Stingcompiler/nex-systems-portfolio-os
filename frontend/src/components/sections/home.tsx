@@ -116,7 +116,7 @@ export async function HeroSection({
                 <div key={stat.id}>
                   <dt className="text-h3 font-bold text-gradient">
                     <span className="code-inline inline">{stat.value}</span>
-                    {stat.suffix || ''}
+                    {stat.suffix ? ` ${stat.suffix}` : ''}
                   </dt>
                   <dd className="mt-0.5 text-xs text-muted">{stat.label}</dd>
                 </div>

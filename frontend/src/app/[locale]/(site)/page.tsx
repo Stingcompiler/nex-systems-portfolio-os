@@ -1,21 +1,17 @@
 import { setRequestLocale } from 'next-intl/server';
 
 import {
-  CaseStudiesSection,
   CtaSection,
   HeroSection,
-  IntroSection,
   PostsSection,
   ProcessSection,
   ProjectsSection,
   ServicesSection,
-  StatsSection,
   TechnologiesSection,
   TestimonialsSection,
 } from '@/components/sections/home';
 import { JsonLd } from '@/components/ui/misc';
 import {
-  getCaseStudies,
   getFeaturedProjects,
   getLatestPosts,
   getProcessSteps,
@@ -30,6 +26,8 @@ import {
 import type { PageSection } from '@/lib/api/types';
 import type { Locale } from '@/lib/i18n/routing';
 import { organizationJsonLd, professionalServiceJsonLd, websiteJsonLd } from '@/lib/seo/json-ld';
+
+const MIN_POSTS_ON_HOME = 3;
 
 export default async function HomePage({
   params,
@@ -47,7 +45,6 @@ export default async function HomePage({
     services,
     solutions,
     projects,
-    caseStudies,
     processSteps,
     technologies,
     testimonials,
@@ -59,7 +56,6 @@ export default async function HomePage({
     getServices(locale, { page_size: 6 }),
     getSolutions(locale, { page_size: 6 }),
     getFeaturedProjects(locale),
-    getCaseStudies(locale, { page_size: 3 }),
     getProcessSteps(locale),
     getTechnologies(locale),
     getTestimonials(locale),
@@ -71,6 +67,12 @@ export default async function HomePage({
   /**
    * كل قسم يقرر بنفسه أن يختفي عندما لا يوجد محتوى، فلا يظهر
    * عنوان قسم فوق فراغ. الترتيب والإظهار يأتيان من قاعدة البيانات.
+   *
+   * ثلاثة مفاتيح لا تُرسم على الرئيسية مهما كانت قيمتها في اللوحة:
+   * - intro: جملة واحدة عن المالك لا تستحق قسمًا — صفحة «نبذة» تحملها.
+   * - stats: البطل يعرض الأرقام نفسها قبله بشاشة واحدة.
+   * - case_studies: تكرّر مشروعًا معروضًا في القسم السابق مباشرة؛
+   *   بطاقة المشروع تحمل شارة «دراسة حالة» بدلًا من ذلك.
    */
   function renderSection(section: PageSection) {
     if (!section.is_visible) return null;
@@ -78,10 +80,6 @@ export default async function HomePage({
     switch (section.key) {
       case 'hero':
         return <HeroSection section={section} settings={settings} stats={stats} locale={locale} />;
-      case 'intro':
-        return <IntroSection section={section} settings={settings} locale={locale} />;
-      case 'stats':
-        return <StatsSection section={section} stats={stats} locale={locale} />;
       case 'services':
         return (
           <ServicesSection
@@ -103,14 +101,6 @@ export default async function HomePage({
         );
       case 'projects':
         return <ProjectsSection section={section} projects={projects} locale={locale} />;
-      case 'case_studies':
-        return (
-          <CaseStudiesSection
-            section={section}
-            caseStudies={caseStudies.results}
-            locale={locale}
-          />
-        );
       case 'process':
         return <ProcessSection section={section} steps={processSteps} locale={locale} />;
       case 'technologies':
@@ -132,9 +122,16 @@ export default async function HomePage({
       case 'cta':
         return <CtaSection section={section} settings={settings} locale={locale} />;
       case 'posts':
-        return <PostsSection section={section} posts={posts} locale={locale} />;
+        // مقال واحد أو اثنان تحت عنوان «أحدث المقالات» يعلنان أن المدونة مهجورة —
+        // القسم يظهر حين يوجد ما يكفي ليبدو مدونةً فعلًا
+        return posts.length >= MIN_POSTS_ON_HOME ? (
+          <PostsSection section={section} posts={posts} locale={locale} />
+        ) : null;
       // النشرة البريدية تُضاف في مرحلتها
       case 'newsletter':
+      case 'intro':
+      case 'stats':
+      case 'case_studies':
       default:
         return null;
     }

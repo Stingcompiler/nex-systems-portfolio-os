@@ -52,6 +52,7 @@ LOCAL_APPS = [
     "apps.blog",
     "apps.comments",
     "apps.analytics",
+    "apps.newsletter",
 ]
 
 # apps.cli أولًا كي يتقدّم أمر runserver المخصّص على نسخة staticfiles
@@ -185,6 +186,7 @@ DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="StingSystem <no-reply@st
 
 EMAIL_VERIFICATION_HOURS = env.int("EMAIL_VERIFICATION_HOURS", default=24)
 PASSWORD_RESET_HOURS = env.int("PASSWORD_RESET_HOURS", default=2)
+NEWSLETTER_CONFIRM_HOURS = env.int("NEWSLETTER_CONFIRM_HOURS", default=48)
 
 # ---------------------------------------------------------------- REST Framework
 
@@ -278,6 +280,11 @@ SPECTACULAR_SETTINGS = {
         "CommentStatusEnum": "apps.comments.models.COMMENT_STATUS_CHOICES",
         "ReportReasonEnum": "apps.comments.models.REPORT_REASON_CHOICES",
         "ReportStatusEnum": "apps.comments.models.REPORT_STATUS_CHOICES",
+        "SubscriberStatusEnum": "apps.newsletter.models.SUBSCRIBER_STATUS_CHOICES",
+        "SubscriberSourceEnum": "apps.newsletter.models.SUBSCRIBER_SOURCE_CHOICES",
+        "CampaignStatusEnum": "apps.newsletter.models.CAMPAIGN_STATUS_CHOICES",
+        "TargetLanguageEnum": "apps.newsletter.models.TARGET_LANGUAGE_CHOICES",
+        "RecipientStatusEnum": "apps.newsletter.models.RECIPIENT_STATUS_CHOICES",
     },
 }
 

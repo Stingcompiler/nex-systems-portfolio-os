@@ -1,0 +1,26 @@
+{% extends "emails/base_ar.html" %}
+
+{% block title %}أكّد اشتراكك في النشرة{% endblock %}
+
+{% block content %}
+<p style="margin:0 0 16px;">مرحبًا{% if user_name %} {{ user_name }}{% endif %},</p>
+<p style="margin:0 0 24px;">
+  طلبت الاشتراك في نشرة {{ site_name }} البريدية. اضغط الزر أدناه لتأكيد بريدك — لن نرسل لك شيئًا قبل ذلك.
+</p>
+<p style="margin:0 0 24px;text-align:center;">
+  <a href="{{ action_url }}"
+     style="display:inline-block;background-color:#2563eb;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:10px;font-weight:600;font-size:16px;">
+    تأكيد الاشتراك
+  </a>
+</p>
+<p style="margin:0 0 8px;color:#64748b;font-size:14px;">
+  الرابط صالح لمدة {{ expires_hours }} ساعة.
+</p>
+<p style="margin:0;color:#64748b;font-size:13px;word-break:break-all;">
+  إن لم يعمل الزر، انسخ هذا الرابط إلى المتصفح:<br />{{ action_url }}
+</p>
+{% endblock %}
+
+{% block footer %}
+إذا لم تطلب الاشتراك فتجاهل هذه الرسالة، ولن يُضاف بريدك إلى القائمة.
+{% endblock %}

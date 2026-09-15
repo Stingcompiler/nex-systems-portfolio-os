@@ -1,25 +1,23 @@
 # خدمتان على Render بدل حاوية واحدة.
 #
-# حدّ الخطة المجانية 512MB يُطبَّق على كل خدمة على حدة، فتقسيم Next وDjango
-# يضاعف الميزانية فعليًا ويسمح بتشغيل عامل المهام (qcluster) إلى جانب
-# Gunicorn — وهو ما لم تكن الحاوية الواحدة تتحمّله. الخدمات المجانية
-# لا تستقبل على الشبكة الخاصة، فالواجهة تصل إلى الـ API عبر عنوانه العام.
+# حدّ الـ512MB في خطة 0.5c-512mb يُطبَّق على كل خدمة على حدة، فتقسيم Next
+# وDjango يضاعف الميزانية (خدمتان × $7 بدل خدمة واحدة تُقتل بنفاد الذاكرة)
+# ويسمح بتشغيل عامل المهام (qcluster) إلى جانب Gunicorn — وهو ما لم تكن
+# الحاوية الواحدة تتحمّله.
+#
+# قاعدة البيانات القائمة (nexa-db) لا تُدار من هذا الملف عمدًا: ذكرها هنا
+# يعني تطبيق خطتها من الملف على القاعدة الحقيقية. بيانات الاتصال تُنسخ
+# يدويًا من الخدمة القديمة إلى nexa-api (معلَّمة sync: false).
 #
 # المتصفح لا يعرف إلا نطاق الواجهة: إعادة الكتابة في next.config تمرّر
 # /api و/admin و/media إلى خدمة الـ API كما في السابق.
-
-databases:
-  - name: nexa-db
-    plan: free
-    databaseName: nexa
-    user: nexa
 
 services:
   # ------------------------------------------------------------- الـ API
   - type: web
     name: nexa-api
     runtime: python
-    plan: free
+    plan: 0.5c-512mb
     rootDir: backend
     buildCommand: pip install -r requirements/prod.txt && python manage.py collectstatic --noinput
     startCommand: bash start.sh
@@ -35,31 +33,23 @@ services:
         value: "False"
       # نطاق الموقع + عنوان الخدمة العام الذي تصل منه الواجهة
       - key: ALLOWED_HOSTS
-        value: stingdev.pro,www.stingdev.pro,nexa-api.onrender.com,.onrender.com
+        # nexa-api هو اسم المضيف على الشبكة الخاصة الذي تصل منه الواجهة
+        value: stingdev.pro,www.stingdev.pro,nexa-api,nexa-api.onrender.com,.onrender.com
       - key: CSRF_TRUSTED_ORIGINS
         value: https://stingdev.pro,https://www.stingdev.pro
       - key: DB_ENGINE
         value: postgres
+      # تُنسخ من إعدادات الخدمة القديمة (nexa) — القاعدة نفسها بلا ترحيل
       - key: DB_NAME
-        fromDatabase:
-          name: nexa-db
-          property: database
+        sync: false
       - key: DB_USER
-        fromDatabase:
-          name: nexa-db
-          property: user
+        sync: false
       - key: DB_PASSWORD
-        fromDatabase:
-          name: nexa-db
-          property: password
+        sync: false
       - key: DB_HOST
-        fromDatabase:
-          name: nexa-db
-          property: host
+        sync: false
       - key: DB_PORT
-        fromDatabase:
-          name: nexa-db
-          property: port
+        value: "5432"
       - key: FRONTEND_URL
         value: https://stingdev.pro
       - key: REVALIDATE_SECRET
@@ -85,7 +75,7 @@ services:
   - type: web
     name: nexa-web
     runtime: node
-    plan: free
+    plan: 0.5c-512mb
     rootDir: frontend
     buildCommand: npm ci && NEXT_BUILD_OFFLINE=true npm run build
     startCommand: bash scripts/start.sh
@@ -97,11 +87,12 @@ services:
         value: https://stingdev.pro
       - key: NEXT_PUBLIC_API_URL
         value: /api/v1
-      # العنوان العام لخدمة الـ API (الخدمات المجانية لا تستقبل على الشبكة الخاصة)
+      # الخطة المدفوعة تسمح بالشبكة الخاصة: nexa-api يستمع على المنفذ 10000
+      # داخليًا، فلا يخرج طلب الواجهة إلى الإنترنت ولا يمر بـ TLS
       - key: INTERNAL_API_URL
-        value: https://nexa-api.onrender.com/api/v1
+        value: http://nexa-api:10000/api/v1
       - key: BACKEND_ORIGIN
-        value: https://nexa-api.onrender.com
+        value: http://nexa-api:10000
       - key: REVALIDATE_SECRET
         sync: false # القيمة نفسها في nexa-api
       # سقف كومة V8 داخل الـ512MB المخصصة للواجهة وحدها

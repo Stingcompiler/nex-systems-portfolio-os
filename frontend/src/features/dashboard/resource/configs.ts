@@ -719,3 +719,53 @@ export const usersConfig: ResourceConfig = {
     { name: 'is_active', label: 'نشط', type: 'switch' },
   ],
 };
+
+// --------------------------------------------------------------- التسويق
+
+export const emailTemplatesConfig: ResourceConfig = {
+  key: 'email-templates',
+  endpoint: '/email-templates/',
+  title: 'قوالب البريد',
+  description:
+    'قالب HTML اختياري للحملات. يجب أن يحوي {{ content }} لإدراج المحتوى و{{ unsubscribe_url }} لرابط الإلغاء. ' +
+    'المتغيرات المتاحة: subject · subscriber_name · content · image_url · cta_label · cta_url · preferences_url · site_name.',
+  permission: 'newsletter.change_emailtemplate',
+  columns: [
+    { name: 'name', label: 'الاسم' },
+    { name: 'key', label: 'المفتاح' },
+    { name: 'is_active', label: 'مفعّل', type: 'boolean' },
+    { name: 'updated_at', label: 'آخر تعديل', type: 'date' },
+  ],
+  fields: [
+    { name: 'name', label: 'الاسم', type: 'text', required: true },
+    { name: 'key', label: 'المفتاح', type: 'text', required: true,
+      help: 'أحرف لاتينية وشرطات، مثل simple-announcement' },
+    { name: 'is_active', label: 'مفعّل', type: 'switch' },
+    { name: 'subject', label: 'الموضوع الافتراضي', type: 'bilingual-text', full: true },
+    { name: 'html', label: 'HTML', type: 'bilingual-textarea', full: true,
+      help: 'اترك لغة فارغة لاستخدام القالب الافتراضي لتلك اللغة.' },
+  ],
+  searchable: true,
+};
+
+export const interestsConfig: ResourceConfig = {
+  key: 'interests',
+  endpoint: '/interests/manage/',
+  title: 'اهتمامات النشرة',
+  description: 'ما يختاره المشترك ليستقبل ما يخصه فقط. المفاتيح الخمسة الافتراضية مرتبطة بإنشاء الحملات من المحتوى.',
+  permission: 'newsletter.change_interest',
+  paginated: false,
+  columns: [
+    { name: 'name_ar', label: 'الاسم' },
+    { name: 'key', label: 'المفتاح' },
+    { name: 'subscriber_count', label: 'المشتركون', type: 'number' },
+    { name: 'display_order', label: 'الترتيب', type: 'number' },
+  ],
+  fields: [
+    { name: 'key', label: 'المفتاح', type: 'text', required: true },
+    { name: 'display_order', label: 'الترتيب', type: 'number' },
+    { name: 'name', label: 'الاسم', type: 'bilingual-text', full: true },
+    { name: 'description', label: 'الوصف', type: 'bilingual-text', full: true },
+  ],
+  searchable: false,
+};

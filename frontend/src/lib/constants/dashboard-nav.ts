@@ -83,6 +83,19 @@ export const DASHBOARD_NAV: DashboardNavGroup[] = [
     ],
   },
   {
+    label: 'التسويق',
+    items: [
+      { href: '/dashboard/marketing/subscribers', label: 'المشتركون', icon: 'MailOpen',
+        permission: 'newsletter.view_subscriber' },
+      { href: '/dashboard/marketing/campaigns', label: 'الحملات', icon: 'Megaphone',
+        permission: 'newsletter.view_campaign' },
+      { href: '/dashboard/marketing/templates', label: 'قوالب البريد', icon: 'LayoutTemplate',
+        permission: 'newsletter.view_emailtemplate' },
+      { href: '/dashboard/marketing/interests', label: 'الاهتمامات', icon: 'Sparkles',
+        permission: 'newsletter.change_interest' },
+    ],
+  },
+  {
     label: 'الوسائط',
     items: [
       { href: '/dashboard/media', label: 'مكتبة الوسائط', icon: 'Image',

@@ -78,6 +78,17 @@ function isProductionBuild(): boolean {
   return process.env.NEXT_PHASE === 'phase-production-build';
 }
 
+/**
+ * بناء بلا API إطلاقًا (خدمة الواجهة المنفصلة على Render).
+ *
+ * لا يوجد Django أثناء البناء هناك، فكل جلب يعود بقيمته الفارغة فورًا:
+ * الفهارس تُولَّد فارغة وتُبطَل عند الإقلاع (scripts/start.sh)، وصفحات
+ * التفاصيل تُولَّد عند الطلب. أثر ذلك مطابق للبناء السابق على قاعدة فارغة.
+ */
+function isOfflineBuild(): boolean {
+  return isProductionBuild() && process.env.NEXT_BUILD_OFFLINE === 'true';
+}
+
 // أثناء البناء تنطلق عشرات الطلبات دفعة واحدة على خادم Django التطويري
 // أحادي الخيط، فيرفض بعضها لحظيًا. صبر أطول وقت البناء يجعله حتميًا دون
 // إخفاء أخطاء HTTP الحقيقية (التي لا تُعاد المحاولة معها أصلًا).
@@ -142,6 +153,8 @@ export async function apiGetSafe<T>(
   options: FetchOptions,
   fallback: T,
 ): Promise<T> {
+  if (isOfflineBuild()) return fallback;
+
   try {
     return await apiGet<T>(path, options);
   } catch (error) {

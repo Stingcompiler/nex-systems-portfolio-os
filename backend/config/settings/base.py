@@ -292,7 +292,7 @@ SPECTACULAR_SETTINGS = {
 
 Q_CLUSTER = {
     "name": "stingsystem",
-    "workers": 2,
+    "workers": env.int("Q_WORKERS", default=2),
     "recycle": 500,
     "timeout": 300,
     "retry": 360,

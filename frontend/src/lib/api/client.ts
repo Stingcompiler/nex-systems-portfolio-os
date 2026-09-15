@@ -118,9 +118,11 @@ export function toApiError(error: unknown): ApiErrorPayload {
 
   if (!axios.isAxiosError(error)) return fallback;
 
-  const data = error.response?.data as Partial<ApiErrorPayload> | undefined;
-  if (!data) {
-    return { ...fallback, detail: 'تعذّر الاتصال بالخادم', code: 'network_error' };
+  const data = error.response?.data as Partial<ApiErrorPayload> | string | undefined;
+  // أثناء إعادة تشغيل الخدمة يردّ الوسيط صفحة HTML (502) بدل JSON —
+  // نصّ خام هنا يعني أن الخادم نفسه غير متاح، لا خطأ من التطبيق.
+  if (!data || typeof data === 'string') {
+    return { ...fallback, detail: 'تعذّر الاتصال بالخادم — حاول بعد لحظات', code: 'network_error' };
   }
 
   return {

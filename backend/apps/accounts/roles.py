@@ -103,7 +103,11 @@ ROLE_PERMISSIONS: dict[str, list[str]] = {
     Role.MARKETING_MANAGER: [
         "newsletter.*",
         "core.view_analytics",
+        "core.manage_media",
+        "media_library.add_mediafile",
+        "media_library.view_mediafile",
         "accounts.view_user",
+        "notifications.view_notification",
     ],
     Role.MEMBER: [],
     Role.CLIENT: [],

@@ -17,6 +17,8 @@ SCHEDULED_TASKS = [
     ("apps.blog.tasks.publish_scheduled_posts", "I", "نشر المقالات المجدولة", 5),
     ("apps.analytics.tasks.aggregate_daily_stats", "D", "تجميع إحصائيات الزيارات", None),
     ("apps.analytics.tasks.prune_old_page_views", "D", "تقليم مشاهدات قديمة", None),
+    ("apps.newsletter.tasks.process_scheduled_campaigns", "I", "إرسال الحملات المجدولة", 5),
+    ("apps.newsletter.tasks.purge_stale_pending_subscribers", "D", "حذف الاشتراكات غير المؤكَّدة", None),
 ]
 
 from apps.accounts.roles import GROUP_NAMES, ROLE_PERMISSIONS

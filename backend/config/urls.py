@@ -22,6 +22,7 @@ api_v1 = [
     path("", include("apps.crm.urls")),
     path("", include("apps.blog.urls")),
     path("", include("apps.comments.urls")),
+    path("", include("apps.newsletter.urls")),
     path("", include("apps.portfolio.urls")),
     path("", include("apps.core.urls")),
 ]

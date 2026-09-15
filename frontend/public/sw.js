@@ -2,7 +2,8 @@
  * Service Worker لـ stingdev.
  *
  * قواعد صارمة للخصوصية والصحة:
- *  - لا يُخزَّن إطلاقًا: /api و /admin و /dashboard وأي مسار عضو (/member).
+ *  - لا يُخزَّن إطلاقًا: /api و /admin و /dashboard وأي مسار عضو (/member)
+ *    وصفحات رموز النشرة (/newsletter) لأن روابطها شخصية.
  *    هذه تحمل بيانات حساسة ورموزًا يجب ألا تبقى في ذاكرة التخزين.
  *  - الصفحات العامة: الشبكة أولًا، مع ارتداد إلى صفحة عدم الاتصال.
  *  - الأصول الثابتة (_next/static): من الذاكرة أولًا (محتوى مُبصَّم لا يتغيّر).
@@ -32,7 +33,8 @@ function isPrivate(url) {
     url.pathname.startsWith('/api/') ||
     url.pathname.startsWith('/admin') ||
     url.pathname.startsWith('/dashboard') ||
-    /\/member(\/|$)/.test(url.pathname)
+    /\/member(\/|$)/.test(url.pathname) ||
+    /\/newsletter\//.test(url.pathname)
   );
 }
 

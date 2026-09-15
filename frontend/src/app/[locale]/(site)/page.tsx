@@ -3,6 +3,7 @@ import { setRequestLocale } from 'next-intl/server';
 import {
   CtaSection,
   HeroSection,
+  NewsletterSection,
   PostsSection,
   ProcessSection,
   ProjectsSection,
@@ -127,8 +128,8 @@ export default async function HomePage({
         return posts.length >= MIN_POSTS_ON_HOME ? (
           <PostsSection section={section} posts={posts} locale={locale} />
         ) : null;
-      // النشرة البريدية تُضاف في مرحلتها
       case 'newsletter':
+        return <NewsletterSection section={section} locale={locale} />;
       case 'intro':
       case 'stats':
       case 'case_studies':

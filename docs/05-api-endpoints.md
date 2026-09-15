@@ -180,21 +180,29 @@
 
 | الطريقة | المسار | الوصول | الوصف |
 |---|---|:--:|---|
-| POST | `subscribers/subscribe/` | P | Double Opt-in |
-| POST | `subscribers/confirm/` | P | تأكيد بالرمز |
-| POST | `subscribers/unsubscribe/` | P | برمز موقّع، بلا تسجيل دخول |
-| GET · PATCH | `subscribers/preferences/{token}/` | P | تعديل التفضيلات برابط آمن |
-| GET | `subscribers/` | S | فلاتر: `status, language, interest` |
-| GET | `subscribers/export/` | S | CSV |
+| POST | `subscribers/subscribe/` | P | Double Opt-in — استجابة 202 واحدة مهما كانت حالة البريد |
+| POST | `subscribers/confirm/` | P | تأكيد بالرمز (صالح 48 ساعة، يُستهلك مرة) |
+| POST | `subscribers/unsubscribe/` | P | برمز دائم، بلا تسجيل دخول · `campaign_token` اختياري للعدّ |
+| GET · PATCH | `subscribers/preferences/{token}/` | P | تعديل التفضيلات برابط آمن · `resubscribe` لإعادة التفعيل |
+| GET · POST · DELETE | `subscribers/me/` | M | اشتراك العضو ببريد حسابه |
 | GET | `interests/` | P | |
-| GET · POST · PATCH · DELETE | `campaigns/…` | S | |
-| POST | `campaigns/{id}/preview-audience/` | S | عدد المستلمين قبل الإرسال |
-| POST | `campaigns/{id}/test-send/` | S | إرسال اختباري |
+| GET | `newsletter/track/open/{token}/` | P | بيكسل الفتح |
+| GET | `newsletter/track/click/{token}/` | P | يحوّل إلى `cta_url` الحملة فقط |
+| GET · POST · PATCH · DELETE | `subscribers/…` | S | فلاتر: `status, language, source, interest` · الإضافة اليدوية تنشط مباشرة |
+| GET | `subscribers/stats/` | S | الأعداد والنمو وحسب الاهتمام |
+| GET | `subscribers/export/` | S | CSV — `export_subscribers` |
+| GET · POST · PATCH · DELETE | `interests/manage/…` | S | |
+| GET · POST · PATCH · DELETE | `campaigns/…` | S | التعديل للمسودة والمجدولة فقط |
+| GET · POST | `campaigns/{id}/preview-audience/` | S | عدد المستلمين قبل الإرسال |
+| POST | `campaigns/{id}/test-send/` | S | إرسال اختباري إلى بريد المدير |
 | POST | `campaigns/{id}/send/` | S | `send_campaign` |
-| POST | `campaigns/{id}/schedule/` | S | |
+| POST | `campaigns/{id}/schedule/` | S | `send_campaign` |
 | POST | `campaigns/{id}/cancel/` | S | |
 | GET | `campaigns/{id}/stats/` | S | |
-| GET · POST · PATCH · DELETE | `email-templates/…` | S | |
+| GET | `campaigns/{id}/recipients/` | S | فلتر `status` |
+| POST | `campaigns/{id}/duplicate/` | S | |
+| POST | `campaigns/from-content/` | S | مسودة من `post/project/service` |
+| GET · POST · PATCH · DELETE | `email-templates/…` | S | يُرفض قالب بلا `{{ content }}` و`{{ unsubscribe_url }}` |
 
 ---
 

@@ -1,0 +1,28 @@
+{% extends "emails/base_en.html" %}
+
+{% block title %}{{ subject }}{% endblock %}
+
+{% block content %}
+{% if subscriber_name %}<p style="margin:0 0 16px;">Hello {{ subscriber_name }},</p>{% endif %}
+{% if image_url %}
+<p style="margin:0 0 20px;"><img src="{{ image_url }}" alt="" width="504" style="display:block;width:100%;max-width:504px;height:auto;border-radius:10px;" /></p>
+{% endif %}
+<h1 style="margin:0 0 16px;font-size:22px;line-height:1.5;">{{ subject }}</h1>
+{{ content }}
+{% if cta_url and cta_label %}
+<p style="margin:24px 0 8px;text-align:center;">
+  <a href="{{ cta_url }}"
+     style="display:inline-block;background-color:#2563eb;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:10px;font-weight:600;font-size:16px;">
+    {{ cta_label }}
+  </a>
+</p>
+{% endif %}
+{% if tracking_pixel %}<img src="{{ tracking_pixel }}" alt="" width="1" height="1" style="display:block;width:1px;height:1px;border:0;" />{% endif %}
+{% endblock %}
+
+{% block footer %}
+You receive this because you subscribed to the {{ site_name }} newsletter and confirmed your email.<br />
+<a href="{{ preferences_url }}" style="color:#2563eb;">Update preferences</a>
+ · 
+<a href="{{ unsubscribe_url }}" style="color:#64748b;">Unsubscribe</a>
+{% endblock %}

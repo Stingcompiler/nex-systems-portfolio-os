@@ -1,4 +1,4 @@
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, Check, Mail } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 import {
@@ -9,6 +9,7 @@ import {
   TestimonialCard,
 } from '@/components/content/cards';
 import { PostCard } from '@/features/blog/post-card';
+import { NewsletterForm } from '@/features/newsletter/newsletter-form';
 import { ButtonLink } from '@/components/ui/button';
 import { Container } from '@/components/ui/container';
 import { Card, Prose } from '@/components/ui/misc';
@@ -517,6 +518,26 @@ export async function CtaSection({
             {tContact('preferWhatsapp')}
           </p>
         ) : null}
+      </div>
+    </Section>
+  );
+}
+
+export async function NewsletterSection({ section }: SectionProps) {
+  const t = await getTranslations('newsletter');
+  const title = await resolveTitle(section);
+
+  return (
+    <Section id="newsletter">
+      <div className="grid gap-8 rounded-2xl border border-border bg-surface p-8 sm:p-12 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+        <div className="max-w-prose">
+          <span className="mb-4 grid size-11 place-items-center rounded-lg bg-primary/10 text-primary">
+            <Mail className="size-5" aria-hidden="true" />
+          </span>
+          <h2 className="text-h2 font-semibold">{title || t('title')}</h2>
+          <p className="mt-3 text-muted">{section.subtitle || t('subtitle')}</p>
+        </div>
+        <NewsletterForm source="home" className="relative" />
       </div>
     </Section>
   );

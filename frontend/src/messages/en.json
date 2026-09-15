@@ -375,7 +375,8 @@
       "overview": "Overview",
       "saved": "Saved articles",
       "comments": "My comments",
-      "settings": "Settings"
+      "settings": "Settings",
+      "subscriptions": "Newsletter"
     },
     "profile": "Profile",
     "fullName": "Full name",
@@ -494,5 +495,40 @@
   },
   "testimonials": {
     "rating": "Rated {value} out of 5"
+  },
+  "newsletter": {
+    "title": "Newsletter",
+    "subtitle": "A useful article, a new project or a seasonal offer — we only send what you pick, and never share your email.",
+    "email": "Email address",
+    "name": "Name (optional)",
+    "interests": "What interests you?",
+    "subscribe": "Subscribe",
+    "subscribing": "Sending…",
+    "sentTitle": "Check your inbox",
+    "sent": "If your email is new to us, a confirmation message will arrive within minutes. Click the link inside to activate.",
+    "consent": "By subscribing you agree to receive our emails. Unsubscribe in one click from any message.",
+    "blogPrompt": "Enjoyed the article? Subscribe for new ones.",
+    "confirmTitle": "Confirm subscription",
+    "confirming": "Confirming your subscription…",
+    "confirmSuccess": "Your subscription is active. Thanks for joining!",
+    "confirmError": "This confirmation link is invalid or expired. Subscribe again to get a new one.",
+    "managePreferences": "Manage preferences",
+    "backHome": "Back to home",
+    "unsubscribeTitle": "Unsubscribe",
+    "unsubscribing": "Unsubscribing…",
+    "unsubscribeSuccess": "You have been unsubscribed and will receive no further emails.",
+    "unsubscribeError": "This link is not valid.",
+    "resubscribe": "Subscribe again",
+    "preferencesTitle": "Newsletter preferences",
+    "preferencesSubtitle": "Choose what you receive and the language of the emails.",
+    "language": "Email language",
+    "save": "Save preferences",
+    "saved": "Preferences saved.",
+    "statusActive": "Your subscription is active",
+    "statusPending": "Waiting for email confirmation",
+    "statusUnsubscribed": "You are unsubscribed",
+    "statusNone": "Not subscribed yet",
+    "unsubscribe": "Unsubscribe",
+    "memberIntro": "Emails go to your account address. The first time you subscribe we send a confirmation link."
   }
 }

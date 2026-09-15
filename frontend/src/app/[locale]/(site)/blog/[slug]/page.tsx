@@ -12,6 +12,7 @@ import { CommentsSection } from '@/features/comments/comments-section';
 import { SavePostButton } from '@/features/blog/save-post-button';
 import { ShareButtons } from '@/features/blog/share-buttons';
 import { ViewBeacon } from '@/features/blog/view-beacon';
+import { NewsletterPrompt } from '@/features/newsletter/newsletter-prompt';
 import { ApiError } from '@/lib/api/server';
 import { getPost, getPostSlugs, getSeoSettings, getSiteSettings } from '@/lib/api/queries';
 import { Link } from '@/lib/i18n/navigation';
@@ -176,6 +177,9 @@ export default async function PostPage({
               <ShareButtons url={url} title={post.title} />
               <SavePostButton slug={slug} initialSaved={post.is_saved} />
             </div>
+
+            {/* دعوة للاشتراك بعد القراءة — الاهتمام «المقالات» محدد مسبقًا */}
+            <NewsletterPrompt />
 
             <CommentsSection
               postId={post.id}

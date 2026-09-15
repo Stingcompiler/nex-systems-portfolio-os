@@ -1,3 +1,13 @@
+# خدمتان على Render بدل حاوية واحدة.
+#
+# حدّ الخطة المجانية 512MB يُطبَّق على كل خدمة على حدة، فتقسيم Next وDjango
+# يضاعف الميزانية فعليًا ويسمح بتشغيل عامل المهام (qcluster) إلى جانب
+# Gunicorn — وهو ما لم تكن الحاوية الواحدة تتحمّله. الخدمات المجانية
+# لا تستقبل على الشبكة الخاصة، فالواجهة تصل إلى الـ API عبر عنوانه العام.
+#
+# المتصفح لا يعرف إلا نطاق الواجهة: إعادة الكتابة في next.config تمرّر
+# /api و/admin و/media إلى خدمة الـ API كما في السابق.
+
 databases:
   - name: nexa-db
     plan: free
@@ -5,19 +15,27 @@ databases:
     user: nexa
 
 services:
+  # ------------------------------------------------------------- الـ API
   - type: web
-    name: nexa
-    runtime: docker
+    name: nexa-api
+    runtime: python
     plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements/prod.txt && python manage.py collectstatic --noinput
+    startCommand: bash start.sh
+    healthCheckPath: /api/v1/health/
     envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.8"
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings.prod
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
         value: "False"
+      # نطاق الموقع + عنوان الخدمة العام الذي تصل منه الواجهة
       - key: ALLOWED_HOSTS
-        value: stingdev.pro,www.stingdev.pro,.onrender.com,localhost,127.0.0.1
+        value: stingdev.pro,www.stingdev.pro,nexa-api.onrender.com,.onrender.com
       - key: CSRF_TRUSTED_ORIGINS
         value: https://stingdev.pro,https://www.stingdev.pro
       - key: DB_ENGINE
@@ -45,7 +63,7 @@ services:
       - key: FRONTEND_URL
         value: https://stingdev.pro
       - key: REVALIDATE_SECRET
-        generateValue: true
+        sync: false # القيمة نفسها في nexa-web — تُضبط يدويًا في الخدمتين
       - key: COOKIE_SECURE
         value: "True"
       - key: COOKIE_SAMESITE
@@ -54,13 +72,38 @@ services:
         value: "False"
       - key: DEFAULT_FROM_EMAIL
         value: "NEXA SYSTEMS <no-reply@stingdev.pro>"
+      # يُبدَّل إلى smtp مع EMAIL_HOST/USER/PASSWORD بعد حسم المزود
       - key: EMAIL_BACKEND
         value: django.core.mail.backends.console.EmailBackend
+      # عامل واحد لمهام django-q داخل 512MB
+      - key: Q_WORKERS
+        value: "1"
+      - key: WEB_CONCURRENCY
+        value: "1"
+
+  # ------------------------------------------------------------- الواجهة
+  - type: web
+    name: nexa-web
+    runtime: node
+    plan: free
+    rootDir: frontend
+    buildCommand: npm ci && NEXT_BUILD_OFFLINE=true npm run build
+    startCommand: bash scripts/start.sh
+    healthCheckPath: /ar
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
       - key: NEXT_PUBLIC_SITE_URL
         value: https://stingdev.pro
       - key: NEXT_PUBLIC_API_URL
         value: /api/v1
+      # العنوان العام لخدمة الـ API (الخدمات المجانية لا تستقبل على الشبكة الخاصة)
       - key: INTERNAL_API_URL
-        value: http://127.0.0.1:8000/api/v1
+        value: https://nexa-api.onrender.com/api/v1
       - key: BACKEND_ORIGIN
-        value: http://127.0.0.1:8000
+        value: https://nexa-api.onrender.com
+      - key: REVALIDATE_SECRET
+        sync: false # القيمة نفسها في nexa-api
+      # سقف كومة V8 داخل الـ512MB المخصصة للواجهة وحدها
+      - key: NODE_HEAP_MB
+        value: "384"

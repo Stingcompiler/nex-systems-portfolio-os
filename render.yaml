@@ -1,100 +1,46 @@
-# خدمتان على Render بدل حاوية واحدة.
+# توثيق طوبولوجيا النشر على Render — خدمة واحدة + Cron Job.
 #
-# حدّ الـ512MB في خطة 0.5c-512mb يُطبَّق على كل خدمة على حدة، فتقسيم Next
-# وDjango يضاعف الميزانية (خدمتان × $7 بدل خدمة واحدة تُقتل بنفاد الذاكرة)
-# ويسمح بتشغيل عامل المهام (qcluster) إلى جانب Gunicorn — وهو ما لم تكن
-# الحاوية الواحدة تتحمّله.
+# ليس Blueprint مُطبَّقًا: الخدمة القائمة أُنشئت يدويًا من نوع Docker ولا
+# يُغيَّر نوعها. الملف مرجع لما يجب أن تكون عليه الإعدادات في اللوحة.
 #
-# قاعدة البيانات القائمة (nexa-db) لا تُدار من هذا الملف عمدًا: ذكرها هنا
-# يعني تطبيق خطتها من الملف على القاعدة الحقيقية. بيانات الاتصال تُنسخ
-# يدويًا من الخدمة القديمة إلى nexa-api (معلَّمة sync: false).
-#
-# المتصفح لا يعرف إلا نطاق الواجهة: إعادة الكتابة في next.config تمرّر
-# /api و/admin و/media إلى خدمة الـ API كما في السابق.
+# لماذا خدمة واحدة رغم ضيق 512MB: الكلفة. خدمتان ($14) تعطيان هامشًا
+# أوسع، لكن هذا الإعداد يبقي الفاتورة عند ~$8 بثلاثة تنازلات مقاسة:
+#   - كومة Node 128MB بدل 224 (185MB RSS بدل 250 بعد 45 صفحة، بلا أخطاء)
+#   - لا تحسين صور في Next (Django يولّد WebP أصلًا) — يزيل ذروات sharp
+#   - عامل المهام Cron كل 5 دقائق بدل عملية دائمة (~70MB) — بريد التحقق
+#     قد يتأخر حتى 5 دقائق
+# المجموع المقيس ~310MB بدل ~445MB، أي هامش ~200MB بدل الصفر.
 
 services:
-  # ------------------------------------------------------------- الـ API
   - type: web
-    name: nexa-api
+    name: nex-systems-portfolio-os-1
+    runtime: docker
+    plan: 0.5c-512mb
+    healthCheckPath: /api/v1/health/
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.prod
+      - key: NODE_HEAP_MB
+        value: "128"
+      - key: WEB_CONCURRENCY
+        value: "1"
+      # بقية المتغيرات (SECRET_KEY, DB_*, ALLOWED_HOSTS, FRONTEND_URL,
+      # REVALIDATE_SECRET, COOKIE_*, EMAIL_*) كما هي في الخدمة القائمة
+
+  # عامل المهام: يُنشأ يدويًا New → Cron Job، بنفس متغيرات البيئة
+  # (يفضَّل Environment Group مشترك مع الخدمة أعلاه)
+  - type: cron
+    name: nexa-queue
     runtime: python
     plan: 0.5c-512mb
     rootDir: backend
-    buildCommand: pip install -r requirements/prod.txt && python manage.py collectstatic --noinput
-    startCommand: bash start.sh
-    healthCheckPath: /api/v1/health/
+    schedule: "*/5 * * * *"
+    buildCommand: pip install -r requirements/prod.txt
+    startCommand: python manage.py process_queue
     envVars:
       - key: PYTHON_VERSION
         value: "3.12.8"
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings.prod
-      - key: SECRET_KEY
-        generateValue: true
-      - key: DEBUG
-        value: "False"
-      # نطاق الموقع + عنوان الخدمة العام الذي تصل منه الواجهة
-      - key: ALLOWED_HOSTS
-        # nexa-api هو اسم المضيف على الشبكة الخاصة الذي تصل منه الواجهة
-        value: stingdev.pro,www.stingdev.pro,nexa-api,nexa-api.onrender.com,.onrender.com
-      - key: CSRF_TRUSTED_ORIGINS
-        value: https://stingdev.pro,https://www.stingdev.pro
-      - key: DB_ENGINE
-        value: postgres
-      # تُنسخ من إعدادات الخدمة القديمة (nexa) — القاعدة نفسها بلا ترحيل
-      - key: DB_NAME
-        sync: false
-      - key: DB_USER
-        sync: false
-      - key: DB_PASSWORD
-        sync: false
-      - key: DB_HOST
-        sync: false
-      - key: DB_PORT
-        value: "5432"
-      - key: FRONTEND_URL
-        value: https://stingdev.pro
-      - key: REVALIDATE_SECRET
-        sync: false # القيمة نفسها في nexa-web — تُضبط يدويًا في الخدمتين
-      - key: COOKIE_SECURE
-        value: "True"
-      - key: COOKIE_SAMESITE
-        value: Lax
-      - key: SECURE_SSL_REDIRECT
-        value: "False"
-      - key: DEFAULT_FROM_EMAIL
-        value: "NEXA SYSTEMS <no-reply@stingdev.pro>"
-      # يُبدَّل إلى smtp مع EMAIL_HOST/USER/PASSWORD بعد حسم المزود
-      - key: EMAIL_BACKEND
-        value: django.core.mail.backends.console.EmailBackend
-      # عامل واحد لمهام django-q داخل 512MB
       - key: Q_WORKERS
         value: "1"
-      - key: WEB_CONCURRENCY
-        value: "1"
-
-  # ------------------------------------------------------------- الواجهة
-  - type: web
-    name: nexa-web
-    runtime: node
-    plan: 0.5c-512mb
-    rootDir: frontend
-    buildCommand: npm ci && NEXT_BUILD_OFFLINE=true npm run build
-    startCommand: bash scripts/start.sh
-    healthCheckPath: /ar
-    envVars:
-      - key: NODE_VERSION
-        value: "20"
-      - key: NEXT_PUBLIC_SITE_URL
-        value: https://stingdev.pro
-      - key: NEXT_PUBLIC_API_URL
-        value: /api/v1
-      # الخطة المدفوعة تسمح بالشبكة الخاصة: nexa-api يستمع على المنفذ 10000
-      # داخليًا، فلا يخرج طلب الواجهة إلى الإنترنت ولا يمر بـ TLS
-      - key: INTERNAL_API_URL
-        value: http://nexa-api:10000/api/v1
-      - key: BACKEND_ORIGIN
-        value: http://nexa-api:10000
-      - key: REVALIDATE_SECRET
-        sync: false # القيمة نفسها في nexa-api
-      # سقف كومة V8 داخل الـ512MB المخصصة للواجهة وحدها
-      - key: NODE_HEAP_MB
-        value: "384"

@@ -58,14 +58,13 @@ def process_media_image(media_id: int) -> bool:
 
 
 def _prepare(image):
-    """يحوّل إلى RGB مع خلفية بيضاء عند وجود شفافية."""
-    from PIL import Image
+    """يحوّل إلى RGB، أو RGBA عند وجود شفافية فعلية.
 
-    if image.mode in ("RGBA", "LA", "P"):
-        converted = image.convert("RGBA")
-        background = Image.new("RGB", converted.size, (255, 255, 255))
-        background.paste(converted, mask=converted.split()[-1])
-        return background
+    WebP يدعم قناة ألفا؛ التسطيح على خلفية بيضاء كان يرسم مربعًا أبيض
+    حول الشعارات الشفافة فوق خلفية الموقع غير البيضاء.
+    """
+    if image.mode in ("RGBA", "LA") or (image.mode == "P" and "transparency" in image.info):
+        return image.convert("RGBA")
     return image.convert("RGB")
 
 

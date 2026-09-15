@@ -1,8 +1,10 @@
+from django.conf import settings
 from django_q.tasks import async_task
 from rest_framework import serializers
 
 from apps.core.fields import TranslatedField
 from apps.media_library.models import MediaFile, MediaFolder
+from apps.media_library.tasks import process_media_image
 from apps.media_library.validators import UploadError, validate_upload
 
 
@@ -105,10 +107,15 @@ class MediaUploadSerializer(serializers.ModelSerializer):
         media.save()
 
         if media.is_image:
-            try:
-                async_task("apps.media_library.tasks.process_media_image", media.pk)
-            except Exception:  # noqa: BLE001
-                pass  # فشل الجدولة لا يُبطل الرفع
+            if settings.MEDIA_PROCESS_INLINE:
+                # لا يرفع استثناء؛ وعند النجاح تحمل الاستجابة رابط WebP مباشرة
+                process_media_image(media.pk)
+                media.refresh_from_db()
+            else:
+                try:
+                    async_task("apps.media_library.tasks.process_media_image", media.pk)
+                except Exception:  # noqa: BLE001
+                    pass  # فشل الجدولة لا يُبطل الرفع
 
         return media
 

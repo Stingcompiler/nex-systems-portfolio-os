@@ -80,6 +80,50 @@ def test_image_processing_fills_dimensions_and_derivatives(manager_client):
     assert media.thumbnail, "يجب توليد مصغّرة"
 
 
+def test_upload_response_already_points_at_the_webp_version(manager_client):
+    """المعالجة داخل طلب الرفع: لا تعتمد على عامل خلفي قد لا يعمل في الإنتاج."""
+    upload = SimpleUploadedFile("cover.png", make_png((300, 200)), content_type="image/png")
+
+    response = manager_client.post(UPLOAD_URL, {"file": upload}, format="multipart")
+
+    assert response.status_code == 201, response.data
+    assert response.data["url"].endswith(".webp")
+    assert response.data["width"] == 300
+
+
+def test_transparent_logo_keeps_its_alpha_in_webp(manager_client):
+    from PIL import Image
+
+    buffer = BytesIO()
+    Image.new("RGBA", (80, 80), (30, 106, 79, 0)).save(buffer, format="PNG")
+    upload = SimpleUploadedFile("logo.png", buffer.getvalue(), content_type="image/png")
+
+    manager_client.post(UPLOAD_URL, {"file": upload}, format="multipart")
+
+    media = MediaFile.objects.get()
+    with Image.open(media.webp_version) as webp:
+        assert webp.mode == "RGBA"
+        assert webp.getpixel((0, 0))[3] == 0, "الشفافية يجب ألا تُسطَّح على خلفية بيضاء"
+
+
+def test_process_media_command_backfills_unprocessed_images(manager_client, settings, monkeypatch):
+    from django.core.management import call_command
+
+    # صورة رُفعت أيام العامل الغائب: لا معالجة مضمّنة ولا طابور يعمل
+    settings.MEDIA_PROCESS_INLINE = False
+    monkeypatch.setattr("apps.media_library.serializers.async_task", lambda *a, **k: None)
+    upload = SimpleUploadedFile("old.png", make_png((120, 90)), content_type="image/png")
+    manager_client.post(UPLOAD_URL, {"file": upload}, format="multipart")
+    media = MediaFile.objects.get()
+    assert not media.webp_version
+
+    call_command("process_media", verbosity=0)
+
+    media.refresh_from_db()
+    assert media.webp_version
+    assert media.width == 120
+
+
 def test_alt_text_follows_the_request_language(manager_client):
     upload = SimpleUploadedFile("x.png", make_png(), content_type="image/png")
     manager_client.post(

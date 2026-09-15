@@ -18,7 +18,30 @@ import { api, setSessionLostHandler } from '@/lib/api/client';
  * منفصلة عن `AuthContext` الخاص بلوحة التحكم: هذا يغلّف مزوّد الموقع
  * ويُحمَّل بكسل عند الحاجة فقط، فلا يجلب المستخدم في كل صفحة عامة إلا
  * حين يوجد كوكي جلسة فعلًا.
+ *
+ * كوكي الجلسة HttpOnly فلا يُقرأ من المتصفح؛ العلامة أدناه تُضبط عند
+ * نجاح الدخول وتُمسح عند الخروج أو انتهاء الجلسة، وبدونها لا يُرسل
+ * الزائر المجهول طلب `/auth/me/` الذي كان يفشل بـ401 في كل زيارة.
  */
+const SESSION_FLAG = 'member-session';
+
+function hasSessionFlag(): boolean {
+  try {
+    return window.localStorage.getItem(SESSION_FLAG) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function setSessionFlag(active: boolean) {
+  try {
+    if (active) window.localStorage.setItem(SESSION_FLAG, '1');
+    else window.localStorage.removeItem(SESSION_FLAG);
+  } catch {
+    // تخزين محظور (وضع خاص مثلًا): نعود إلى السلوك القديم بلا ضرر
+  }
+}
+
 export interface Member {
   id: number;
   email: string;
@@ -64,8 +87,18 @@ export function MemberProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    load();
+    if (hasSessionFlag()) {
+      load();
+    } else {
+      setLoading(false);
+    }
   }, [load]);
+
+  // العلامة تتبع حالة العضو أيًّا كان مصدرها: دخول، تسجيل، تحديث، أو خروج —
+  // بعد اكتمال التحميل الأول، وإلا مُسحت قبل أن يعود الطلب بالعضو
+  useEffect(() => {
+    if (!loading) setSessionFlag(member !== null);
+  }, [member, loading]);
 
   useEffect(() => {
     setSessionLostHandler(() => setMember(null));

@@ -362,8 +362,10 @@ export async function ProcessSection({
       <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((step, index) => (
           <li key={step.id} className="relative">
-            {/* خطّ رابط بين الخطوات على الشاشات الواسعة */}
-            {index < steps.length - 1 ? (
+            {/* خطّ رابط بين الخطوات على الشاشات الواسعة — يُحذف من آخر عمود
+                في كل صف (الشبكة رباعية عند lg)، وإلا امتدّ خارج الصفحة
+                وأنشأ تمريرًا أفقيًا بعرض 111px على 1280 */}
+            {index < steps.length - 1 && (index + 1) % 4 !== 0 ? (
               <span
                 aria-hidden="true"
                 className="absolute top-6 hidden h-px w-full bg-gradient-to-l from-border to-transparent lg:block"
@@ -371,7 +373,7 @@ export async function ProcessSection({
               />
             ) : null}
             <div className="relative">
-              <span className="mb-4 grid size-12 place-items-center rounded-2xl bg-brand text-lg font-bold text-white shadow-[0_8px_24px_-8px_rgb(var(--primary)/0.6)]">
+              <span className="mb-4 grid size-12 place-items-center rounded-2xl bg-brand text-lg font-bold text-white shadow-brand-lg">
                 <span className="code-inline inline">{index + 1}</span>
               </span>
               <h3 className="mb-2 text-h3 font-semibold">{step.title}</h3>

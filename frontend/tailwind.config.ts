@@ -45,13 +45,21 @@ const config: Config = {
         mono: ['var(--font-mono)', 'monospace'],
       },
       fontSize: {
+        // عنوان البطل وحده يقرأ --line-height-display: العربية بأربعة أسطر
+        // عند 56px تحتاج سطرًا أضيق من باقي العناوين وإلا تفكّكت الكتلة.
+        // السقف 56px لا 60: فوقه تنكسر العناوين العربية إلى خمسة أسطر على 1280.
+        display: [
+          'clamp(2.375rem, 3.5vw + 1rem, 3.5rem)',
+          { lineHeight: 'var(--line-height-display)' },
+        ],
         // بلا lineHeight — القاعدة في globals.css تقرأ var(--line-height-heading)
-        display: 'clamp(2.5rem, 5vw + 1rem, 3.75rem)',
         h1: 'clamp(2rem, 3vw + 1rem, 2.75rem)',
-        h2: 'clamp(1.6rem, 2vw + 0.75rem, 2rem)',
+        h2: 'clamp(1.625rem, 2vw + 0.75rem, 2rem)',
         h3: 'clamp(1.25rem, 1vw + 0.75rem, 1.375rem)',
         // مقدمات الأقسام — كانت تُكتب text-lg يدويًا
         'body-lg': ['1.125rem', { lineHeight: 'var(--line-height-body)' }],
+        // التسميات الصغيرة (شارات، تواريخ، عناوين أعمدة) — بدل text-xs/text-sm العشوائي
+        label: ['0.8125rem', { lineHeight: '1.5' }],
       },
       maxWidth: {
         content: '80rem',
@@ -67,6 +75,10 @@ const config: Config = {
         subtle: 'var(--shadow-sm)',
         card: 'var(--shadow-md)',
         elevated: 'var(--shadow-lg)',
+        // الظل الملوّن للعناصر ذات خلفية العلامة (الأزرار، أيقونات الشعار)
+        // — كان يُكتب بسبع صيغ يدوية مختلفة
+        brand: 'var(--shadow-brand)',
+        'brand-lg': 'var(--shadow-brand-lg)',
       },
       backgroundImage: {
         brand: 'var(--gradient-brand)',

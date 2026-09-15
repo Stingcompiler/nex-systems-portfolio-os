@@ -47,6 +47,8 @@
     --shadow-sm: 0 1px 2px rgb(22 33 27 / 0.05);
     --shadow-md: 0 4px 20px -4px rgb(22 33 27 / 0.1), 0 2px 8px -4px rgb(22 33 27 / 0.06);
     --shadow-lg: 0 12px 40px -8px rgb(22 33 27 / 0.16), 0 4px 12px -6px rgb(22 33 27 / 0.1);
+    --shadow-brand: 0 4px 16px -6px rgb(var(--primary) / 0.5);
+    --shadow-brand-lg: 0 8px 24px -8px rgb(var(--primary) / 0.6);
 
     --duration-fast: 150ms;
     --duration-normal: 300ms;
@@ -54,6 +56,7 @@
 
     --line-height-body: 1.65;
     --line-height-heading: 1.2;
+    --line-height-display: 1.1;
   }
 
   .dark {
@@ -92,12 +95,17 @@
     --shadow-sm: 0 0 0 1px rgb(255 255 255 / 0.06);
     --shadow-md: 0 0 0 1px rgb(255 255 255 / 0.08), 0 8px 24px -8px rgb(0 0 0 / 0.6);
     --shadow-lg: 0 0 0 1px rgb(255 255 255 / 0.1), 0 24px 64px -12px rgb(0 0 0 / 0.7);
+    /* الظل الملوّن على أرضية داكنة يكاد لا يُرى — يُخفَّض لا يُلغى */
+    --shadow-brand: 0 4px 16px -6px rgb(var(--primary) / 0.3);
+    --shadow-brand-lg: 0 8px 24px -8px rgb(var(--primary) / 0.4);
   }
 
-  /* العربية تحتاج مساحة رأسية أكبر */
+  /* العربية تحتاج مساحة رأسية أكبر — لكن ليس في العناوين الكبيرة:
+     1.5 كانت تفكّك عنوان البطل ذا الأربعة أسطر إلى أربع جمل منفصلة */
   :lang(ar) {
-    --line-height-body: 1.9;
-    --line-height-heading: 1.5;
+    --line-height-body: 1.85;
+    --line-height-heading: 1.4;
+    --line-height-display: 1.3;
   }
 
   * {

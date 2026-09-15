@@ -45,7 +45,7 @@ export async function Footer({ settings }: { settings: SiteSettings | null }) {
           {/* الهوية */}
           <div className="lg:pe-8">
             <div className="flex items-center gap-2">
-              <span className="grid size-8 place-items-center rounded-lg bg-brand text-sm font-bold text-white shadow-[0_2px_10px_-2px_rgb(var(--primary)/0.6)]">
+              <span className="grid size-8 place-items-center rounded-lg bg-brand text-sm font-bold text-white shadow-brand">
                 {siteName.charAt(0).toUpperCase()}
               </span>
               <span className="text-lg font-bold">{siteName}</span>

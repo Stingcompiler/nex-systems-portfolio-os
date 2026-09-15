@@ -124,7 +124,7 @@ export function MobileNav({ items, ctaLabel }: { items: NavLinkItem[]; ctaLabel:
         <div className="shrink-0 border-t border-border p-3">
           <Link
             href="/request-quote"
-            className="flex min-h-11 items-center justify-center rounded-lg bg-primary px-5 font-medium text-primary-foreground shadow-[0_2px_12px_-3px_rgb(var(--primary)/0.4)]"
+            className="flex min-h-11 items-center justify-center rounded-lg bg-primary px-5 font-medium text-primary-foreground shadow-brand"
           >
             {ctaLabel}
           </Link>

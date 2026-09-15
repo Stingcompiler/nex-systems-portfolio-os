@@ -118,7 +118,8 @@ def render_campaign_email(
     tracking_pixel = ""
     if recipient is not None:
         unsubscribe_url += f"?c={recipient.token}"
-        tracking_pixel = _api(f"track/open/{recipient.token}.gif")
+        # بلا امتداد: وسيط Next يضيف شرطة نهائية لكل مسارات /api
+        tracking_pixel = _api(f"track/open/{recipient.token}/")
         if cta_url:
             cta_url = _api(f"track/click/{recipient.token}/")
 

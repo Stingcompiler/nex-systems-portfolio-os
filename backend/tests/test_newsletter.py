@@ -455,9 +455,9 @@ def test_open_and_click_tracking_and_stats(api_client, marketing_client, audienc
     services.start_campaign(c)
     recipient = CampaignRecipient.objects.filter(campaign=c).first()
 
-    pixel = api_client.get(f"/api/v1/newsletter/track/open/{recipient.token}.gif")
+    pixel = api_client.get(f"/api/v1/newsletter/track/open/{recipient.token}/")
     assert pixel.status_code == 200 and pixel["Content-Type"] == "image/gif"
-    api_client.get(f"/api/v1/newsletter/track/open/{recipient.token}.gif")  # مرة ثانية لا تُعدّ
+    api_client.get(f"/api/v1/newsletter/track/open/{recipient.token}/")  # مرة ثانية لا تُعدّ
 
     click = api_client.get(f"/api/v1/newsletter/track/click/{recipient.token}/")
     assert click.status_code == 302 and click["Location"] == "https://example.com/post"

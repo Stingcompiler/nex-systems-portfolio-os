@@ -23,7 +23,7 @@ urlpatterns = [
         name="preferences",
     ),
     path("interests/", views.InterestListView.as_view(), name="interests"),
-    path("newsletter/track/open/<str:token>.gif", views.TrackOpenView.as_view(), name="track-open"),
+    path("newsletter/track/open/<str:token>/", views.TrackOpenView.as_view(), name="track-open"),
     path("newsletter/track/click/<str:token>/", views.TrackClickView.as_view(), name="track-click"),
     path("", include(router.urls)),
 ]

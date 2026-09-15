@@ -4,22 +4,28 @@ public/og/ar.png و public/og/en.png.
 
 لماذا سكربت ثابت لا مولّد وقت التشغيل: محرّك Satori الذي يقف خلف
 `next/og` لا يدعم اتجاه النص العربي ولا يقيس عرض كلماته بدقة، فتخرج
-الجملة معكوسة أو متباعدة. Pillow مع arabic-reshaper وpython-bidi يشكّل
-الحروف ويعكس الترتيب بصريًا بشكل صحيح.
+الجملة معكوسة أو متباعدة. Pillow مع raqm (HarfBuzz + FriBidi) يشكّل
+الحروف ويرتّبها كما يفعل المتصفح.
 
-التشغيل (من مجلد frontend، ببيئة الباكند التي تحوي Pillow):
-    ../backend/.venv/bin/python scripts/generate-og.py
+يتطلب raqm: عجلات Pillow تحمل HarfBuzz لكنها تحتاج FriBidi من النظام —
+على macOS: `brew install fribidi` ثم التشغيل من مجلد frontend:
 
-يُعاد التشغيل فقط عند تغيير الاسم أو الشعار النصي أو الخط.
+    DYLD_LIBRARY_PATH=/opt/homebrew/lib ../backend/.venv/bin/python scripts/generate-og.py
+
+يُعاد التشغيل فقط عند تغيير الاسم أو الشعار النصي أو الخط (Readex Pro).
 """
 
 from __future__ import annotations
 
 from pathlib import Path
 
-import arabic_reshaper
-from bidi.algorithm import get_display
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, features
+
+if not features.check_feature("raqm"):
+    raise SystemExit(
+        "Pillow بلا raqm: ثبّت fribidi (brew install fribidi) وشغّل مع "
+        "DYLD_LIBRARY_PATH=/opt/homebrew/lib — وإلا خرجت الحروف العربية منفصلة."
+    )
 
 ROOT = Path(__file__).resolve().parents[1]
 FONT_DIR = ROOT / "scripts" / "fonts"
@@ -54,12 +60,15 @@ CARDS = {
 
 
 def font(weight: str, size: int) -> ImageFont.FreeTypeFont:
-    return ImageFont.truetype(str(FONT_DIR / f"IBMPlexSansArabic-{weight}.ttf"), size)
+    """Readex Pro متغيّر الوزن: الملف واحد والوزن يُضبط بالاسم (Regular/Bold…)."""
+    fnt = ImageFont.truetype(str(FONT_DIR / "ReadexPro-Variable.ttf"), size)
+    fnt.set_variation_by_name(weight)
+    return fnt
 
 
-def shape(text: str, rtl: bool) -> str:
-    """يشكّل الحروف ويرتّبها بصريًا — Pillow بلا raqm يرسم الحروف كما تُعطى."""
-    return get_display(arabic_reshaper.reshape(text)) if rtl else text
+def text_kwargs(rtl: bool) -> dict:
+    """raqm يتولى التشكيل والاتجاه؛ نمرّر له اللغة والاتجاه فقط."""
+    return {"direction": "rtl", "language": "ar"} if rtl else {"direction": "ltr", "language": "en"}
 
 
 def gradient() -> Image.Image:
@@ -78,7 +87,7 @@ def wrap(words: list[str], fnt: ImageFont.FreeTypeFont, max_width: int, rtl: boo
     current: list[str] = []
     for word in words:
         candidate = " ".join(current + [word])
-        if current and fnt.getlength(shape(candidate, rtl)) > max_width:
+        if current and fnt.getlength(candidate, **text_kwargs(rtl)) > max_width:
             lines.append(" ".join(current))
             current = [word]
         else:
@@ -104,19 +113,21 @@ def draw_card(locale: str, spec: dict) -> None:
     mark_font = font("Bold", 36)
     draw.text(
         (mark_x + mark_size / 2, PAD_Y + mark_size / 2),
-        shape(spec["mark"], rtl),
+        spec["mark"],
         font=mark_font,
         fill=PRIMARY_FG,
         anchor="mm",
+        **text_kwargs(rtl),
     )
     name_font = font("Bold", 40)
     name_x = mark_x - 20 if rtl else mark_x + mark_size + 20
     draw.text(
         (name_x, PAD_Y + mark_size / 2),
-        shape(spec["name"], rtl),
+        spec["name"],
         font=name_font,
         fill=INK,
         anchor="rm" if rtl else "lm",
+        **text_kwargs(rtl),
     )
 
     # الشعار النصي على سطرين كحد أقصى
@@ -126,7 +137,7 @@ def draw_card(locale: str, spec: dict) -> None:
     block_height = line_height * len(lines)
     y = (HEIGHT - block_height) / 2 + 10
     for line in lines:
-        draw.text((anchor_x, y), shape(line, rtl), font=title_font, fill=INK, anchor=align)
+        draw.text((anchor_x, y), line, font=title_font, fill=INK, anchor=align, **text_kwargs(rtl))
         y += line_height
 
     # النطاق وخط أخضر قصير في الطرف المقابل

@@ -161,7 +161,22 @@
     "education": "Education",
     "certifications": "Certifications",
     "current": "Present",
-    "credential": "Verify credential"
+    "credential": "Verify credential",
+    "intro": "StingSystems is a developer-led software studio: the person who analyses your requirements is the same one who designs, builds, deploys and supports the system after handover — no layers between you and whoever writes the code.",
+    "whatWeBuild": "What we build",
+    "whatWeBuildBody": "Systems, websites and applications built from analysis through deployment, in Arabic and English.",
+    "howWeWork": "How we work",
+    "howWeWorkBody": "Written phases with defined deliverables for each, and a review with you on a staging environment before launch.",
+    "allServices": "All services",
+    "fullProcess": "Full process",
+    "stack": "What we work with",
+    "allTechnologies": "All technologies"
+  },
+  "pageCta": {
+    "title": "Have a project in mind?",
+    "body": "Send the details in four short steps and we will come back with an initial outline within one working day.",
+    "primary": "Start a project",
+    "secondary": "Contact us"
   },
   "contact": {
     "title": "Contact",

@@ -8,6 +8,7 @@ import type {
 } from '@/lib/api/types';
 import type { Locale } from '@/lib/i18n/routing';
 import { absoluteUrl } from '@/lib/seo/metadata';
+import { toE164 } from '@/lib/utils/format';
 
 type Json = Record<string, unknown>;
 
@@ -30,7 +31,7 @@ export function organizationJsonLd(settings: SiteSettings | null, locale: Locale
     url: absoluteUrl(`/${locale}`),
     logo: settings?.logo_light?.url ? absoluteUrl(settings.logo_light.url) : undefined,
     email: settings?.email || undefined,
-    telephone: settings?.phone || undefined,
+    telephone: toE164(settings?.phone) || undefined,
     sameAs: settings?.social_links?.map((link) => link.url) ?? undefined,
     address: settings?.city
       ? {
@@ -72,7 +73,7 @@ export function professionalServiceJsonLd(
     description: settings?.tagline || undefined,
     url: absoluteUrl(`/${locale}`),
     email: settings?.email || undefined,
-    telephone: settings?.phone || undefined,
+    telephone: toE164(settings?.phone) || undefined,
     areaServed: 'Worldwide',
     availableLanguage: ['ar', 'en'],
   };

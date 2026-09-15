@@ -72,3 +72,29 @@ export function whatsappLink(number: string, message: string): string {
   const text = message ? `?text=${encodeURIComponent(message)}` : '';
   return `https://wa.me/${digits}${text}`;
 }
+
+/**
+ * يحوّل رقم الهاتف المخزّن إلى صيغة دولية قابلة للاتصال (`+249902929451`).
+ * الأرقام المحلية السودانية (09xxxxxxxx) تُقرأ كثيرًا في الإعدادات بلا مفتاح
+ * الدولة، فيُضاف لها؛ وأي رقم يبدأ بـ00 يُحوَّل إلى +.
+ */
+export function toE164(number: string | null | undefined, defaultCountryCode = '249'): string {
+  const raw = (number || '').trim();
+  if (!raw) return '';
+  if (raw.startsWith('+')) return `+${raw.slice(1).replace(/\D/g, '')}`;
+  const digits = raw.replace(/\D/g, '');
+  if (!digits) return '';
+  if (digits.startsWith('00')) return `+${digits.slice(2)}`;
+  if (digits.startsWith('0')) return `+${defaultCountryCode}${digits.slice(1)}`;
+  return `+${digits}`;
+}
+
+/** صيغة عرض مجمّعة: `+249902929451` → `+249 90 292 9451`. */
+export function formatPhone(number: string | null | undefined): string {
+  const e164 = toE164(number);
+  if (!e164) return '';
+  const match = e164.match(/^\+(\d{1,3})(\d{2})(\d{3})(\d+)$/);
+  if (!match) return e164;
+  const [, country, a, b, rest] = match;
+  return `+${country} ${a} ${b} ${rest}`;
+}

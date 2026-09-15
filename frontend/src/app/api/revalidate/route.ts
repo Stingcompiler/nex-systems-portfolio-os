@@ -1,4 +1,4 @@
-import { revalidateTag } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextResponse, type NextRequest } from 'next/server';
 
 /**
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let body: { tags?: string[]; paths?: string[] };
+  let body: { tags?: string[]; paths?: string[]; all?: boolean };
   try {
     body = await request.json();
   } catch {
@@ -36,5 +36,18 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ revalidated: true, tags });
+  const paths = Array.isArray(body.paths) ? body.paths : [];
+  for (const path of paths) {
+    if (typeof path === 'string' && path.startsWith('/')) {
+      revalidatePath(path);
+    }
+  }
+
+  // عند الإقلاع: الصفحات المخبوزة وقت البناء كلها بلا محتوى، فتُبطَل الشجرة
+  // كاملة بدل الاعتماد على تطابق الوسوم
+  if (body.all === true) {
+    revalidatePath('/', 'layout');
+  }
+
+  return NextResponse.json({ revalidated: true, tags, paths, all: body.all === true });
 }

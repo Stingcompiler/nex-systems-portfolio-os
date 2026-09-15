@@ -35,7 +35,7 @@ ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL \
 RUN chmod +x build-frontend.sh && ./build-frontend.sh
 
 RUN cd backend && SECRET_KEY=build-only-key DJANGO_SETTINGS_MODULE=config.settings.prod \
-    ALLOWED_HOSTS=localhost SECURE_SSL_REDIRECT=False \
+    ALLOWED_HOSTS=localhost SECURE_SSL_REDIRECT=False DB_ENGINE=sqlite \
     python manage.py collectstatic --noinput
 
 RUN chmod +x start.sh

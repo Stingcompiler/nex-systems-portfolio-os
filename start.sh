@@ -4,6 +4,9 @@ set -e
 cd /app/backend
 python manage.py migrate --noinput
 python manage.py seed_content --only-if-empty
+# صور رُفعت بلا عامل خلفي تبقى بلا نسخة WebP فتُخدم خامًا (1MB للصورة).
+# المعالجة هنا — قبل إقلاع Node — حيث الذاكرة كلها متاحة، ولا تمس إلا الناقص.
+python manage.py process_media || true
 
 # الحاوية بحدّ 512MB يتقاسمها Django وNode.
 # --max-requests يعيد تدوير العامل دوريًا فلا يتراكم تسرّب بطيء.
@@ -28,13 +31,14 @@ done
 
 PORT="${PORT:-3000}"
 
-# الصفحات مخزَّنة، وصورة Docker تحمل نسخًا وُلّدت وقت البناء على قاعدة
-# فارغة. إبطالها فور الإقلاع يمنع تقديم صفحة مخبوزة فارغة، ويغني عن
-# البناء عند كل طلب الذي كان يستنزف ذاكرة الحاوية.
+# الصفحات مخزَّنة، وصورة Docker تحمل نسخًا وُلّدت وقت البناء بلا محتوى.
+# إبطالها فور الإقلاع يمنع تقديم صفحة مخبوزة فارغة. `all` يُبطل شجرة
+# الصفحات كلها لا الوسوم فقط، والفشل يُسجَّل برمزه لا بصمت — 401 يعني أن
+# REVALIDATE_SECRET غير مطابق بين البيئة والخدمة.
 (
-  for i in $(seq 1 60); do
-    if python - "$PORT" <<'PY' 2>/dev/null
-import json, os, sys, urllib.request
+  for i in $(seq 1 90); do
+    result=$(python - "$PORT" <<'PY' 2>&1
+import json, os, sys, urllib.error, urllib.request
 
 port = sys.argv[1]
 secret = os.environ.get("REVALIDATE_SECRET", "")
@@ -42,19 +46,29 @@ tags = ["settings", "sections", "services", "projects", "case-studies",
         "technologies", "testimonials", "resume", "posts"]
 request = urllib.request.Request(
     f"http://127.0.0.1:{port}/api/revalidate",
-    data=json.dumps({"tags": tags}).encode(),
+    data=json.dumps({"tags": tags, "all": True}).encode(),
     headers={"Content-Type": "application/json", "X-Revalidate-Secret": secret},
     method="POST",
 )
-with urllib.request.urlopen(request, timeout=5) as response:
-    sys.exit(0 if 200 <= response.status < 300 else 1)
+try:
+    with urllib.request.urlopen(request, timeout=5) as response:
+        print("ok" if 200 <= response.status < 300 else f"http {response.status}")
+except urllib.error.HTTPError as error:
+    print(f"http {error.code}")
+except Exception as error:  # noqa: BLE001
+    print(f"unreachable ({error.__class__.__name__})")
 PY
-    then
+    )
+    if [ "$result" = "ok" ]; then
       echo "Build-time page cache purged."
       break
     fi
+    case "$result" in
+      http\ 401) echo "Cache purge rejected (401): REVALIDATE_SECRET mismatch — pages stay stale until their window expires."; break ;;
+    esac
     sleep 2
   done
+  [ "$result" = "ok" ] || echo "Cache purge did not succeed (last: $result)."
 ) &
 
 cd /app/frontend

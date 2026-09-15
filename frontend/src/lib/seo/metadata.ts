@@ -45,7 +45,9 @@ export function buildMetadata({
   const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
   const resolvedDescription =
     description?.trim() || seoSettings?.default_seo_description || settings?.tagline || '';
-  const resolvedImage = image || seoSettings?.default_og_image?.url || null;
+  // صورة الصفحة إن وُجدت، وإلا بطاقة اللغة المولّدة (scripts/generate-og.py).
+  // صورة اللوحة الافتراضية لم تعد في السلسلة: كانت الشعار الخام بحجم 1MB.
+  const resolvedImage = image || `/og/${locale}.png`;
 
   const cleanPath = path === '/' ? '' : path.replace(/\/$/, '');
   const canonical = absoluteUrl(`/${locale}${cleanPath}`);
@@ -70,15 +72,15 @@ export function buildMetadata({
       description: resolvedDescription,
       siteName,
       locale: locale === 'ar' ? 'ar_AR' : 'en_US',
-      images: resolvedImage ? [{ url: absoluteUrl(resolvedImage) }] : undefined,
+      images: [{ url: absoluteUrl(resolvedImage), width: 1200, height: 630 }],
       ...(publishedTime ? { publishedTime } : {}),
     },
     twitter: {
-      card: resolvedImage ? 'summary_large_image' : 'summary',
+      card: 'summary_large_image',
       title: fullTitle,
       description: resolvedDescription,
       site: seoSettings?.twitter_handle || undefined,
-      images: resolvedImage ? [absoluteUrl(resolvedImage)] : undefined,
+      images: [absoluteUrl(resolvedImage)],
     },
     verification: {
       google: seoSettings?.google_verification || undefined,

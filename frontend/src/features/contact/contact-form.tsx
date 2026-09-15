@@ -2,7 +2,7 @@
 
 import { Check, LoaderCircle, Send } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useState, type FormEvent } from 'react';
+import { useId, useState, type FormEvent, type ReactNode } from 'react';
 
 import { api, fieldError, toApiError, type ApiErrorPayload } from '@/lib/api/client';
 import type { Locale } from '@/lib/i18n/routing';
@@ -71,50 +71,77 @@ export function ContactForm() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label={t('nameField')} error={error ? fieldError(error, 'name') : undefined}>
-          <input
-            type="text"
-            value={form.name}
-            onChange={(event) => set('name', event.target.value)}
-            className="min-h-11 w-full rounded border border-border bg-background px-3 text-sm"
-          />
+        <Field
+          required
+          label={t('nameField')}
+          error={error ? fieldError(error, 'name') : undefined}
+        >
+          {(control) => (
+            <input
+              {...control}
+              type="text"
+              value={form.name}
+              onChange={(event) => set('name', event.target.value)}
+              className="min-h-11 w-full rounded border border-border bg-background px-3 text-sm"
+            />
+          )}
         </Field>
-        <Field label={t('emailField')} error={error ? fieldError(error, 'email') : undefined}>
-          <input
-            type="email"
-            dir="ltr"
-            value={form.email}
-            onChange={(event) => set('email', event.target.value)}
-            className="min-h-11 w-full rounded border border-border bg-background px-3 text-start text-sm"
-          />
+        <Field
+          required
+          label={t('emailField')}
+          error={error ? fieldError(error, 'email') : undefined}
+        >
+          {(control) => (
+            <input
+              {...control}
+              type="email"
+              dir="ltr"
+              value={form.email}
+              onChange={(event) => set('email', event.target.value)}
+              className="min-h-11 w-full rounded border border-border bg-background px-3 text-start text-sm"
+            />
+          )}
         </Field>
         <Field label={t('phoneField')}>
-          <input
-            type="tel"
-            dir="ltr"
-            value={form.phone}
-            onChange={(event) => set('phone', event.target.value)}
-            className="min-h-11 w-full rounded border border-border bg-background px-3 text-start text-sm"
-          />
+          {(control) => (
+            <input
+              {...control}
+              type="tel"
+              dir="ltr"
+              value={form.phone}
+              onChange={(event) => set('phone', event.target.value)}
+              className="min-h-11 w-full rounded border border-border bg-background px-3 text-start text-sm"
+            />
+          )}
         </Field>
         <Field label={t('subjectField')}>
-          <input
-            type="text"
-            value={form.subject}
-            onChange={(event) => set('subject', event.target.value)}
-            className="min-h-11 w-full rounded border border-border bg-background px-3 text-sm"
-          />
+          {(control) => (
+            <input
+              {...control}
+              type="text"
+              value={form.subject}
+              onChange={(event) => set('subject', event.target.value)}
+              className="min-h-11 w-full rounded border border-border bg-background px-3 text-sm"
+            />
+          )}
         </Field>
       </div>
 
       <div className="mt-4">
-        <Field label={t('messageField')} error={error ? fieldError(error, 'message') : undefined}>
-          <textarea
-            rows={5}
-            value={form.message}
-            onChange={(event) => set('message', event.target.value)}
-            className="min-h-28 w-full rounded border border-border bg-background px-3 py-2 text-sm"
-          />
+        <Field
+          required
+          label={t('messageField')}
+          error={error ? fieldError(error, 'message') : undefined}
+        >
+          {(control) => (
+            <textarea
+              {...control}
+              rows={5}
+              value={form.message}
+              onChange={(event) => set('message', event.target.value)}
+              className="min-h-28 w-full rounded border border-border bg-background px-3 py-2 text-sm"
+            />
+          )}
         </Field>
       </div>
 
@@ -143,18 +170,38 @@ function Field({
   label: string;
   required?: boolean;
   error?: string;
-  children: React.ReactNode;
+  /** يستلم id وسمات الوصف والخطأ ليضعها على الحقل نفسه */
+  children: (control: {
+    id: string;
+    required?: boolean;
+    'aria-required'?: boolean;
+    'aria-invalid'?: boolean;
+    'aria-describedby'?: string;
+  }) => ReactNode;
 }) {
+  const id = useId();
+  const errorId = `${id}-error`;
+
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium">
+      <label htmlFor={id} className="mb-1.5 block text-sm font-medium">
         {label}
         {required ? <span className="text-danger"> *</span> : null}
       </label>
       <div className={cn(error && '[&_input]:border-danger [&_textarea]:border-danger')}>
-        {children}
+        {children({
+          id,
+          required,
+          'aria-required': required || undefined,
+          'aria-invalid': error ? true : undefined,
+          'aria-describedby': error ? errorId : undefined,
+        })}
       </div>
-      {error ? <p className="mt-1 text-sm text-danger">{error}</p> : null}
+      {error ? (
+        <p id={errorId} className="mt-1 text-sm text-danger">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

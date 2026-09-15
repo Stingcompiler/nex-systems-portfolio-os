@@ -2,7 +2,7 @@
 
 import { ArrowLeft, ArrowRight, Check, LoaderCircle, MessageCircle } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 
 import { api, fieldError, toApiError, type ApiErrorPayload } from '@/lib/api/client';
 import type { Locale } from '@/lib/i18n/routing';
@@ -480,10 +480,15 @@ function SelectField({
   onChange: (value: string) => void;
   placeholder?: string;
 }) {
+  const id = useId();
+
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium">{label}</label>
+      <label htmlFor={id} className="mb-1.5 block text-sm font-medium">
+        {label}
+      </label>
       <select
+        id={id}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         className="min-h-11 w-full rounded border border-border bg-background px-3 text-sm focus-visible:ring-2 focus-visible:ring-ring"
@@ -516,25 +521,36 @@ function TextField({
   required?: boolean;
   error?: string;
 }) {
+  const id = useId();
+  const errorId = `${id}-error`;
+
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium">
+      <label htmlFor={id} className="mb-1.5 block text-sm font-medium">
         {label}
         {required ? <span className="text-danger"> *</span> : null}
       </label>
       <input
+        id={id}
         type={type}
         dir={dir}
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        required={required}
+        aria-required={required || undefined}
         aria-invalid={Boolean(error)}
+        aria-describedby={error ? errorId : undefined}
         className={cn(
           'min-h-11 w-full rounded border bg-background px-3 text-sm focus-visible:ring-2 focus-visible:ring-ring',
           error ? 'border-danger' : 'border-border',
           dir === 'ltr' && 'text-start',
         )}
       />
-      {error ? <p className="mt-1 text-sm text-danger">{error}</p> : null}
+      {error ? (
+        <p id={errorId} className="mt-1 text-sm text-danger">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -550,10 +566,15 @@ function TextArea({
   onChange: (value: string) => void;
   placeholder?: string;
 }) {
+  const id = useId();
+
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium">{label}</label>
+      <label htmlFor={id} className="mb-1.5 block text-sm font-medium">
+        {label}
+      </label>
       <textarea
+        id={id}
         rows={4}
         value={value}
         onChange={(event) => onChange(event.target.value)}

@@ -92,12 +92,11 @@ const nextConfig = {
     ];
   },
 
+  // لا تحسين صور في الخادم: Django يولّد WebP عند الرفع (webp_version)
+  // ويقدّمه عبر /media، فمعالجة sharp داخل عملية Node كانت تكرارًا يكلّف
+  // ذروات ذاكرة بمئة ميغابايت وأكثر في حاوية حدّها 512MB.
   images: {
-    formats: ['image/avif', 'image/webp'],
-    remotePatterns: [
-      { protocol: 'http', hostname: '127.0.0.1' },
-      { protocol: 'http', hostname: 'localhost' },
-    ],
+    unoptimized: true,
   },
 
   async headers() {

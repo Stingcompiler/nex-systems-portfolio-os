@@ -86,7 +86,10 @@ function isProductionBuild(): boolean {
  * التفاصيل تُولَّد عند الطلب. أثر ذلك مطابق للبناء السابق على قاعدة فارغة.
  */
 function isOfflineBuild(): boolean {
-  return isProductionBuild() && process.env.NEXT_BUILD_OFFLINE === 'true';
+  // لا يُربط بـ NEXT_PHASE: عمّال التصيير وقت البناء لا يحملونه، فالفحص كان
+  // يخفق بصمت ويعود البناء إلى جلب فعلي. المتغير يُمرَّر لأمر البناء وحده
+  // (build-frontend.sh) فلا يصل إلى وقت التشغيل.
+  return process.env.NEXT_BUILD_OFFLINE === 'true';
 }
 
 // أثناء البناء تنطلق عشرات الطلبات دفعة واحدة على خادم Django التطويري

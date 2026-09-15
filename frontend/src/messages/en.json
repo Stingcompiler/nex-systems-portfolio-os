@@ -109,7 +109,8 @@
   },
   "projects": {
     "title": "Work",
-    "description": "Systems, websites, and applications built and delivered.",
+    "description": "A selection of what we have built and delivered — systems, websites, and applications, not everything we have worked on.",
+    "hasCaseStudy": "Case study",
     "viewCaseStudy": "Read the case study",
     "gallery": "System screenshots",
     "links": "Links",

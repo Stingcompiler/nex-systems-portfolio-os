@@ -42,24 +42,21 @@ export async function ServiceCard({
 
   return (
     <Card interactive className="relative flex h-full flex-col">
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <h3 className="text-h3 font-semibold">
-          <Link
-            href={`${basePath}/${service.slug}`}
-            className="after:absolute after:inset-0 focus-visible:outline-none"
-          >
-            {service.title}
-          </Link>
-        </h3>
-        {service.is_featured ? (
-          <Badge tone="primary">{tServices('featured')}</Badge>
-        ) : null}
-      </div>
+      {/* «مميّزة» تحكم الترتيب فقط: أغلب الخدمات تحملها فلا تميّز شيئًا كشارة */}
+      <h3 className="mb-3 text-h3 font-semibold">
+        <Link
+          href={`${basePath}/${service.slug}`}
+          className="after:absolute after:inset-0 focus-visible:outline-none"
+        >
+          {service.title}
+        </Link>
+      </h3>
 
       <p className="mb-4 flex-1 text-sm text-muted">{service.short_description}</p>
 
       <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
-        <Badge>{service.sector_display}</Badge>
+        {/* «عام» هو القطاع الافتراضي في الباكند — شارة بلا معلومة */}
+        {service.sector !== 'general' ? <Badge>{service.sector_display}</Badge> : null}
         {price ? (
           <span>
             {tServices('priceFrom')} <span className="code-inline inline">{price}</span>
@@ -98,9 +95,10 @@ export async function ProjectCard({
 
       <div className="flex flex-1 flex-col p-6">
         <div className="mb-2 flex flex-wrap items-center gap-2">
-          <Badge>{project.sector_display}</Badge>
+          {project.sector !== 'general' ? <Badge>{project.sector_display}</Badge> : null}
           <Badge>{project.project_type_display}</Badge>
-          {project.is_featured ? <Badge tone="accent">{t('featured')}</Badge> : null}
+          {/* بديل قسم «دراسات الحالة» على الرئيسية الذي كان يكرّر المشروع نفسه */}
+          {project.has_case_study ? <Badge tone="primary">{t('hasCaseStudy')}</Badge> : null}
         </div>
 
         <h3 className="mb-2 text-h3 font-semibold">

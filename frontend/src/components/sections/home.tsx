@@ -126,27 +126,35 @@ export async function HeroSection({
         </div>
 
         <div className="relative mt-10 lg:mt-0">
+          {/* هالة خفيفة تفصل اللوحة عن الأرضية — 0.2 كانت آخر أثر «قالب» في الصفحة */}
           <div
             aria-hidden="true"
-            className="absolute -inset-6 -z-10 rounded-[2.5rem] bg-brand opacity-20 blur-3xl"
+            className="absolute -inset-4 -z-10 rounded-[2rem] bg-brand opacity-[0.08] blur-3xl"
           />
 
-          <div className="overflow-hidden rounded-2xl border border-border/50 bg-surface/80 shadow-elevated backdrop-blur-xl">
+          {/* واجهة إنجليزية بطبيعتها — تُرسم LTR داخل الصفحة العربية وإلا انقلبت
+              الإشارات السالبة والمسارات */}
+          <div
+            dir="ltr"
+            className="overflow-hidden rounded-2xl border border-border/50 bg-surface/80 shadow-elevated backdrop-blur-xl"
+          >
             <div className="flex items-center gap-1.5 border-b border-border/40 px-3 py-2 sm:px-4 sm:py-2.5">
               <span className="size-2 rounded-full bg-danger/50 sm:size-2.5" />
               <span className="size-2 rounded-full bg-warning/50 sm:size-2.5" />
               <span className="size-2 rounded-full bg-success/50 sm:size-2.5" />
               <span className="ms-2 flex-1 rounded-md bg-surface-hover px-2 py-0.5 text-[9px] text-muted sm:ms-3 sm:text-[10px]">
-                app.stingsystem.com
+                stingdev.pro/dashboard
               </span>
             </div>
 
             <div className="p-3 sm:p-4">
               <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+                {/* لوحة توضيحية لا تقرير: مقاييس تشغيل عامة، لا أرقام أعمال
+                    تنافس الإحصائيات الحقيقية المعروضة بجوارها في البطل */}
                 {[
-                  { label: 'Projects', value: '24', trend: '+3' },
-                  { label: 'Deploys', value: '148', trend: '+12' },
                   { label: 'Uptime', value: '99.9%', trend: 'stable' },
+                  { label: 'API p95', value: '120ms', trend: '−18ms' },
+                  { label: 'Tests', value: '100%', trend: 'passing' },
                 ].map((m) => (
                   <div
                     key={m.label}
@@ -164,7 +172,10 @@ export async function HeroSection({
               </div>
 
               <div className="mt-2 rounded-lg border border-border/30 bg-background/60 p-2 sm:mt-3 sm:p-3">
-                <div className="mb-1.5 text-[8px] text-muted sm:text-[10px]">Performance</div>
+                <div className="mb-1.5 flex items-baseline justify-between text-[8px] text-muted sm:text-[10px]">
+                  <span>Performance</span>
+                  <span className="font-bold text-foreground">98</span>
+                </div>
                 <svg
                   viewBox="0 0 200 50"
                   className="h-8 w-full sm:h-12"

@@ -32,6 +32,8 @@ import type { Locale } from '@/lib/i18n/routing';
 interface SectionProps {
   section: PageSection;
   locale: Locale;
+  /** رقم القسم في ترتيب الصفحة — يُعرض في سطر الجذب. تحسبه الصفحة من الأقسام المعروضة فعلًا. */
+  index?: number;
 }
 
 /** عنوان القسم من قاعدة البيانات مع ارتداد إلى ملف الترجمة. */
@@ -110,16 +112,17 @@ export async function HeroSection({
             </ButtonLink>
           </div>
 
-          {/* شريط أرقام موجز — من البيانات الحقيقية إن وُجدت */}
+          {/* شريط أرقام موجز — من البيانات الحقيقية إن وُجدت.
+              الأرقام بخط المونو وبلون صلب: تُقرأ كقياسات لا كزخرفة */}
           {heroStats.length ? (
-            <dl className="mt-10 flex flex-wrap gap-x-10 gap-y-4 border-t border-border pt-6">
+            <dl className="mt-12 flex flex-wrap gap-x-12 gap-y-5 border-t border-border pt-7">
               {heroStats.map((stat) => (
                 <div key={stat.id}>
-                  <dt className="text-h3 font-bold text-gradient">
+                  <dt className="font-mono text-h2 font-medium tabular-nums text-foreground">
                     <span className="code-inline inline">{stat.value}</span>
-                    {stat.suffix ? ` ${stat.suffix}` : ''}
+                    {stat.suffix ? <span className="text-h3 text-primary">{stat.suffix}</span> : ''}
                   </dt>
-                  <dd className="mt-0.5 text-xs text-muted">{stat.label}</dd>
+                  <dd className="mt-1 text-label text-muted">{stat.label}</dd>
                 </div>
               ))}
             </dl>
@@ -134,10 +137,12 @@ export async function HeroSection({
           />
 
           {/* واجهة إنجليزية بطبيعتها — تُرسم LTR داخل الصفحة العربية وإلا انقلبت
-              الإشارات السالبة والمسارات */}
+              الإشارات السالبة والمسارات.
+              خط المونو على الحاوية كلها: اللوحة «طرفية» مقصودة الأسلوب، لا
+              واجهة إنجليزية بخط الجسم ضلّت طريقها إلى صفحة عربية */}
           <div
             dir="ltr"
-            className="overflow-hidden rounded-2xl border border-border/50 bg-surface/80 shadow-elevated backdrop-blur-xl"
+            className="overflow-hidden rounded-2xl border border-border/50 bg-surface/80 font-mono shadow-elevated backdrop-blur-xl"
           >
             <div className="flex items-center gap-1.5 border-b border-border/40 px-3 py-2 sm:px-4 sm:py-2.5">
               <span className="size-2 rounded-full bg-danger/50 sm:size-2.5" />
@@ -210,7 +215,7 @@ export async function HeroSection({
             </div>
           </div>
 
-          <div className="absolute -bottom-3 -start-3 z-10 hidden animate-float rounded-xl border border-border/50 bg-surface/95 p-2 shadow-card backdrop-blur sm:block sm:p-2.5">
+          <div className="absolute -bottom-3 -start-3 z-10 hidden animate-float rounded-xl border border-border/50 bg-surface/95 p-2 font-mono shadow-card backdrop-blur sm:block sm:p-2.5">
             <div className="flex items-center gap-1.5">
               <span className="size-1.5 animate-pulse rounded-full bg-success" />
               <span className="text-[9px] text-muted">terminal</span>
@@ -221,7 +226,7 @@ export async function HeroSection({
           </div>
 
           <div className="absolute -end-2 -top-2 z-10 hidden animate-float-reverse rounded-full border border-border/50 bg-surface/95 px-2.5 py-1 shadow-card backdrop-blur sm:block">
-            <span className="text-[10px] font-medium text-primary">v2.4.0</span>
+            <span className="font-mono text-[10px] font-medium text-primary">v2.4.0</span>
           </div>
         </div>
       </Container>
@@ -254,12 +259,20 @@ export async function IntroSection({
   );
 }
 
-export async function StatsSection({ section, stats }: SectionProps & { stats: Stat[] }) {
+export async function StatsSection({
+  section,
+  stats,
+  index,
+}: SectionProps & { stats: Stat[] }) {
   if (!stats.length) return null;
 
   return (
     <Section>
-      <SectionHeader title={await resolveTitle(section)} subtitle={section.subtitle} />
+      <SectionHeader
+        title={await resolveTitle(section)}
+        subtitle={section.subtitle}
+        index={index}
+      />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
           <StatCard key={stat.id} stat={stat} />
@@ -274,6 +287,7 @@ export async function ServicesSection({
   services,
   basePath,
   tone,
+  index,
 }: SectionProps & {
   services: ServiceListItem[];
   basePath: '/services' | '/solutions';
@@ -289,6 +303,7 @@ export async function ServicesSection({
       <SectionHeader
         title={await resolveTitle(section)}
         subtitle={section.subtitle}
+        index={index}
         action={
           <ButtonLink href={basePath} variant="secondary" size="sm">
             {t('viewAll')}
@@ -307,6 +322,7 @@ export async function ServicesSection({
 export async function ProjectsSection({
   section,
   projects,
+  index,
 }: SectionProps & { projects: ProjectListItem[] }) {
   if (!projects.length) return null;
 
@@ -318,6 +334,7 @@ export async function ProjectsSection({
       <SectionHeader
         title={await resolveTitle(section)}
         subtitle={section.subtitle}
+        index={index}
         action={
           <ButtonLink href="/projects" variant="secondary" size="sm">
             {t('viewAll')}
@@ -336,6 +353,7 @@ export async function ProjectsSection({
 export async function CaseStudiesSection({
   section,
   caseStudies,
+  index,
 }: SectionProps & { caseStudies: CaseStudyListItem[] }) {
   if (!caseStudies.length) return null;
 
@@ -347,6 +365,7 @@ export async function CaseStudiesSection({
       <SectionHeader
         title={await resolveTitle(section)}
         subtitle={section.subtitle}
+        index={index}
         action={
           <ButtonLink href="/case-studies" variant="secondary" size="sm">
             {t('viewAll')}
@@ -365,12 +384,17 @@ export async function CaseStudiesSection({
 export async function ProcessSection({
   section,
   steps,
+  index,
 }: SectionProps & { steps: ProcessStep[] }) {
   if (!steps.length) return null;
 
   return (
     <Section tone="muted">
-      <SectionHeader title={await resolveTitle(section)} subtitle={section.subtitle} />
+      <SectionHeader
+        title={await resolveTitle(section)}
+        subtitle={section.subtitle}
+        index={index}
+      />
       <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((step, index) => (
           <li key={step.id} className="relative">
@@ -385,11 +409,12 @@ export async function ProcessSection({
               />
             ) : null}
             <div className="relative">
-              <span className="mb-4 grid size-12 place-items-center rounded-2xl bg-brand text-lg font-bold text-white shadow-brand-lg">
-                <span className="code-inline inline">{index + 1}</span>
+              {/* رقم الخطوة بخط المونو ومرقّم بصفر بادئ — يطابق سطر الجذب */}
+              <span className="mb-5 block font-mono text-h2 font-medium text-primary">
+                <span className="code-inline inline">{String(index + 1).padStart(2, '0')}</span>
               </span>
-              <h3 className="mb-2 text-h3 font-semibold">{step.title}</h3>
-              <p className="text-sm leading-relaxed text-muted">{step.description}</p>
+              <h3 className="mb-3 text-h3 font-semibold">{step.title}</h3>
+              <p className="text-base leading-relaxed text-muted">{step.description}</p>
             </div>
           </li>
         ))}
@@ -401,6 +426,7 @@ export async function ProcessSection({
 export async function TechnologiesSection({
   section,
   technologies,
+  index,
 }: SectionProps & { technologies: Technology[] }) {
   if (!technologies.length) return null;
 
@@ -411,6 +437,7 @@ export async function TechnologiesSection({
       <SectionHeader
         title={await resolveTitle(section)}
         subtitle={section.subtitle}
+        index={index}
         action={
           <ButtonLink href="/technologies" variant="secondary" size="sm">
             {t('viewAll')}
@@ -420,9 +447,11 @@ export async function TechnologiesSection({
       <ul className="flex flex-wrap gap-2">
         {technologies.map((technology) => (
           <li key={technology.id}>
+            {/* أسماء التقنيات لاتينية ومعرّفات بطبيعتها: بخط المونو ومعزولة
+                اتجاهيًا — «C#» كان يُرسم «#C» داخل السياق العربي */}
             <Link
               href="/technologies"
-              className="inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-4 text-sm font-medium hover:bg-surface-hover"
+              className="code-inline inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-4 font-mono text-sm font-medium hover:bg-surface-hover"
             >
               {technology.name}
             </Link>
@@ -436,12 +465,17 @@ export async function TechnologiesSection({
 export async function TestimonialsSection({
   section,
   testimonials,
+  index,
 }: SectionProps & { testimonials: Testimonial[] }) {
   if (!testimonials.length) return null;
 
   return (
     <Section>
-      <SectionHeader title={await resolveTitle(section)} subtitle={section.subtitle} />
+      <SectionHeader
+        title={await resolveTitle(section)}
+        subtitle={section.subtitle}
+        index={index}
+      />
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {testimonials.map((testimonial) => (
           <TestimonialCard key={testimonial.id} testimonial={testimonial} />
@@ -454,6 +488,7 @@ export async function TestimonialsSection({
 export async function PostsSection({
   section,
   posts,
+  index,
 }: SectionProps & { posts: PostListItem[] }) {
   if (!posts.length) return null;
 
@@ -465,6 +500,7 @@ export async function PostsSection({
       <SectionHeader
         title={await resolveTitle(section)}
         subtitle={section.subtitle}
+        index={index}
         action={
           <ButtonLink href="/blog" variant="secondary" size="sm">
             {t('viewAll')}

@@ -75,7 +75,45 @@ export default async function HomePage({
    * - case_studies: تكرّر مشروعًا معروضًا في القسم السابق مباشرة؛
    *   بطاقة المشروع تحمل شارة «دراسة حالة» بدلًا من ذلك.
    */
-  function renderSection(section: PageSection) {
+  /**
+   * أقسام المحتوى المرقّمة في سطر الجذب (01 · 02 · …). البطل والدعوة
+   * والنشرة إطار للصفحة لا فصول فيها، فلا تحمل رقمًا.
+   * الترقيم يُحسب من الأقسام التي ستُعرض فعلًا، فلا تظهر فجوة
+   * (01، 02، 04) حين يُخفى قسم من اللوحة أو يُحجب لقلّة محتواه.
+   */
+  const NUMBERED_KEYS = new Set([
+    'services',
+    'solutions',
+    'projects',
+    'process',
+    'technologies',
+    'testimonials',
+    'posts',
+  ]);
+
+  function willRender(section: PageSection) {
+    if (!section.is_visible) return false;
+    switch (section.key) {
+      case 'services':
+        return services.results.length > 0;
+      case 'solutions':
+        return solutions.results.length > 0;
+      case 'projects':
+        return projects.length > 0;
+      case 'process':
+        return processSteps.length > 0;
+      case 'technologies':
+        return featuredTechnologies.length > 0;
+      case 'testimonials':
+        return testimonials.results.length > 0;
+      case 'posts':
+        return posts.length >= MIN_POSTS_ON_HOME;
+      default:
+        return false;
+    }
+  }
+
+  function renderSection(section: PageSection, index?: number) {
     if (!section.is_visible) return null;
 
     switch (section.key) {
@@ -88,6 +126,7 @@ export default async function HomePage({
             services={services.results}
             basePath="/services"
             locale={locale}
+            index={index}
           />
         );
       case 'solutions':
@@ -98,18 +137,24 @@ export default async function HomePage({
             basePath="/solutions"
             tone="muted"
             locale={locale}
+            index={index}
           />
         );
       case 'projects':
-        return <ProjectsSection section={section} projects={projects} locale={locale} />;
+        return (
+          <ProjectsSection section={section} projects={projects} locale={locale} index={index} />
+        );
       case 'process':
-        return <ProcessSection section={section} steps={processSteps} locale={locale} />;
+        return (
+          <ProcessSection section={section} steps={processSteps} locale={locale} index={index} />
+        );
       case 'technologies':
         return (
           <TechnologiesSection
             section={section}
             technologies={featuredTechnologies}
             locale={locale}
+            index={index}
           />
         );
       case 'testimonials':
@@ -118,6 +163,7 @@ export default async function HomePage({
             section={section}
             testimonials={testimonials.results}
             locale={locale}
+            index={index}
           />
         );
       case 'cta':
@@ -126,7 +172,7 @@ export default async function HomePage({
         // مقال واحد أو اثنان تحت عنوان «أحدث المقالات» يعلنان أن المدونة مهجورة —
         // القسم يظهر حين يوجد ما يكفي ليبدو مدونةً فعلًا
         return posts.length >= MIN_POSTS_ON_HOME ? (
-          <PostsSection section={section} posts={posts} locale={locale} />
+          <PostsSection section={section} posts={posts} locale={locale} index={index} />
         ) : null;
       case 'newsletter':
         return <NewsletterSection section={section} locale={locale} />;
@@ -138,15 +184,19 @@ export default async function HomePage({
     }
   }
 
+  let chapter = 0;
+
   return (
     <>
       <JsonLd data={websiteJsonLd(settings, locale)} />
       <JsonLd data={organizationJsonLd(settings, locale)} />
       <JsonLd data={professionalServiceJsonLd(settings, locale)} />
 
-      {sections.map((section) => (
-        <div key={section.id}>{renderSection(section)}</div>
-      ))}
+      {sections.map((section) => {
+        const numbered = NUMBERED_KEYS.has(section.key) && willRender(section);
+        const index = numbered ? ++chapter : undefined;
+        return <div key={section.id}>{renderSection(section, index)}</div>;
+      })}
     </>
   );
 }

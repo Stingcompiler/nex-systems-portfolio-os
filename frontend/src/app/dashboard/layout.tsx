@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
-import { Cairo, JetBrains_Mono } from 'next/font/google';
+import { Cairo, IBM_Plex_Mono, IBM_Plex_Sans_Arabic } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import '@/app/globals.css';
 
@@ -19,15 +19,25 @@ import dashboardMessages from '@/messages/ar.json';
  * فلكلٍّ عنصر <html> باتجاهه ولغته. لا يوجد `app/layout.tsx` مشترك،
  * فيصبح كل فرع جذرًا مستقلًا.
  */
-const arabic = Cairo({
-  subsets: ['arabic'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-arabic',
+// نفس عائلات الموقع العام: Cairo للعناوين، IBM Plex Sans Arabic للنصوص
+// والواجهة، IBM Plex Mono للأرقام والمعرّفات.
+const heading = Cairo({
+  subsets: ['arabic', 'latin'],
+  weight: ['600', '700'],
+  variable: '--font-heading',
   display: 'swap',
 });
 
-const mono = JetBrains_Mono({
+const sans = IBM_Plex_Sans_Arabic({
+  subsets: ['arabic', 'latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+const mono = IBM_Plex_Mono({
   subsets: ['latin'],
+  weight: ['400', '500'],
   variable: '--font-mono',
   display: 'swap',
 });
@@ -47,8 +57,7 @@ export default function DashboardRootLayout({ children }: { children: ReactNode 
       lang="ar"
       dir="rtl"
       suppressHydrationWarning
-      className={`${arabic.variable} ${mono.variable}`}
-      style={{ '--font-sans': 'var(--font-arabic)' } as CSSProperties}
+      className={`${heading.variable} ${sans.variable} ${mono.variable}`}
     >
       <head>
         <ThemeScript />

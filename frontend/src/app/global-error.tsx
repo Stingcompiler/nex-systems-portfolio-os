@@ -26,7 +26,7 @@ export default function GlobalError({
           padding: '24px',
           background: '#f8fafc',
           color: '#0f172a',
-          fontFamily: "'Readex Pro', 'IBM Plex Sans Arabic', Tahoma, Arial, sans-serif",
+          fontFamily: "'IBM Plex Sans Arabic', 'Cairo', Tahoma, Arial, sans-serif",
           textAlign: 'center',
         }}
       >

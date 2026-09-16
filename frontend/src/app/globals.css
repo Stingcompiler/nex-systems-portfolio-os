@@ -123,11 +123,13 @@
   }
 
   /* [بند 1] العناوين تقرأ المتغيّر اللغوي — ولهذا حُذف lineHeight
-     من مقاييس display/h1/h2/h3 في tailwind.config.ts */
+     من مقاييس display/h1/h2/h3 في tailwind.config.ts.
+     الخط: Cairo (عائلة العناوين) يعلو على IBM Plex Sans Arabic. */
   h1,
   h2,
   h3,
   h4 {
+    font-family: var(--font-heading), var(--font-sans), system-ui, sans-serif;
     line-height: var(--line-height-heading);
     text-wrap: balance;
   }

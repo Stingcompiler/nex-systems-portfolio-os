@@ -74,3 +74,45 @@ export function CoverImage({
     </div>
   );
 }
+
+/**
+ * شعار تقنية أحادي اللون.
+ *
+ * الشعار يُرسم قناعًا (`mask-image`) على خلفية بلون النص الحالي، لا صورةً:
+ * فيرث لون سياقه — خافت في الحالة العادية، لون العلامة عند التحويم،
+ * فاتح داخل القسم الداكن — بملف واحد للوضعين ودون نسختين. القناع يقبل
+ * SVG أو PNG شفافًا؛ ألوان الملف الأصلية تُهمل عمدًا (الهوية أحادية).
+ *
+ * الاسم يبقى في DOM للقارئ الشاشي والفهرسة؛ الشعار زخرفة بصرية فقط.
+ */
+export function TechLogo({
+  media,
+  name,
+  className,
+}: {
+  media: MediaRef | null;
+  name: string;
+  className?: string;
+}) {
+  if (!media) return null;
+
+  return (
+    <span
+      role="img"
+      aria-label={name}
+      className={cn('inline-block shrink-0 bg-current', className)}
+      style={
+        {
+          maskImage: `url("${media.url}")`,
+          WebkitMaskImage: `url("${media.url}")`,
+          maskRepeat: 'no-repeat',
+          WebkitMaskRepeat: 'no-repeat',
+          maskPosition: 'center',
+          WebkitMaskPosition: 'center',
+          maskSize: 'contain',
+          WebkitMaskSize: 'contain',
+        } as CSSProperties
+      }
+    />
+  );
+}

@@ -58,7 +58,8 @@ _LANGUAGE_PARAM = OpenApiParameter(
     retrieve=extend_schema(summary="تفاصيل تقنية"),
 )
 class TechnologyViewSet(PublicContentViewSet):
-    queryset = Technology.objects.all()
+    # الشعار يُضمَّن في كل عنصر — بلا select_related كان كل تقنية استعلامًا
+    queryset = Technology.objects.select_related("logo")
     public_serializer_class = TechnologySerializer
     admin_serializer_class = TechnologyAdminSerializer
     filterset_class = TechnologyFilter
@@ -75,7 +76,7 @@ class TechnologyViewSet(PublicContentViewSet):
 
 class BaseServiceViewSet(PublicContentViewSet):
     queryset = Service.objects.select_related("cover_image", "og_image").prefetch_related(
-        "technologies", "faqs"
+        Prefetch("technologies", queryset=Technology.objects.select_related("logo")), "faqs"
     )
     public_serializer_class = ServiceListSerializer
     detail_serializer_class = ServiceDetailSerializer
@@ -144,7 +145,10 @@ class SolutionViewSet(BaseServiceViewSet):
 class ProjectViewSet(PublicContentViewSet):
     queryset = (
         Project.objects.select_related("cover_image", "og_image", "case_study")
-        .prefetch_related("technologies", "images__image")
+        .prefetch_related(
+            Prefetch("technologies", queryset=Technology.objects.select_related("logo")),
+            "images__image",
+        )
     )
     public_serializer_class = ProjectListSerializer
     detail_serializer_class = ProjectDetailSerializer

@@ -46,21 +46,25 @@ const config: Config = {
         mono: ['var(--font-mono)', 'monospace'],
       },
       fontSize: {
+        // مقياس بنسبة ~1.4–1.5 بين المستويات لا ~1.2: القفزة الصغيرة كانت
+        // تُسطّح الصفحة بعد البطل، فيبدو عنوان القسم بحجم عنوان البطاقة.
         // عنوان البطل وحده يقرأ --line-height-display: العربية بأربعة أسطر
-        // عند 56px تحتاج سطرًا أضيق من باقي العناوين وإلا تفكّكت الكتلة.
-        // السقف 56px لا 60: فوقه تنكسر العناوين العربية إلى خمسة أسطر على 1280.
+        // تحتاج سطرًا أضيق من باقي العناوين وإلا تفكّكت الكتلة.
+        // الحدّ الأعلى 72px مع عمود بطل بعرض 1.1fr يحافظ على أربعة أسطر على 1280.
         display: [
-          'clamp(2.375rem, 3.5vw + 1rem, 3.5rem)',
+          'clamp(2.75rem, 4.5vw + 1rem, 4.5rem)',
           { lineHeight: 'var(--line-height-display)' },
         ],
         // بلا lineHeight — القاعدة في globals.css تقرأ var(--line-height-heading)
-        h1: 'clamp(2rem, 3vw + 1rem, 2.75rem)',
-        h2: 'clamp(1.625rem, 2vw + 0.75rem, 2rem)',
-        h3: 'clamp(1.25rem, 1vw + 0.75rem, 1.375rem)',
-        // مقدمات الأقسام — كانت تُكتب text-lg يدويًا
+        h1: 'clamp(2.25rem, 3.5vw + 1rem, 3.25rem)',
+        h2: 'clamp(1.875rem, 2.5vw + 0.875rem, 2.75rem)',
+        h3: 'clamp(1.25rem, 1vw + 0.75rem, 1.5rem)',
+        // مقدمات الأقسام ووصف البطاقات — 17px بدل 14px: نص المتصفّح لا حاشية
         'body-lg': ['1.125rem', { lineHeight: 'var(--line-height-body)' }],
         // التسميات الصغيرة (شارات، تواريخ، عناوين أعمدة) — بدل text-xs/text-sm العشوائي
         label: ['0.8125rem', { lineHeight: '1.5' }],
+        // سطر الجذب فوق عناوين الأقسام — مونو صغير متباعد الأحرف
+        eyebrow: ['0.75rem', { lineHeight: '1', letterSpacing: '0.12em' }],
       },
       maxWidth: {
         content: '80rem',

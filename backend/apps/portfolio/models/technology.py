@@ -21,6 +21,13 @@ class Technology(TranslatableMixin, OrderableModel, ActivatableModel, TimeStampe
     description_ar = models.TextField("الوصف (عربي)", blank=True)
     description_en = models.TextField("الوصف (إنجليزي)", blank=True)
     icon = models.CharField("الأيقونة", max_length=60, blank=True)
+    # شعار العلامة كملف (SVG أحادي اللون يُفضَّل) من مكتبة الوسائط.
+    # `icon` اسم أيقونة عامة من lucide ولا يصلح لشعارات العلامات (React، Django…).
+    # مكتبة الوسائط ترفض SVG يحوي سكربتًا أو معالجات أحداث بالفحص البايتي.
+    logo = models.ForeignKey(
+        "media_library.MediaFile", verbose_name="الشعار",
+        related_name="+", null=True, blank=True, on_delete=models.SET_NULL,
+    )
     color = models.CharField("اللون", max_length=9, blank=True)
     proficiency = models.PositiveSmallIntegerField(
         "مستوى الإتقان",

@@ -21,11 +21,15 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
       <Container className="flex h-16 items-center gap-6">
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-2.5 text-lg font-bold"
+          className="flex shrink-0 items-center gap-3"
           aria-label={settings?.site_name || 'StingSystems'}
         >
           <SiteMark settings={settings} />
-          <span>{settings?.site_name || 'StingSystems'}</span>
+          {/* اسم الموقع بخط العناوين وبحجم يليق بعلامة لا برابط:
+              كان بخط الجسم و18px فبدا بندًا في القائمة */}
+          <span className="font-heading text-xl font-bold tracking-tight sm:text-[1.375rem]">
+            {settings?.site_name || 'StingSystems'}
+          </span>
         </Link>
 
         {/* ثمانية روابط لا تتسع مع الشعار وزر الطلب قبل 1280px،
@@ -65,8 +69,8 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
  * التخطيط عنصر خادم فلا يعرف السمة وقت التوليد، والتبديل بالصنف
  * يتجنّب وميض الشعار الخاطئ عند التحميل.
  */
-/** ارتفاع العلامة المعروض — يقابل `h-8` في الأصناف. */
-const MARK_HEIGHT = 32;
+/** ارتفاع العلامة المعروض — يقابل `h-10` في الأصناف. 40px لا 32: حضور علامة. */
+const MARK_HEIGHT = 40;
 
 /**
  * أبعاد العرض لا أبعاد الملف.
@@ -88,7 +92,7 @@ function SiteMark({ settings }: { settings: SiteSettings | null }) {
 
   if (!light || !dark) {
     return (
-      <span className="grid size-8 place-items-center rounded-lg bg-brand text-sm text-white shadow-brand">
+      <span className="grid size-10 place-items-center rounded-xl bg-brand font-heading text-lg font-bold text-white shadow-brand">
         {name.charAt(0).toUpperCase()}
       </span>
     );
@@ -101,7 +105,7 @@ function SiteMark({ settings }: { settings: SiteSettings | null }) {
         src={light.url}
         alt={light.alt || name}
         {...markSize(light)}
-        className="h-8 w-auto object-contain"
+        className="h-10 w-auto object-contain"
       />
     );
   }
@@ -112,13 +116,13 @@ function SiteMark({ settings }: { settings: SiteSettings | null }) {
         src={light.url}
         alt={light.alt || name}
         {...markSize(light)}
-        className="h-8 w-auto object-contain dark:hidden"
+        className="h-10 w-auto object-contain dark:hidden"
       />
       <Image
         src={dark.url}
         alt={dark.alt || name}
         {...markSize(dark)}
-        className="hidden h-8 w-auto object-contain dark:block"
+        className="hidden h-10 w-auto object-contain dark:block"
       />
     </>
   );

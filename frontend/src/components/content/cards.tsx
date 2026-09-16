@@ -52,14 +52,16 @@ export async function ServiceCard({
         </Link>
       </h3>
 
-      <p className="mb-4 flex-1 text-sm text-muted">{service.short_description}</p>
+      {/* 16px لا 14: وصف يُقرأ، لا حاشية — كانت ستّ بطاقات نص متكاثف */}
+      <p className="mb-5 flex-1 text-base text-muted">{service.short_description}</p>
 
-      <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
+      <div className="flex flex-wrap items-center gap-2 text-label text-muted">
         {/* «عام» هو القطاع الافتراضي في الباكند — شارة بلا معلومة */}
         {service.sector !== 'general' ? <Badge>{service.sector_display}</Badge> : null}
         {price ? (
           <span>
-            {tServices('priceFrom')} <span className="code-inline inline">{price}</span>
+            {tServices('priceFrom')}{' '}
+            <span className="code-inline inline font-mono text-foreground">{price}</span>
           </span>
         ) : null}
       </div>
@@ -110,12 +112,12 @@ export async function ProjectCard({
           </Link>
         </h3>
 
-        <p className="mb-4 flex-1 text-sm text-muted">{project.summary}</p>
+        <p className="mb-5 flex-1 text-base text-muted">{project.summary}</p>
 
-        <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
+        <div className="flex flex-wrap items-center justify-between gap-2 text-label text-muted">
           <span>{project.client_name || t('anonymous')}</span>
           {project.completed_at ? (
-            <time dateTime={project.completed_at} className="code-inline inline">
+            <time dateTime={project.completed_at} className="code-inline inline font-mono">
               {formatMonthYear(project.completed_at, locale)}
             </time>
           ) : null}
@@ -141,7 +143,7 @@ export async function CaseStudyCard({ caseStudy }: { caseStudy: CaseStudyListIte
         </Link>
       </h3>
 
-      <p className="mb-4 flex-1 text-sm text-muted">{caseStudy.overview}</p>
+      <p className="mb-5 flex-1 text-base text-muted">{caseStudy.overview}</p>
 
       <span className="inline-flex items-center gap-2 text-sm font-medium text-primary">
         {t('readMore')}
@@ -153,7 +155,7 @@ export async function CaseStudyCard({ caseStudy }: { caseStudy: CaseStudyListIte
 
 export function TechBadge({ technology }: { technology: TechnologyRef }) {
   return (
-    <span className="inline-flex items-center rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted transition-colors duration-fast hover:border-primary/40 hover:text-primary">
+    <span className="code-inline inline-flex items-center rounded-full border border-border bg-surface px-3 py-1 font-mono text-xs font-medium text-muted transition-colors duration-fast hover:border-primary/40 hover:text-primary">
       {technology.name}
     </span>
   );
@@ -162,11 +164,13 @@ export function TechBadge({ technology }: { technology: TechnologyRef }) {
 export function StatCard({ stat }: { stat: Stat }) {
   return (
     <div className="rounded-xl border border-border bg-surface p-6 text-center shadow-subtle transition-all duration-normal hover:-translate-y-1 hover:border-primary/30 hover:shadow-card">
-      <p className="text-h1 font-bold">
-        <span className="text-gradient code-inline inline">{stat.value}</span>
-        {stat.suffix ? <span className="text-h3 text-gradient">{stat.suffix}</span> : null}
+      {/* الرقم بخط المونو وبلون صلب: التدرّج على الأرقام كان آخر أثر «قالب»،
+          والمونو يجعل الأرقام تُقرأ كبيانات مقاسة لا كزخرفة */}
+      <p className="font-mono text-h1 font-medium tabular-nums text-primary">
+        <span className="code-inline inline">{stat.value}</span>
+        {stat.suffix ? <span className="text-h3">{stat.suffix}</span> : null}
       </p>
-      <p className="mt-1 text-sm text-muted">{stat.label}</p>
+      <p className="mt-2 text-label uppercase tracking-wide text-muted">{stat.label}</p>
     </div>
   );
 }
@@ -177,13 +181,18 @@ export async function TestimonialCard({ testimonial }: { testimonial: Testimonia
   return (
     <Card className="flex h-full flex-col">
       {/* علامة الاقتباس اتجاهية — تنعكس؛ التقييم بالنجوم لا ينعكس */}
-      <Quote className="mb-3 size-6 text-primary/40 flip-rtl" aria-hidden="true" />
-      <p className="mb-4 flex-1 text-sm">{testimonial.content}</p>
+      <Quote className="mb-4 size-7 text-primary/40 flip-rtl" aria-hidden="true" />
+      {/* أقوى دليل اجتماعي في الصفحة كان أصغر نص فيها. الاقتباس يُقرأ
+          كاقتباس (17px) ويُقتطع عند ثمانية أسطر — رسائل الشكر الكاملة
+          تُعرض في صفحة الآراء لا في بطاقة */}
+      <blockquote className="mb-6 flex-1 text-body-lg leading-relaxed [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:8] overflow-hidden">
+        {testimonial.content}
+      </blockquote>
 
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-3 border-t border-border pt-4">
         <div>
-          <p className="text-sm font-semibold">{testimonial.client_name}</p>
-          <p className="text-xs text-muted">
+          <p className="font-heading text-base font-semibold">{testimonial.client_name}</p>
+          <p className="text-label text-muted">
             {[testimonial.client_title, testimonial.company].filter(Boolean).join(' — ')}
           </p>
         </div>

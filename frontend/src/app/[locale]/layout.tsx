@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import { Inter, JetBrains_Mono, Readex_Pro } from 'next/font/google';
+import { Cairo, IBM_Plex_Mono, IBM_Plex_Sans_Arabic } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import '@/app/globals.css';
 
@@ -16,33 +16,36 @@ import { getDirection, isLocale, locales, type Locale } from '@/lib/i18n/routing
 import { buildMetadata } from '@/lib/seo/metadata';
 
 // الخطوط تُستضاف ذاتيًا: Next.js ينزّلها وقت البناء ويقدّمها من نطاقنا،
-// فلا يوجد أي طلب خارجي وقت التشغيل.
+// فلا يوجد أي طلب خارجي وقت التشغيل. `font-display: swap` وارتداد
+// next/font المضبوط المقاسات يمنعان قفز التخطيط.
 //
-// بلا preload لكل الخطوط: التخطيط واحد للغتين، وpreload يجبر المتصفح على
-// تنزيل كل الملفات المعلنة — فكانت الصفحة العربية تنزّل Inter (47KB) بلا
-// استخدام، والإنجليزية أربعة أوزان عربية (134KB) بلا استخدام. الـCSS مضمّن
-// في الصفحة (inlineCss)، فالمتصفح يكتشف @font-face فورًا ويجلب الأوجه
-// المستخدمة فقط؛ وارتداد next/font المضبوط المقاسات يمنع قفز التخطيط.
+// ثلاث عائلات مقصودة، تخدم اللغتين معًا (كلها تحمل محارف لاتينية وعربية):
+//   • Cairo — للعناوين وحدها (600/700).
+//   • IBM Plex Sans Arabic — للنصوص والواجهة (400–700).
+//   • IBM Plex Mono — للأرقام والمعرّفات والشيفرة (400/500).
 //
-// العربية: Readex Pro — كوفي حديث هندسي (Modern Kufic / Geometric Sans)،
-// متغيّر الوزن فيأتي بملف واحد لكل مجموعة حروف بدل ملف لكل وزن.
-const arabic = Readex_Pro({
-  subsets: ['arabic'],
-  variable: '--font-arabic',
+// بلا preload: الـCSS مضمّن في الصفحة (inlineCss)، فالمتصفح يكتشف
+// @font-face فورًا ويجلب الأوجه المستخدمة فقط.
+const heading = Cairo({
+  subsets: ['arabic', 'latin'],
+  weight: ['600', '700'],
+  variable: '--font-heading',
   display: 'swap',
   preload: false,
 });
 
-const latin = Inter({
-  subsets: ['latin'],
-  variable: '--font-latin',
+const sans = IBM_Plex_Sans_Arabic({
+  subsets: ['arabic', 'latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-sans',
   display: 'swap',
   preload: false,
 });
 
-// الخط البرمجي يخدم مقاطع الشيفرة والأرقام داخل النص.
-const mono = JetBrains_Mono({
+// الخط البرمجي يخدم الأرقام والمعرّفات ومقاطع الشيفرة داخل النص.
+const mono = IBM_Plex_Mono({
   subsets: ['latin'],
+  weight: ['400', '500'],
   variable: '--font-mono',
   display: 'swap',
   preload: false,
@@ -111,16 +114,12 @@ export default async function LocaleLayout({
     getSiteSettings(locale as Locale),
   ]);
 
-  const fontVariable =
-    locale === 'ar' ? 'var(--font-arabic)' : 'var(--font-latin)';
-
   return (
     <html
       lang={locale}
       dir={getDirection(locale)}
       suppressHydrationWarning
-      className={`${arabic.variable} ${latin.variable} ${mono.variable}`}
-      style={{ '--font-sans': fontVariable } as CSSProperties}
+      className={`${heading.variable} ${sans.variable} ${mono.variable}`}
     >
       <head>
         <ThemeScript />

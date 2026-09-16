@@ -8,12 +8,13 @@ import {
   StatCard,
   TestimonialCard,
 } from '@/components/content/cards';
+import { TechLogo } from '@/components/content/media';
 import { PostCard } from '@/features/blog/post-card';
 import { NewsletterForm } from '@/features/newsletter/newsletter-form';
 import { ButtonLink } from '@/components/ui/button';
 import { Container } from '@/components/ui/container';
 import { Card, Prose } from '@/components/ui/misc';
-import { Section, SectionHeader } from '@/components/ui/section';
+import { Section, SectionHeader, type SectionTone } from '@/components/ui/section';
 import type {
   CaseStudyListItem,
   PageSection,
@@ -291,7 +292,7 @@ export async function ServicesSection({
 }: SectionProps & {
   services: ServiceListItem[];
   basePath: '/services' | '/solutions';
-  tone?: 'default' | 'muted';
+  tone?: SectionTone;
 }) {
   if (!services.length) return null;
 
@@ -330,7 +331,7 @@ export async function ProjectsSection({
   const limit = section.config?.limit ?? 6;
 
   return (
-    <Section>
+    <Section tone="dark">
       <SectionHeader
         title={await resolveTitle(section)}
         subtitle={section.subtitle}
@@ -433,7 +434,7 @@ export async function TechnologiesSection({
   const t = await getTranslations('common');
 
   return (
-    <Section tone="muted">
+    <Section>
       <SectionHeader
         title={await resolveTitle(section)}
         subtitle={section.subtitle}
@@ -444,17 +445,29 @@ export async function TechnologiesSection({
           </ButtonLink>
         }
       />
-      <ul className="flex flex-wrap gap-2">
+      {/* شعارات أحادية اللون إن رُفعت من اللوحة، وإلا شارات نصية:
+          التساقط عنصرًا بعنصر، فقائمة مختلطة تظل متسقة الارتفاع */}
+      <ul className="flex flex-wrap items-center gap-x-10 gap-y-6">
         {technologies.map((technology) => (
           <li key={technology.id}>
-            {/* أسماء التقنيات لاتينية ومعرّفات بطبيعتها: بخط المونو ومعزولة
-                اتجاهيًا — «C#» كان يُرسم «#C» داخل السياق العربي */}
-            <Link
-              href="/technologies"
-              className="code-inline inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-4 font-mono text-sm font-medium hover:bg-surface-hover"
-            >
-              {technology.name}
-            </Link>
+            {technology.logo ? (
+              <Link
+                href="/technologies"
+                title={technology.name}
+                className="group/logo inline-flex min-h-11 items-center text-muted transition-colors duration-fast hover:text-primary"
+              >
+                <TechLogo media={technology.logo} name={technology.name} className="h-7 w-auto min-w-7 sm:h-8 sm:min-w-8" />
+              </Link>
+            ) : (
+              /* أسماء التقنيات لاتينية ومعرّفات بطبيعتها: بخط المونو ومعزولة
+                 اتجاهيًا — «C#» كان يُرسم «#C» داخل السياق العربي */
+              <Link
+                href="/technologies"
+                className="code-inline inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-4 font-mono text-sm font-medium hover:bg-surface-hover"
+              >
+                {technology.name}
+              </Link>
+            )}
           </li>
         ))}
       </ul>
@@ -470,7 +483,7 @@ export async function TestimonialsSection({
   if (!testimonials.length) return null;
 
   return (
-    <Section>
+    <Section tone="dark">
       <SectionHeader
         title={await resolveTitle(section)}
         subtitle={section.subtitle}

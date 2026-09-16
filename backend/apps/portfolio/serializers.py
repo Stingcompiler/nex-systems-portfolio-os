@@ -23,12 +23,13 @@ from apps.portfolio.models import (
 class TechnologySerializer(serializers.ModelSerializer):
     description = TranslatedField()
     category_display = serializers.CharField(source="get_category_display", read_only=True)
+    logo = MediaFileRefSerializer(read_only=True)
 
     class Meta:
         model = Technology
         fields = [
             "id", "name", "slug", "category", "category_display",
-            "description", "icon", "color", "proficiency", "is_featured",
+            "description", "icon", "logo", "color", "proficiency", "is_featured",
         ]
 
 
@@ -41,9 +42,11 @@ class TechnologyAdminSerializer(serializers.ModelSerializer):
 class TechnologyRefSerializer(serializers.ModelSerializer):
     """تمثيل مختصر داخل بطاقات الخدمات والمشاريع."""
 
+    logo = MediaFileRefSerializer(read_only=True)
+
     class Meta:
         model = Technology
-        fields = ["id", "name", "slug", "category", "icon", "color"]
+        fields = ["id", "name", "slug", "category", "icon", "logo", "color"]
 
 
 # --------------------------------------------------------------- الخدمات والحلول

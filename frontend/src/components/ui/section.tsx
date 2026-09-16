@@ -3,6 +3,21 @@ import type { ReactNode } from 'react';
 import { Container } from '@/components/ui/container';
 import { cn } from '@/lib/utils/cn';
 
+/**
+ * نبرات القسم:
+ * - `default` أرضية الصفحة.
+ * - `muted` سطح فاتح بحدّين — فاصل خفيف.
+ * - `dark` يُرجع لغة البطل الداكنة إلى منتصف الصفحة. يعمل بصنف `.dark`
+ *   المحلي: darkMode في Tailwind بالصنف، فكل رموز الألوان داخل القسم
+ *   (الأسطح، الحدود، النص الخافت، الظلال) تتحوّل إلى قيم الوضع الداكن
+ *   الموثوقة نفسها — بلا ألوان جديدة ولا تفريع في البطاقات.
+ *   في الوضع الداكن العام أرضية الصفحة داكنة أصلًا، فلو أخذ القسم
+ *   الأرضية نفسها لذاب فيها واختفى الإيقاع (قِيس: 11/18/14 = 11/18/14).
+ *   لذلك يرتفع إلى السطح (`--surface`) بحدّين — الدرجة الأفتح — فيبقى
+ *   القسم «المميّز» في الوضعين، بالاتجاه المعاكس لكل وضع.
+ */
+export type SectionTone = 'default' | 'muted' | 'dark';
+
 export function Section({
   id,
   children,
@@ -12,14 +27,20 @@ export function Section({
   id?: string;
   children: ReactNode;
   className?: string;
-  tone?: 'default' | 'muted';
+  tone?: SectionTone;
 }) {
   return (
     <section
       id={id}
       className={cn(
         'py-16 sm:py-24',
-        tone === 'muted' && 'bg-surface border-y border-border',
+        tone === 'muted' && 'border-y border-border bg-surface',
+        // `dark:` هنا = الوضع الداكن العام فقط: Tailwind يولّدها كـ :is(.dark *)
+        // أي سليل عنصر .dark، والقسم ليس سليل نفسه.
+        // في الداكن العام يصير القسم مطابقًا لـ muted (سطح + حدّان)، وبطاقاته
+        // تُميَّز بحدّها لا بخلفيتها — وهو مبدأ الارتفاع الموثّق للوضع الداكن.
+        tone === 'dark' &&
+          'dark bg-background text-foreground dark:border-y dark:border-border dark:bg-surface',
         className,
       )}
     >

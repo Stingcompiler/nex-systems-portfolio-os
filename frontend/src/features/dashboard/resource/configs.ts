@@ -271,7 +271,10 @@ export const technologiesConfig: ResourceConfig = {
     { name: 'slug', label: 'المعرّف', type: 'text' },
     { name: 'category', label: 'التصنيف', type: 'select', options: TECH_CATEGORIES },
     { name: 'proficiency', label: 'مستوى الإتقان (1–5)', type: 'number', min: 1, max: 5 },
-    { name: 'icon', label: 'الأيقونة', type: 'text' },
+    // الشعار يُرسم قناعًا أحادي اللون في الموقع: يرث لون سياقه ويعمل في
+    // الوضعين بملف واحد. ألوان الملف الأصلية تُهمل — SVG أو PNG شفاف.
+    { name: 'logo', label: 'الشعار', type: 'media',
+      help: 'SVG أحادي اللون بخلفية شفافة يُفضَّل. يظهر شعارًا في الرئيسية بدل الاسم؛ بدونه تُعرض التقنية شارةً نصية.' },
     { name: 'color', label: 'اللون', type: 'text', placeholder: '#2563EB' },
     { name: 'description', label: 'الوصف', type: 'bilingual-textarea' },
     { name: 'is_featured', label: 'مميزة (تظهر في الرئيسية)', type: 'switch' },

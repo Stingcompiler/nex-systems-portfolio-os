@@ -138,6 +138,8 @@ export interface Technology {
   category_display: string;
   description: string;
   icon: string;
+  /** شعار العلامة من مكتبة الوسائط (SVG أحادي اللون يُفضَّل)؛ null حتى يُرفع من اللوحة. */
+  logo: MediaRef | null;
   color: string;
   proficiency: number;
   is_featured: boolean;
@@ -149,6 +151,7 @@ export interface TechnologyRef {
   slug: string;
   category: string;
   icon: string;
+  logo: MediaRef | null;
   color: string;
 }
 

@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import { Cairo, IBM_Plex_Mono, IBM_Plex_Sans_Arabic } from 'next/font/google';
+import { IBM_Plex_Mono, Inter, Tajawal } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 import '@/app/globals.css';
 
@@ -19,25 +19,25 @@ import { buildMetadata } from '@/lib/seo/metadata';
 // فلا يوجد أي طلب خارجي وقت التشغيل. `font-display: swap` وارتداد
 // next/font المضبوط المقاسات يمنعان قفز التخطيط.
 //
-// ثلاث عائلات مقصودة، تخدم اللغتين معًا (كلها تحمل محارف لاتينية وعربية):
-//   • Cairo — للعناوين وحدها (600/700).
-//   • IBM Plex Sans Arabic — للنصوص والواجهة (400–700).
-//   • IBM Plex Mono — للأرقام والمعرّفات والشيفرة (400/500).
+// نظام Vezano حرفيًا: Tajawal للجسم والعناوين معًا (المرجع لا يفصلهما،
+// فيرث `--font-heading` خط الجسم)، وInter للإنجليزية، وIBM Plex Mono
+// للأرقام والمعرّفات — قرار مقصود بخلاف المرجع الذي يرقّم بـ Inter:
+// هوية الموقع الهندسية تقوم على المونو.
 //
 // بلا preload: الـCSS مضمّن في الصفحة (inlineCss)، فالمتصفح يكتشف
 // @font-face فورًا ويجلب الأوجه المستخدمة فقط.
-const heading = Cairo({
+const arabic = Tajawal({
   subsets: ['arabic', 'latin'],
-  weight: ['600', '700'],
-  variable: '--font-heading',
+  weight: ['400', '500', '700', '800'],
+  variable: '--font-arabic',
   display: 'swap',
   preload: false,
 });
 
-const sans = IBM_Plex_Sans_Arabic({
-  subsets: ['arabic', 'latin'],
+const latin = Inter({
+  subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
-  variable: '--font-sans',
+  variable: '--font-latin',
   display: 'swap',
   preload: false,
 });
@@ -91,8 +91,8 @@ export async function generateMetadata({
 export const viewport = {
   themeColor: [
     // يطابق --background في globals.css — شريط المتصفح يمتدّ من الصفحة
-    { media: '(prefers-color-scheme: light)', color: '#f7f8f5' },
-    { media: '(prefers-color-scheme: dark)', color: '#0b120e' },
+    { media: '(prefers-color-scheme: light)', color: '#f6f8fb' },
+    { media: '(prefers-color-scheme: dark)', color: '#0c141f' },
   ],
 };
 
@@ -114,12 +114,20 @@ export default async function LocaleLayout({
     getSiteSettings(locale as Locale),
   ]);
 
+  // الخط يتبدّل حسب اللغة كما في المرجع: Tajawal للعربية وInter للإنجليزية.
+  // العناوين ترث الجسم (--font-heading = --font-sans) لأن Vezano لا يفصلهما.
+  const fontVariable =
+    locale === 'ar' ? 'var(--font-arabic)' : 'var(--font-latin)';
+
   return (
     <html
       lang={locale}
       dir={getDirection(locale)}
       suppressHydrationWarning
-      className={`${heading.variable} ${sans.variable} ${mono.variable}`}
+      className={`${arabic.variable} ${latin.variable} ${mono.variable}`}
+      style={
+        { '--font-sans': fontVariable, '--font-heading': fontVariable } as CSSProperties
+      }
     >
       <head>
         <ThemeScript />

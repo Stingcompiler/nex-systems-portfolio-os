@@ -4,51 +4,49 @@
 
 @layer base {
   :root {
-    /* ── الوضع الفاتح — «سَنط»: أخضر عميق مع مغرة ──
-       الحياد دافئ لا مائل إلى الأزرق، فيبدو اللون مختارًا لا موروثًا
-       من إعدادات الإطار الافتراضية. */
-    --background: 247 248 245;
-    --surface: 255 255 255;
-    --surface-hover: 236 239 232;
-    --foreground: 22 33 27;
-    --foreground-muted: 95 114 103;
-    --border: 216 224 214;
+    /* ── الوضع الفاتح — لوحة Vezano: تركوازي على كحلي ──
+       الحياد بارد مائل إلى الأزرق (كحلي #12253B)، والتمييز تركوازي
+       #0E7C86. مأخوذة حرفيًا من styles.css في تصميم Vezano. */
+    --background: 246 248 251; /* paper  #F6F8FB */
+    --surface: 255 255 255; /* surface #FFFFFF */
+    --surface-hover: 241 250 251; /* #F1FAFB — تحويم التركوازي الباهت في المرجع */
+    --foreground: 18 37 59; /* ink    #12253B */
+    --foreground-muted: 91 107 127; /* muted  #5B6B7F */
+    --border: 224 231 238; /* line   #E0E7EE */
 
-    --primary: 30 106 79; /* أخضر السَنط */
-    --primary-foreground: 244 251 247;
-    --accent: 142 99 21; /* مغرة — للبيانات والإبرازات وحدها */
+    --primary: 14 124 134; /* accent #0E7C86 — تركوازي Vezano */
+    --primary-foreground: 255 255 255;
+    --accent: 53 97 166; /* #3561A6 — الأزرق الثانوي في شارات المرجع */
 
-    /* [بند 2] درجات دلالية معدّلة للتباين: كنص على خلفية فاتحة.
-       النجاح يميل إلى الزمرد ليفترق عن أخضر العلامة الغامق،
-       فلا تُقرأ شارة نجاح كأنها زر أساسي. */
-    --success: 4 120 67;
-    --warning: 133 86 10;
-    --danger: 187 32 32;
-    --ring: 30 106 79;
+    /* الدلالية من المرجع حرفيًا: ok / warn / danger */
+    --success: 21 128 61; /* #15803D */
+    --warning: 180 83 9; /* #B45309 */
+    --danger: 185 28 28; /* #B91C1C */
+    --ring: 14 124 134;
 
-    /* [بند 4] خلفيات هادئة صريحة — بديل التخفيف بالشفافية الذي ينهار بين الوضعين */
-    --primary-soft: 226 239 231;
-    --accent-soft: 251 245 233;
-    --success-soft: 226 244 234;
-    --warning-soft: 243 233 210;
-    --danger-soft: 250 228 228;
+    /* الخلفيات الهادئة — درجات المرجع الباهتة (teal / blue / navy) */
+    --primary-soft: 223 241 243; /* #DFF1F3 */
+    --accent-soft: 231 237 249; /* #E7EDF9 */
+    --success-soft: 219 243 228; /* #DBF3E4 */
+    --warning-soft: 255 243 223; /* #FFF3DF */
+    --danger-soft: 251 233 232; /* #FBE9E8 */
 
-    /* تدرّج من عائلة لونية واحدة: الثلاثي القُطري إنديغو←سماوي كان
-       أوضح علامة على قالب جاهز. يبقى للأرقام والأسطح لا للعناوين. */
+    /* تدرّج من التركوازي إلى درجته القوية — المرجع يستخدم accent→accent-strong
+       للتحويم، والتدرّج هنا للأرقام والأسطح لا للعناوين */
     --gradient-brand: linear-gradient(
       135deg,
-      rgb(30 106 79) 0%,
-      rgb(38 128 95) 100%
+      rgb(14 124 134) 0%,
+      rgb(11 90 97) 100%
     );
-    --glow: 30 106 79;
+    --glow: 14 124 134;
 
-    /* الظلال من حياد اللوحة نفسه — الأزرق المائل السابق كان يبرّد
-       الأسطح الدافئة ويكشف أنها من لوحة أخرى */
-    --shadow-sm: 0 1px 2px rgb(22 33 27 / 0.05);
-    --shadow-md: 0 4px 20px -4px rgb(22 33 27 / 0.1), 0 2px 8px -4px rgb(22 33 27 / 0.06);
-    --shadow-lg: 0 12px 40px -8px rgb(22 33 27 / 0.16), 0 4px 12px -6px rgb(22 33 27 / 0.1);
-    --shadow-brand: 0 4px 16px -6px rgb(var(--primary) / 0.5);
-    --shadow-brand-lg: 0 8px 24px -8px rgb(var(--primary) / 0.6);
+    /* الظلال من حياد الكحلي — المرجع: 0 12px 32px rgba(18,37,59,.08) */
+    --shadow-sm: 0 1px 2px rgb(18 37 59 / 0.05);
+    --shadow-md: 0 12px 32px rgb(18 37 59 / 0.08);
+    --shadow-lg: 0 16px 40px -8px rgb(18 37 59 / 0.14), 0 4px 12px -6px rgb(18 37 59 / 0.08);
+    /* الظل الملوّن — المرجع: 0 7px 14px rgba(14,124,134,.2) على الزر الأساسي */
+    --shadow-brand: 0 7px 14px rgb(var(--primary) / 0.2);
+    --shadow-brand-lg: 0 10px 22px rgb(var(--primary) / 0.28);
 
     --duration-fast: 150ms;
     --duration-normal: 300ms;
@@ -60,44 +58,45 @@
   }
 
   .dark {
-    --background: 11 18 14;
-    --surface: 20 29 23;
-    --surface-hover: 30 43 35;
-    --foreground: 230 239 232;
-    --foreground-muted: 140 163 150;
-    --border: 37 51 40;
+    /* الوضع الداكن — body.dark في المرجع حرفيًا */
+    --background: 12 20 31; /* paper   #0C141F */
+    --surface: 19 30 45; /* surface #131E2D */
+    --surface-hover: 23 48 59; /* #17303B — تحويم الأزرار السريعة في المرجع */
+    --foreground: 232 237 243; /* ink     #E8EDF3 */
+    --foreground-muted: 158 171 186; /* muted   #9EABBA */
+    --border: 36 50 70; /* line    #243246 */
 
-    --primary: 79 191 143; /* سَنط مفتَّح للأرضية الداكنة */
-    --primary-foreground: 6 23 15;
-    --accent: 224 169 74; /* مغرة */
+    --primary: 55 176 184; /* accent        #37B0B8 */
+    --primary-foreground: 12 20 31;
+    --accent: 90 198 205; /* accent-strong #5AC6CD — الأفتح على الداكن */
 
-    /* [بند 2] الدلالية تُفتَّح مثل الأساسي — الداكن على داكن لا يحقق AA */
-    --success: 110 219 168;
-    --warning: 224 169 74;
+    /* الدلالية تُفتَّح كما في الوضع الداكن السابق — المرجع لا يعيد تعريفها،
+       والداكن على داكن لا يحقق AA */
+    --success: 74 222 128;
+    --warning: 251 191 36;
     --danger: 248 113 113;
-    --ring: 79 191 143;
+    --ring: 55 176 184;
 
-    /* [بند 4] الخلفيات الهادئة في الداكن ألوان معتمة مشبعة، لا شفافية */
-    --primary-soft: 20 48 31;
-    --accent-soft: 51 39 13;
-    --success-soft: 12 44 33;
-    --warning-soft: 51 39 13;
-    --danger-soft: 56 20 24;
+    /* الخلفيات الهادئة — درجات المرجع الداكنة الصريحة */
+    --primary-soft: 23 60 70; /* #173C46 */
+    --accent-soft: 29 45 69; /* #1D2D45 */
+    --success-soft: 21 59 39; /* #153B27 */
+    --warning-soft: 61 44 14;
+    --danger-soft: 62 24 26;
 
     --gradient-brand: linear-gradient(
       135deg,
-      rgb(37 128 96) 0%,
-      rgb(79 191 143) 100%
+      rgb(55 176 184) 0%,
+      rgb(90 198 205) 100%
     );
-    --glow: 79 191 143;
+    --glow: 55 176 184;
 
-    /* [بند 3] الارتفاع في الداكن يُنقل بحدّ أوضح لا بظل أسود غير مرئي */
+    /* الارتفاع في الداكن بحدّ أوضح — والمرجع: 0 14px 34px rgba(0,0,0,.28) */
     --shadow-sm: 0 0 0 1px rgb(255 255 255 / 0.06);
-    --shadow-md: 0 0 0 1px rgb(255 255 255 / 0.08), 0 8px 24px -8px rgb(0 0 0 / 0.6);
-    --shadow-lg: 0 0 0 1px rgb(255 255 255 / 0.1), 0 24px 64px -12px rgb(0 0 0 / 0.7);
-    /* الظل الملوّن على أرضية داكنة يكاد لا يُرى — يُخفَّض لا يُلغى */
-    --shadow-brand: 0 4px 16px -6px rgb(var(--primary) / 0.3);
-    --shadow-brand-lg: 0 8px 24px -8px rgb(var(--primary) / 0.4);
+    --shadow-md: 0 0 0 1px rgb(255 255 255 / 0.08), 0 14px 34px rgb(0 0 0 / 0.28);
+    --shadow-lg: 0 0 0 1px rgb(255 255 255 / 0.1), 0 24px 64px -12px rgb(0 0 0 / 0.6);
+    --shadow-brand: 0 7px 14px rgb(var(--primary) / 0.25);
+    --shadow-brand-lg: 0 10px 22px rgb(var(--primary) / 0.32);
   }
 
   /* العربية تحتاج مساحة رأسية أكبر — لكن ليس في العناوين الكبيرة:
@@ -124,7 +123,7 @@
 
   /* [بند 1] العناوين تقرأ المتغيّر اللغوي — ولهذا حُذف lineHeight
      من مقاييس display/h1/h2/h3 في tailwind.config.ts.
-     الخط: Cairo (عائلة العناوين) يعلو على IBM Plex Sans Arabic. */
+     الخط: --font-heading يرث الجسم (Tajawal) — نظام Vezano لا يفصل العناوين. */
   h1,
   h2,
   h3,
@@ -138,6 +137,14 @@
      فالجُزُر الإنجليزية داخل صفحة عربية تحتفظ بمقياسها */
   :lang(ar) {
     letter-spacing: 0;
+  }
+
+  /* تباعد العناوين السالب من مرجع Vezano (.welcome-row h1: -.02em) —
+     للإنجليزية فقط؛ العربية تحتفظ بصفر أعلاه */
+  :lang(en) h1,
+  :lang(en) h2,
+  :lang(en) .text-display {
+    letter-spacing: -0.02em;
   }
 
   :lang(ar) em,

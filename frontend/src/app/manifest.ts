@@ -14,8 +14,8 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: '/ar',
     display: 'standalone',
     // يطابقان --background و--primary في globals.css
-    background_color: '#f7f8f5',
-    theme_color: '#1e6a4f',
+    background_color: '#f6f8fb',
+    theme_color: '#0e7c86',
     dir: 'rtl',
     lang: 'ar',
     orientation: 'portrait',

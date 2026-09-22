@@ -24,9 +24,9 @@ export default function GlobalError({
           display: 'grid',
           placeItems: 'center',
           padding: '24px',
-          background: '#f8fafc',
-          color: '#0f172a',
-          fontFamily: "'IBM Plex Sans Arabic', 'Cairo', Tahoma, Arial, sans-serif",
+          background: '#f6f8fb',
+          color: '#12253b',
+          fontFamily: "'Tajawal', Tahoma, Arial, sans-serif",
           textAlign: 'center',
         }}
       >
@@ -35,10 +35,10 @@ export default function GlobalError({
             ⚠️
           </p>
           <h1 style={{ fontSize: '1.375rem', margin: '0 0 8px' }}>حدث خطأ غير متوقع</h1>
-          <p style={{ color: '#64748b', lineHeight: 1.9, margin: '0 0 6px' }}>
+          <p style={{ color: '#5b6b7f', lineHeight: 1.9, margin: '0 0 6px' }}>
             جرّب إعادة تحميل الصفحة — غالبًا يكون الخلل مؤقتًا.
           </p>
-          <p style={{ color: '#94a3b8', fontSize: '0.875rem', margin: '0 0 24px' }} lang="en" dir="ltr">
+          <p style={{ color: '#5b6b7f', fontSize: '0.875rem', margin: '0 0 24px' }} lang="en" dir="ltr">
             Something went wrong. Reloading usually fixes it.
           </p>
           <button
@@ -49,7 +49,7 @@ export default function GlobalError({
               padding: '0 28px',
               border: 0,
               borderRadius: '10px',
-              background: '#2563eb',
+              background: '#0e7c86',
               color: '#fff',
               fontSize: '1rem',
               fontWeight: 600,

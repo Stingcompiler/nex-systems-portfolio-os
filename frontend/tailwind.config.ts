@@ -46,35 +46,42 @@ const config: Config = {
         mono: ['var(--font-mono)', 'monospace'],
       },
       fontSize: {
-        // مقياس بنسبة ~1.4–1.5 بين المستويات لا ~1.2: القفزة الصغيرة كانت
-        // تُسطّح الصفحة بعد البطل، فيبدو عنوان القسم بحجم عنوان البطاقة.
-        // عنوان البطل وحده يقرأ --line-height-display: العربية بأربعة أسطر
-        // تحتاج سطرًا أضيق من باقي العناوين وإلا تفكّكت الكتلة.
-        // الحدّ الأعلى 72px مع عمود بطل بعرض 1.1fr يحافظ على أربعة أسطر على 1280.
+        // مقياس Vezano حرفيًا (styles.css في المرجع): لوحة تحكم مضغوطة
+        // لا صفحة تسويقية — h1 = 28px (25 على الهاتف)، عناوين اللوحات 17px،
+        // الجسم 16px، البطاقات 13px، الشارات 11–12px.
+        // `display` هو h1 المرجع مرفوعًا درجة واحدة لعنوان البطل فقط، لأن
+        // المرجع لا يملك بطلًا أصلًا؛ يقرأ --line-height-display.
+        // بلا letterSpacing هنا: قيمة في الرمز تُطبَّق على العنصر نفسه فتتغلب
+        // على `:lang(ar) { letter-spacing: 0 }` الموروثة وتكسر اتصال الحروف
+        // العربية (قِيس: -0.64px على عنوان عربي). تباعد المرجع السالب
+        // (-0.02em) يُطبَّق في globals.css على :lang(en) فقط.
         display: [
-          'clamp(2.75rem, 4.5vw + 1rem, 4.5rem)',
+          'clamp(1.75rem, 1.2vw + 1.25rem, 2.25rem)',
           { lineHeight: 'var(--line-height-display)' },
         ],
         // بلا lineHeight — القاعدة في globals.css تقرأ var(--line-height-heading)
-        h1: 'clamp(2.25rem, 3.5vw + 1rem, 3.25rem)',
-        h2: 'clamp(1.875rem, 2.5vw + 0.875rem, 2.75rem)',
-        h3: 'clamp(1.25rem, 1vw + 0.75rem, 1.5rem)',
-        // مقدمات الأقسام ووصف البطاقات — 17px بدل 14px: نص المتصفّح لا حاشية
-        'body-lg': ['1.125rem', { lineHeight: 'var(--line-height-body)' }],
-        // التسميات الصغيرة (شارات، تواريخ، عناوين أعمدة) — بدل text-xs/text-sm العشوائي
-        label: ['0.8125rem', { lineHeight: '1.5' }],
+        h1: 'clamp(1.5625rem, 0.6vw + 1.35rem, 1.75rem)',
+        h2: 'clamp(1rem, 0.3vw + 0.95rem, 1.0625rem)',
+        h3: '0.875rem',
+        // مقدمات الأقسام
+        'body-lg': ['1rem', { lineHeight: 'var(--line-height-body)' }],
+        // نص البطاقات والجداول في المرجع
+        card: ['0.8125rem', { lineHeight: '1.55' }],
+        // التسميات الصغيرة (شارات، تواريخ، عناوين أعمدة)
+        label: ['0.75rem', { lineHeight: '1.5' }],
         // سطر الجذب فوق عناوين الأقسام — مونو صغير متباعد الأحرف
-        eyebrow: ['0.75rem', { lineHeight: '1', letterSpacing: '0.12em' }],
+        eyebrow: ['0.6875rem', { lineHeight: '1', letterSpacing: '0.12em' }],
       },
       maxWidth: {
         content: '80rem',
         prose: '72ch',
       },
+      // نصف القطر من المرجع: 10px للأزرار والحقول، 18px للبطاقات واللوحات
       borderRadius: {
         sm: '0.375rem',
         DEFAULT: '0.625rem',
-        lg: '0.875rem',
-        xl: '1.25rem',
+        lg: '0.625rem',
+        xl: '1.125rem',
       },
       boxShadow: {
         subtle: 'var(--shadow-sm)',

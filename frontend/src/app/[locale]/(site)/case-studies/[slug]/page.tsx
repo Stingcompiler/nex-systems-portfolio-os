@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { ServiceCard, TestimonialCard } from '@/components/content/cards';
 import { CoverImage } from '@/components/content/media';
+import { PageCta } from '@/components/content/page-cta';
 import { ButtonLink } from '@/components/ui/button';
 import { CardGrid } from '@/components/ui/card-grid';
 import { Container } from '@/components/ui/container';
@@ -14,6 +15,7 @@ import type { CaseStudyDetail } from '@/lib/api/types';
 import { locales, type Locale } from '@/lib/i18n/routing';
 import { articleJsonLd, breadcrumbJsonLd } from '@/lib/seo/json-ld';
 import { buildMetadata } from '@/lib/seo/metadata';
+import { cn } from '@/lib/utils/cn';
 
 export async function generateStaticParams() {
   const caseStudies = await getCaseStudies('ar', { page_size: 100 });
@@ -119,18 +121,33 @@ export default async function CaseStudyDetailPage({
           </div>
         ) : null}
 
+        {/* كل رقم يُعرض مع مصدره وفترة قياسه إن وُجدا — رقم بلا سياق يُقرأ
+            ادعاءً تسويقيًا. اللون صلب لا تدرّج: الأرقام بيانات لا زخرفة */}
         {caseStudy.metrics.length ? (
-          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <ul
+            className={cn(
+              'mt-10 grid gap-4 sm:grid-cols-2',
+              caseStudy.metrics.length >= 4 ? 'lg:grid-cols-4' : caseStudy.metrics.length === 3 ? 'lg:grid-cols-3' : null,
+            )}
+          >
             {caseStudy.metrics.map((metric, index) => (
               <li key={index}>
-                <Card className="text-center">
-                  <p className="text-h2 font-bold">
-                    <span className="text-gradient" dir="ltr">{metric.value}</span>
-                    {metric.suffix ? (
-                      <span className="text-h3 text-gradient">{metric.suffix}</span>
-                    ) : null}
+                <Card className="h-full text-center">
+                  <p className="font-mono text-h2 font-medium tabular-nums text-primary">
+                    <span className="code-inline inline">{metric.value}</span>
+                    {metric.suffix ? <span className="text-h3">{metric.suffix}</span> : null}
                   </p>
-                  <p className="mt-1 text-sm text-muted">{metric.label}</p>
+                  <p className="mt-1 text-sm font-medium">{metric.label}</p>
+                  {metric.source || metric.period ? (
+                    <p className="mt-2 text-label text-muted">
+                      {[
+                        metric.source ? `${t('metricSource')}: ${metric.source}` : '',
+                        metric.period ? `${t('metricPeriod')}: ${metric.period}` : '',
+                      ]
+                        .filter(Boolean)
+                        .join(' · ')}
+                    </p>
+                  ) : null}
                 </Card>
               </li>
             ))}
@@ -207,6 +224,10 @@ export default async function CaseStudyDetailPage({
           </CardGrid>
         </Section>
       ) : null}
+
+      <Container className="pb-16">
+        <PageCta title={t('ctaTitle')} body={t('ctaBody')} />
+      </Container>
     </>
   );
 }

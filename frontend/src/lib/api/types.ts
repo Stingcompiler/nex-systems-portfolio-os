@@ -184,6 +184,14 @@ export interface ServiceDetail extends ServiceListItem {
   duration_estimate: string;
   features: ServiceFeature[];
   deliverables: string[];
+  /** المشكلة التي تعالجها الخدمة — فارغ = القسم لا يُعرض */
+  problem: string;
+  /** لمن تناسب */
+  audience: string[];
+  /** ما يلزم من العميل للبدء */
+  client_inputs: string[];
+  /** كيف تُحدَّد المدة والتكلفة */
+  pricing_approach: string;
   technologies: TechnologyRef[];
   related_projects: ProjectListItem[];
   faqs: Faq[];
@@ -263,6 +271,10 @@ export interface CaseStudyMetric {
   label: string;
   value: string;
   suffix?: string;
+  /** من أين جاء الرقم (سجلات النظام، استبيان العميل…) */
+  source?: string;
+  /** فترة القياس (مثل: أول 3 أشهر بعد الإطلاق) */
+  period?: string;
 }
 
 export interface CaseStudyDetail extends CaseStudyListItem {

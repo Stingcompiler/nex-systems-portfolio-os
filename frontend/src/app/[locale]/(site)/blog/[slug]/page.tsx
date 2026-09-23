@@ -122,7 +122,7 @@ export default async function PostPage({
                 </Link>
               ) : null}
 
-              <h1 className="text-h1 font-semibold tracking-tight">{post.title}</h1>
+              <h1 className="text-h1 font-semibold">{post.title}</h1>
 
               <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
                 {post.author_name ? <span>{post.author_name}</span> : null}
@@ -165,7 +165,7 @@ export default async function PostPage({
                   <li key={tag.id}>
                     <Link
                       href={`/blog?search=${encodeURIComponent(tag.name)}`}
-                      className="inline-flex rounded-full border border-border px-3 py-1 text-xs text-muted hover:text-foreground"
+                      className="inline-flex min-h-11 items-center rounded-full border border-border px-3 text-xs text-muted hover:text-foreground"
                     >
                       #{tag.name}
                     </Link>

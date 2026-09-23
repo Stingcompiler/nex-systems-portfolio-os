@@ -44,6 +44,8 @@ class Service(
         "description",
         "price_note",
         "duration_estimate",
+        "problem",
+        "pricing_approach",
     )
     search_source_fields = (
         "title_ar", "title_en",
@@ -77,6 +79,17 @@ class Service(
     features = models.JSONField("المميزات", default=list, blank=True)
     #: ["..."] قائمة نصية بالمخرجات
     deliverables = models.JSONField("المخرجات", default=list, blank=True)
+
+    # صفحة الخدمة تجيب أسئلة القرار قبل الطلب: ما المشكلة، لمن، ماذا نحتاج
+    # منك، وكيف تُقدَّر المدة والتكلفة. كلها اختيارية وتختفي أقسامها فارغة.
+    problem_ar = models.TextField("المشكلة التي تعالجها (عربي)", blank=True)
+    problem_en = models.TextField("المشكلة التي تعالجها (إنجليزي)", blank=True)
+    #: [{ar, en}] بنفس شكل المخرجات
+    audience = models.JSONField("لمن تناسب", default=list, blank=True)
+    #: [{ar, en}] ما يلزم من العميل للبدء
+    client_inputs = models.JSONField("ما نحتاجه من العميل", default=list, blank=True)
+    pricing_approach_ar = models.TextField("كيف تُحدَّد المدة والتكلفة (عربي)", blank=True)
+    pricing_approach_en = models.TextField("كيف تُحدَّد المدة والتكلفة (إنجليزي)", blank=True)
 
     price_from = models.DecimalField(
         "السعر يبدأ من", max_digits=10, decimal_places=2, null=True, blank=True

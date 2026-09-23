@@ -73,6 +73,10 @@ class ServiceDetailSerializer(ServiceListSerializer):
     duration_estimate = TranslatedField()
     features = TranslatedJSONField()
     deliverables = TranslatedJSONField()
+    problem = TranslatedField()
+    audience = TranslatedJSONField()
+    client_inputs = TranslatedJSONField()
+    pricing_approach = TranslatedField()
     technologies = TechnologyRefSerializer(many=True, read_only=True)
     related_projects = serializers.SerializerMethodField()
     faqs = serializers.SerializerMethodField()
@@ -81,7 +85,8 @@ class ServiceDetailSerializer(ServiceListSerializer):
     class Meta(ServiceListSerializer.Meta):
         fields = ServiceListSerializer.Meta.fields + [
             "description", "price_note", "duration_estimate",
-            "features", "deliverables", "technologies",
+            "features", "deliverables", "problem", "audience", "client_inputs",
+            "pricing_approach", "technologies",
             "related_projects", "faqs", "view_count", "seo", "published_at",
         ]
 

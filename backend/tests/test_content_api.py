@@ -132,6 +132,29 @@ def test_json_lists_are_localized_too(api_client, content):
     assert isinstance(arabic.data["deliverables"][0], str)
 
 
+def test_service_decision_fields_are_localized(api_client, content):
+    from apps.portfolio.models import Service
+
+    Service.objects.filter(slug="web-development").update(
+        problem_ar="موقع قديم بطيء", problem_en="A slow legacy site",
+        audience=[{"ar": "المدارس", "en": "Schools"}],
+        client_inputs=[{"ar": "الشعار", "en": "Your logo"}],
+        pricing_approach_ar="بحسب عدد الشاشات", pricing_approach_en="By screen count",
+    )
+    arabic = api_client.get(f"{SERVICES_URL}web-development/", **AR).data
+    english = api_client.get(f"{SERVICES_URL}web-development/", **EN).data
+
+    assert arabic["problem"] == "موقع قديم بطيء"
+    assert english["audience"] == ["Schools"]
+    assert english["client_inputs"] == ["Your logo"]
+    assert english["pricing_approach"] == "By screen count"
+
+
+def test_service_decision_fields_are_empty_by_default(api_client, content):
+    data = api_client.get(f"{SERVICES_URL}mobile-app-development/", **AR).data
+    assert data["problem"] == "" and data["audience"] == [] and data["client_inputs"] == []
+
+
 def test_response_declares_its_content_language(api_client, content):
     response = api_client.get(SERVICES_URL, **EN)
     assert response["Content-Language"] == "en"

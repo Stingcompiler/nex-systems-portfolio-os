@@ -2,16 +2,18 @@ import { Download, ExternalLink } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-import { TechBadge } from '@/components/content/cards';
+import { ProjectCard, TechBadge } from '@/components/content/cards';
 import { CoverImage } from '@/components/content/media';
 import { PageCta } from '@/components/content/page-cta';
 import { ButtonLink, ExternalButtonLink } from '@/components/ui/button';
+import { CardGrid, gridColumns } from '@/components/ui/card-grid';
 import { Container } from '@/components/ui/container';
 import { Breadcrumbs, Card, JsonLd, Prose } from '@/components/ui/misc';
 import {
   getCertifications,
   getEducation,
   getExperiences,
+  getFeaturedProjects,
   getProcessSteps,
   getSeoSettings,
   getServices,
@@ -22,6 +24,7 @@ import { Link } from '@/lib/i18n/navigation';
 import type { Locale } from '@/lib/i18n/routing';
 import { breadcrumbJsonLd, organizationJsonLd, personJsonLd } from '@/lib/seo/json-ld';
 import { buildMetadata } from '@/lib/seo/metadata';
+import { cn } from '@/lib/utils/cn';
 import { formatMonthYear } from '@/lib/utils/format';
 
 export async function generateMetadata({
@@ -68,6 +71,7 @@ export default async function AboutPage({
     education,
     certifications,
     technologies,
+    projects,
   ] = await Promise.all([
     getTranslations('about'),
     getTranslations('nav'),
@@ -79,6 +83,7 @@ export default async function AboutPage({
     getEducation(locale),
     getCertifications(locale),
     getTechnologies(locale),
+    getFeaturedProjects(locale),
   ]);
 
   const cv = locale === 'ar' ? settings?.cv_ar : settings?.cv_en;
@@ -116,6 +121,60 @@ export default async function AboutPage({
           <p className="mt-6 text-body-lg text-muted">{t('intro')}</p>
         </header>
 
+        {/* المسؤول عن التحليل والتنفيذ والدعم أولًا — ثم ما بناه فعلًا */}
+        {settings?.owner_name ? (
+          <section className="mb-16">
+            <h2 className="mb-6 text-h2 font-semibold">{t('founder')}</h2>
+            <Card>
+              {/* عمودان فقط حين توجد صورة — بدونها كان النص يُحشر في عمود الصورة الضيق */}
+              <div className={cn('grid gap-8', settings.owner_photo && 'lg:grid-cols-[1fr_2.4fr]')}>
+                {settings.owner_photo ? (
+                  <CoverImage
+                    media={settings.owner_photo}
+                    alt={settings.owner_name}
+                    ratio="aspect-square"
+                    sizes="(max-width: 1024px) 100vw, 25vw"
+                    className="rounded-xl"
+                  />
+                ) : null}
+                <div>
+                  <h3 className="text-h3 font-semibold">{settings.owner_name}</h3>
+                  {settings.owner_title ? (
+                    <p className="mt-1 text-primary">{settings.owner_title}</p>
+                  ) : null}
+                  {settings.owner_bio ? (
+                    <div className="mt-4">
+                      <Prose text={settings.owner_bio} />
+                    </div>
+                  ) : null}
+                  {cv?.url ? (
+                    <ExternalButtonLink href={cv.url} className="mt-6" variant="secondary" size="sm">
+                      <Download className="size-4" aria-hidden="true" />
+                      {tCommon('downloadCv')}
+                    </ExternalButtonLink>
+                  ) : null}
+                </div>
+              </div>
+            </Card>
+
+            {projects.length ? (
+              <div className="mt-8">
+                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                  <h3 className="text-h3 font-semibold">{t('publishedWork')}</h3>
+                  <ButtonLink href="/projects" variant="secondary" size="sm">
+                    {tNav('projects')}
+                  </ButtonLink>
+                </div>
+                <CardGrid count={Math.min(projects.length, 2)}>
+                  {projects.slice(0, 2).map((project) => (
+                    <ProjectCard key={project.id} project={project} />
+                  ))}
+                </CardGrid>
+              </div>
+            ) : null}
+          </section>
+        ) : null}
+
         {/* ماذا نبني: الخدمات الفعلية لا وصف عام */}
         {services.results.length ? (
           <section className="mb-16">
@@ -128,7 +187,7 @@ export default async function AboutPage({
                 {t('allServices')}
               </ButtonLink>
             </div>
-            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className={cn('grid gap-4', gridColumns(services.results.length))}>
               {services.results.map((service) => (
                 <li key={service.id}>
                   <Link
@@ -171,43 +230,6 @@ export default async function AboutPage({
                 </li>
               ))}
             </ol>
-          </section>
-        ) : null}
-
-        {/* المؤسس: الاسم والوجه والنبذة الشخصية في مكان واحد */}
-        {settings?.owner_name ? (
-          <section className="mb-16">
-            <h2 className="mb-6 text-h2 font-semibold">{t('founder')}</h2>
-            <Card>
-              <div className="grid gap-8 lg:grid-cols-[1fr_2.4fr]">
-                {settings.owner_photo ? (
-                  <CoverImage
-                    media={settings.owner_photo}
-                    alt={settings.owner_name}
-                    ratio="aspect-square"
-                    sizes="(max-width: 1024px) 100vw, 25vw"
-                    className="rounded-xl"
-                  />
-                ) : null}
-                <div>
-                  <h3 className="text-h3 font-semibold">{settings.owner_name}</h3>
-                  {settings.owner_title ? (
-                    <p className="mt-1 text-primary">{settings.owner_title}</p>
-                  ) : null}
-                  {settings.owner_bio ? (
-                    <div className="mt-4">
-                      <Prose text={settings.owner_bio} />
-                    </div>
-                  ) : null}
-                  {cv?.url ? (
-                    <ExternalButtonLink href={cv.url} className="mt-6" variant="secondary" size="sm">
-                      <Download className="size-4" aria-hidden="true" />
-                      {tCommon('downloadCv')}
-                    </ExternalButtonLink>
-                  ) : null}
-                </div>
-              </div>
-            </Card>
           </section>
         ) : null}
 

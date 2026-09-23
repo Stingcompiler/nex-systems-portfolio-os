@@ -86,6 +86,7 @@ export type SectionKey =
   | 'testimonials'
   | 'posts'
   | 'newsletter'
+  | 'faq'
   | 'cta';
 
 export interface PageSection {

@@ -1,4 +1,4 @@
-import { ArrowLeft } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 import { ButtonLink } from '@/components/ui/button';
@@ -29,7 +29,7 @@ export async function PageCta({
         <div className="flex shrink-0 flex-wrap gap-3">
           <ButtonLink href="/request-quote">
             {t('primary')}
-            <ArrowLeft className="size-4 flip-rtl" aria-hidden="true" />
+            <ArrowRight className="size-4 flip-rtl" aria-hidden="true" />
           </ButtonLink>
           <ButtonLink href="/contact" variant="secondary">
             {t('secondary')}

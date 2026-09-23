@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { ServiceCard, TestimonialCard } from '@/components/content/cards';
 import { CoverImage } from '@/components/content/media';
 import { ButtonLink } from '@/components/ui/button';
+import { CardGrid } from '@/components/ui/card-grid';
 import { Container } from '@/components/ui/container';
 import { Breadcrumbs, Card, JsonLd, Prose } from '@/components/ui/misc';
 import { Section, SectionHeader } from '@/components/ui/section';
@@ -195,7 +196,7 @@ export default async function CaseStudyDetailPage({
       {caseStudy.related_services.length ? (
         <Section>
           <SectionHeader title={t('relatedServices')} />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <CardGrid count={caseStudy.related_services.length}>
             {caseStudy.related_services.map((service) => (
               <ServiceCard
                 key={service.id}
@@ -203,7 +204,7 @@ export default async function CaseStudyDetailPage({
                 basePath={service.kind === 'solution' ? '/solutions' : '/services'}
               />
             ))}
-          </div>
+          </CardGrid>
         </Section>
       ) : null}
     </>

@@ -1,12 +1,14 @@
+import { ArrowRight } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { ProjectCard } from '@/components/content/cards';
 import { ButtonLink } from '@/components/ui/button';
+import { CardGrid } from '@/components/ui/card-grid';
 import { Container } from '@/components/ui/container';
 import { Breadcrumbs, JsonLd } from '@/components/ui/misc';
 import { EmptyState } from '@/components/ui/states';
-import { getProjects, getSeoSettings, getSiteSettings } from '@/lib/api/queries';
+import { getCaseStudies, getProjects, getSeoSettings, getSiteSettings } from '@/lib/api/queries';
 import { Link } from '@/lib/i18n/navigation';
 import type { Locale } from '@/lib/i18n/routing';
 import { breadcrumbJsonLd } from '@/lib/seo/json-ld';
@@ -47,7 +49,9 @@ export default async function ProjectsPage({
   setRequestLocale(rawLocale);
   const locale = rawLocale as Locale;
 
-  const [t, tNav, tStates, tCommon, projects] = await Promise.all([
+  const filtered = Boolean(filters.sector || filters.project_type);
+
+  const [t, tNav, tStates, tCommon, projects, allProjects, caseStudies] = await Promise.all([
     getTranslations('projects'),
     getTranslations('nav'),
     getTranslations('states'),
@@ -56,13 +60,19 @@ export default async function ProjectsPage({
       sector: filters.sector,
       project_type: filters.project_type,
       page_size: 50,
-    }),
+    }, { strict: true }),
+    // خيارات الفلترة من القائمة الكاملة لا من النتائج المفلترة: وإلا
+    // اختفت بقية القطاعات فور اختيار أحدها وعلق الزائر في قطاع واحد
+    filtered ? getProjects(locale, { page_size: 50 }) : null,
+    getCaseStudies(locale, { page_size: 1 }),
   ]);
 
-  // خيارات الفلترة تُشتق من النتائج نفسها، فلا قائمة ثابتة في الكود
   const sectors = Array.from(
     new Map(
-      projects.results.map((project) => [project.sector, project.sector_display]),
+      (allProjects ?? projects).results.map((project) => [
+        project.sector,
+        project.sector_display,
+      ]),
     ).entries(),
   );
 
@@ -84,6 +94,16 @@ export default async function ProjectsPage({
         <header className="mb-8 max-w-prose">
           <h1 className="text-h1 font-semibold">{t('title')}</h1>
           <p className="mt-3 text-muted">{t('description')}</p>
+          {/* رابط دراسات الحالة يظهر حين تُنشر واحدة على الأقل — لا وجهة فارغة */}
+          {caseStudies.count > 0 ? (
+            <Link
+              href="/case-studies"
+              className="mt-4 inline-flex min-h-11 items-center gap-2 font-medium text-primary hover:underline"
+            >
+              {t('caseStudiesLink')}
+              <ArrowRight className="size-4 flip-rtl" aria-hidden="true" />
+            </Link>
+          ) : null}
         </header>
 
         {sectors.length > 1 ? (
@@ -109,11 +129,11 @@ export default async function ProjectsPage({
         ) : null}
 
         {projects.results.length ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <CardGrid count={projects.results.length}>
             {projects.results.map((project, index) => (
               <ProjectCard key={project.id} project={project} priority={index < 3} />
             ))}
-          </div>
+          </CardGrid>
         ) : (
           <EmptyState
             title={
@@ -121,8 +141,16 @@ export default async function ProjectsPage({
                 ? tStates('emptySearch')
                 : tStates('emptyProjects')
             }
-            body={tStates('emptyBody')}
-            action={<ButtonLink href="/contact">{tNav('requestQuote')}</ButtonLink>}
+            body={filtered ? undefined : tStates('emptyBody')}
+            action={
+              filtered ? (
+                <ButtonLink href="/projects" variant="secondary">
+                  {tCommon('resetFilters')}
+                </ButtonLink>
+              ) : (
+                <ButtonLink href="/request-quote">{tNav('requestQuote')}</ButtonLink>
+              )
+            }
           />
         )}
       </Container>

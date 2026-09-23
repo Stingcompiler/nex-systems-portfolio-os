@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import type { SeoSettings, SiteSettings } from '@/lib/api/types';
 import { locales, type Locale } from '@/lib/i18n/routing';
+import { SITE_NAME_FALLBACK } from '@/lib/constants/site';
 
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
@@ -41,7 +42,7 @@ export function buildMetadata({
   seoSettings,
   noIndex = false,
 }: BuildMetadataInput): Metadata {
-  const siteName = settings?.site_name || 'StingSystems';
+  const siteName = settings?.site_name || SITE_NAME_FALLBACK;
   const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
   const resolvedDescription =
     description?.trim() || seoSettings?.default_seo_description || settings?.tagline || '';

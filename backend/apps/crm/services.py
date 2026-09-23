@@ -39,7 +39,7 @@ def create_lead_from_request(request: ProjectRequest) -> Lead:
         lead.save(update_fields=["notes", "expected_budget", "updated_at"])
     else:
         lead = Lead.objects.create(
-            name=request.name or request.email or "عميل بلا اسم",
+            name=request.name or request.email or request.phone or "عميل بلا اسم",
             company=request.company,
             email=request.email,
             phone=request.phone,

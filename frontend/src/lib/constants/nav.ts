@@ -6,20 +6,25 @@ export interface NavItem {
   key: string;
 }
 
+/**
+ * أربعة روابط تجيب أسئلة الزائر الأساسية: ماذا تقدّمون، ماذا بنيتم،
+ * كيف تعملون، ومن أنتم. زر «ابدأ مشروعك» بجوارها في الترويسة.
+ *
+ * الحلول القطاعية ودراسات الحالة تُصل من صفحتي الخدمات والأعمال،
+ * والمدونة والتقنيات والتواصل في التذييل — كل المسارات باقية.
+ */
 export const MAIN_NAV: NavItem[] = [
   { href: '/services', key: 'services' },
-  { href: '/solutions', key: 'solutions' },
   { href: '/projects', key: 'projects' },
-  { href: '/case-studies', key: 'caseStudies' },
-  { href: '/blog', key: 'blog' },
   { href: '/process', key: 'process' },
   { href: '/about', key: 'about' },
-  { href: '/contact', key: 'contact' },
 ];
 
-export const FOOTER_NAV: NavItem[] = [
-  ...MAIN_NAV,
-  { href: '/technologies', key: 'technologies' },
+/** يظهر تحت الروابط الرئيسية في درج الهاتف. */
+export const MOBILE_SECONDARY_NAV: NavItem[] = [
+  { href: '/solutions', key: 'solutions' },
+  { href: '/blog', key: 'blog' },
+  { href: '/contact', key: 'contact' },
 ];
 
 export const LEGAL_NAV: NavItem[] = [

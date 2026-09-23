@@ -50,6 +50,9 @@ interface ProjectRequestDetail {
   status: string;
   status_display: string;
   source: string;
+  /** الخدمة التي بدأ منها الزائر الطلب — فارغة للطلبات العامة والقديمة */
+  service_title: string;
+  service_kind: string;
   lead_id: number | null;
   attachments: Attachment[];
   created_at: string;
@@ -196,6 +199,12 @@ export default function RequestDetailPage() {
               <Field label="القطاع" value={data.sector} />
               <Field label="الميزانية" value={data.budget_display} />
               <Field label="المدة المتوقعة" value={data.timeline_display} />
+              {data.service_title ? (
+                <Field
+                  label={data.service_kind === 'solution' ? 'الحل المطلوب' : 'الخدمة المطلوبة'}
+                  value={data.service_title}
+                />
+              ) : null}
             </dl>
 
             {data.description ? (
@@ -272,6 +281,19 @@ export default function RequestDetailPage() {
                   className="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
                 >
                   مراسلة بالبريد
+                </a>
+              ) : null}
+              {/* الطلبات الواردة بالهاتف وحده: وسيلة الرد الوحيدة هي الاتصال */}
+              {data.phone ? (
+                <a
+                  href={`tel:${data.phone.replace(/\s+/g, '')}`}
+                  className={
+                    data.email
+                      ? 'inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-4 text-sm hover:bg-surface-hover'
+                      : 'inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90'
+                  }
+                >
+                  اتصال هاتفي
                 </a>
               ) : null}
               {data.lead_id ? (

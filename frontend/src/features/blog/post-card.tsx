@@ -20,12 +20,17 @@ export async function PostCard({
 
   return (
     <Card interactive className="relative flex h-full flex-col p-0">
-      <CoverImage
-        media={post.cover_image}
-        alt={post.title}
-        priority={priority}
-        className="rounded-b-none"
-      />
+      {/* بلا غلاف: بطاقة نصية، لا كتلة لونية فارغة */}
+      {post.cover_image ? (
+        <CoverImage
+          media={post.cover_image}
+          alt={post.title}
+          priority={priority}
+          className="rounded-b-none"
+        />
+      ) : (
+        <span aria-hidden="true" className="h-1 rounded-t-xl bg-brand" />
+      )}
       <div className="flex flex-1 flex-col p-6">
         {post.category ? (
           <Badge tone="primary" className="mb-2 self-start">

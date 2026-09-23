@@ -3,7 +3,7 @@
     "home": "Home",
     "about": "About",
     "services": "Services",
-    "solutions": "Solutions",
+    "solutions": "Sector solutions",
     "projects": "Work",
     "caseStudies": "Case studies",
     "blog": "Blog",
@@ -47,7 +47,9 @@
     "completedAt": "Completed",
     "technologies": "Technologies",
     "results": "{count, plural, =0 {No results} one {# result} other {# results}}",
-    "views": "Views"
+    "views": "Views",
+    "details": "Details",
+    "resetFilters": "Show all work"
   },
   "states": {
     "errorTitle": "This section could not be loaded",
@@ -67,8 +69,12 @@
   },
   "home": {
     "ctaPrimary": "Start a project",
-    "ctaSecondary": "See the work",
-    "heroBadge": "Accepting new projects"
+    "ctaSecondary": "See our work",
+    "heroBadge": "Accepting new projects",
+    "heroTitle": "We turn the way you work into a clear, easy-to-use system.",
+    "heroSubtitle": "We analyse your needs and build websites, apps and custom systems — from the idea through launch and support.",
+    "showcaseLabel": "From our work",
+    "heroServicesTitle": "What we build"
   },
   "sections": {
     "intro": "About",
@@ -82,7 +88,8 @@
     "testimonials": "Client feedback",
     "posts": "Latest articles",
     "newsletter": "Newsletter",
-    "cta": "Have a project?"
+    "cta": "Have a project?",
+    "faq": "Frequently asked questions"
   },
   "services": {
     "title": "Services",
@@ -115,7 +122,8 @@
     "gallery": "System screenshots",
     "links": "Links",
     "anonymous": "Undisclosed client",
-    "featured": "Featured"
+    "featured": "Featured",
+    "caseStudiesLink": "Read the case studies"
   },
   "caseStudies": {
     "title": "Case studies",
@@ -162,7 +170,7 @@
     "certifications": "Certifications",
     "current": "Present",
     "credential": "Verify credential",
-    "intro": "StingSystems is a developer-led software studio: the person who analyses your requirements is the same one who designs, builds, deploys and supports the system after handover — no layers between you and whoever writes the code.",
+    "intro": "StingSystem is a developer-led software studio: the person who analyses your requirements is the same one who designs, builds, deploys and supports the system after handover — no layers between you and whoever writes the code.",
     "whatWeBuild": "What we build",
     "whatWeBuildBody": "Systems, websites and applications built from analysis through deployment, in Arabic and English.",
     "howWeWork": "How we work",
@@ -195,21 +203,29 @@
     "sentBody": "We will reply as soon as possible.",
     "startProjectTitle": "Have a specific project?",
     "startProjectBody": "Use the project request form to send us sharper details.",
-    "startProjectCta": "Start a project"
+    "startProjectCta": "Start a project",
+    "formHelp": "For a general question or quick enquiry. We need your message and an email or phone number to reply; for a specific project, use the request form.",
+    "optional": "optional",
+    "errors": {
+      "message": "Write your message.",
+      "contact": "Add an email address or a phone number so we can reply.",
+      "email": "Check the email address.",
+      "network": "The message could not be sent. Your text is still on this page; check your connection and try again."
+    }
   },
   "requestForm": {
     "pageTitle": "Start a project",
-    "pageDescription": "Tell us about your project in four short steps, and we will come back with an initial outline.",
+    "pageDescription": "Describe what you need in three short steps, and we will come back with an initial outline. A description and one way to reach you are enough; everything else is optional.",
     "steps": "Request steps",
-    "step1Title": "Project type",
-    "step2Title": "Scope & features",
-    "step3Title": "Budget & timeline",
-    "projectTypeLabel": "What kind of project?",
+    "step1Title": "What do you need?",
+    "step2Title": "Optional details",
+    "step3Title": "How can we reach you?",
+    "projectTypeLabel": "Project type (optional)",
     "sectorLabel": "Sector",
     "sectorPlaceholder": "Choose a sector (optional)",
     "requirementsLabel": "What does the project need?",
-    "descriptionLabel": "Project description",
-    "descriptionPlaceholder": "Briefly explain your idea…",
+    "descriptionLabel": "Short project description",
+    "descriptionPlaceholder": "e.g. We need a system to register school students and track fees…",
     "budgetLabel": "Expected budget",
     "budgetPlaceholder": "Choose a range (optional)",
     "timelineLabel": "Expected timeline",
@@ -233,7 +249,8 @@
       "existing": "Improve existing system",
       "api": "REST API",
       "hosting": "Hosting",
-      "consulting": "Consulting & analysis"
+      "consulting": "Consulting & analysis",
+      "unsure": "Not sure"
     },
     "sector": {
       "education": "Education",
@@ -274,13 +291,12 @@
     "summaryFeatures": "Selected features",
     "summaryCount": "{count} of {total}",
     "replyPromise": "A reply within one business day",
-    "summaryPlaceholder": "Pick a project type to start.",
+    "summaryPlaceholder": "Describe your project to start.",
     "summaryType": "Project type",
     "stepName": {
-      "type": "Project type",
-      "scope": "Scope & features",
-      "budget": "Budget & timeline",
-      "contact": "Contact details"
+      "idea": "The idea",
+      "details": "Optional details",
+      "contact": "Contact & review"
     },
     "scopeLabel": "What does the project include?",
     "scopeHelp": "Pick what you need now — scope can grow later without a rebuild.",
@@ -313,7 +329,30 @@
         "desc": "Works offline"
       }
     },
-    "step4Title": "Contact details"
+    "stepOf": "Step {step} of {total}",
+    "step2Help": "These help us estimate scope. You can skip them entirely.",
+    "step3Help": "At least an email address or a phone number. Name and company are optional.",
+    "descriptionHint": "A sentence or two: the problem you want solved, or what you picture the system doing.",
+    "optional": "optional",
+    "reviewTitle": "Review your request",
+    "edit": "Edit",
+    "notSpecified": "Not specified",
+    "skip": "Skip",
+    "submitting": "Sending…",
+    "retry": "Try again",
+    "serviceContext": "Request about:",
+    "summaryService": "Service",
+    "nextStepTitle": "What happens next?",
+    "nextStepEmail": "We will review your request and reply to your email.",
+    "nextStepPhone": "We will review your request and contact you on the phone number you sent.",
+    "whatsappFollowUp": "Or follow up on WhatsApp",
+    "errors": {
+      "description": "Write a short description of what you need (at least ten characters).",
+      "contact": "Add an email address or a phone number so we can reply.",
+      "email": "Check the email address.",
+      "phone": "The phone number looks incomplete.",
+      "network": "The request could not be sent. Your answers are still on this page; check your connection and try again."
+    }
   },
   "blog": {
     "title": "Blog",

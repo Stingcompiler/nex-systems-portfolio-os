@@ -59,7 +59,7 @@ export default async function BlogPage({
       category: filters.category,
       search: filters.search,
       page_size: 12,
-    }),
+    }, { strict: true }),
     getCategories(locale),
     getPopularPosts(locale),
   ]);

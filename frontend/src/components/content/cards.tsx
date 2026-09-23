@@ -1,4 +1,4 @@
-import { ArrowLeft, Quote, Star } from 'lucide-react';
+import { ArrowRight, Quote, Star } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 
 import { CoverImage } from '@/components/content/media';
@@ -18,11 +18,13 @@ import { formatMonthYear, formatPrice } from '@/lib/utils/format';
 /**
  * [بند 9] سهم واحد ثابت ينعكس بالـCSS عبر .flip-rtl —
  * لا تفريع على locale في مكوّنات العرض، ولا استيراد سهمين.
+ * السهم «إلى الأمام»: يمين في الإنجليزية، ويسار بعد الانعكاس في العربية،
+ * والإزاحة عند التحويم في اتجاه القراءة نفسه.
  */
 function DirectionArrow() {
   return (
-    <ArrowLeft
-      className="size-4 shrink-0 flip-rtl transition-transform duration-fast group-hover/card:-translate-x-1"
+    <ArrowRight
+      className="size-4 shrink-0 flip-rtl transition-transform duration-fast group-hover/card:translate-x-1 rtl:group-hover/card:-translate-x-1"
       aria-hidden="true"
     />
   );
@@ -86,14 +88,20 @@ export async function ProjectCard({
 
   return (
     <Card interactive className="relative flex h-full flex-col overflow-hidden p-0">
-      <div className="overflow-hidden">
-        <CoverImage
-          media={project.cover_image}
-          alt={project.title}
-          priority={priority}
-          className="rounded-b-none rounded-t-xl transition-transform duration-slow group-hover/card:scale-[1.04]"
-        />
-      </div>
+      {/* بلا غلاف: بطاقة نصية مقصودة، لا مساحة لونية فارغة بحجم صورة
+          توحي بأن المحتوى لم يكتمل */}
+      {project.cover_image ? (
+        <div className="overflow-hidden border-b border-border">
+          <CoverImage
+            media={project.cover_image}
+            alt={project.title}
+            priority={priority}
+            className="rounded-b-none rounded-t-xl transition-transform duration-slow group-hover/card:scale-[1.04]"
+          />
+        </div>
+      ) : (
+        <span aria-hidden="true" className="h-1 bg-brand" />
+      )}
 
       <div className="flex flex-1 flex-col p-6">
         <div className="mb-2 flex flex-wrap items-center gap-2">

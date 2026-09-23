@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
 import { CoverImage } from '@/components/content/media';
+import { CardGrid } from '@/components/ui/card-grid';
 import { Container } from '@/components/ui/container';
 import { Badge, Breadcrumbs, JsonLd } from '@/components/ui/misc';
 import { ArticleBody } from '@/features/blog/article-body';
@@ -193,11 +194,11 @@ export default async function PostPage({
           <section className="border-t border-border bg-surface/60 py-12 sm:py-16">
             <Container>
               <h2 className="mb-8 text-h2 font-semibold">{t('related')}</h2>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <CardGrid count={post.related_posts.length}>
                 {post.related_posts.map((related) => (
                   <PostCard key={related.id} post={related} />
                 ))}
-              </div>
+              </CardGrid>
             </Container>
           </section>
         ) : null}

@@ -25,7 +25,7 @@ export function ThemeToggle() {
       aria-label={t(LABEL_KEYS[theme])}
       title={t(LABEL_KEYS[theme])}
       onClick={() => setTheme(CYCLE[theme])}
-      className="flex size-9 items-center justify-center rounded-full text-muted transition-colors duration-fast hover:bg-surface-hover hover:text-foreground"
+      className="flex size-11 items-center justify-center rounded-full text-muted transition-colors duration-fast hover:bg-surface-hover hover:text-foreground"
     >
       <Icon className="size-[1.1rem]" aria-hidden="true" />
     </button>

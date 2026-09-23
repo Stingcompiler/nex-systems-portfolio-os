@@ -1,4 +1,4 @@
-import { apiGet, apiGetSafe } from '@/lib/api/server';
+import { apiGet, apiGetSafe, apiGetStrict } from '@/lib/api/server';
 import type {
   CaseStudyDetail,
   CaseStudyListItem,
@@ -42,6 +42,18 @@ const EMPTY_PAGE = { count: 0, total_pages: 0, current_page: 1, page_size: 0, ne
 
 function emptyPage<T>(): Paginated<T> {
   return EMPTY_PAGE as Paginated<T>;
+}
+
+/**
+ * `strict` للمحتوى الأساسي في صفحته: فشل الجلب يُعرض خطأً قابلًا للمحاولة
+ * لا قائمة فارغة. الأقسام الثانوية تبقى متسامحة.
+ */
+interface ListOptions {
+  strict?: boolean;
+}
+
+function listFetcher(options?: ListOptions) {
+  return options?.strict ? apiGetStrict : apiGetSafe;
 }
 
 // --------------------------------------------------------------- الإعدادات
@@ -105,19 +117,24 @@ interface ServiceQuery {
   page_size?: number;
 }
 
-function serviceList(kind: 'services' | 'solutions', locale: Locale, query: ServiceQuery = {}) {
-  return apiGetSafe<Paginated<ServiceListItem>>(
+function serviceList(
+  kind: 'services' | 'solutions',
+  locale: Locale,
+  query: ServiceQuery = {},
+  options?: ListOptions,
+) {
+  return listFetcher(options)<Paginated<ServiceListItem>>(
     `${kind}/`,
     { locale, searchParams: { ...query }, revalidate: 600, tags: [CacheTags.services] },
     emptyPage<ServiceListItem>(),
   );
 }
 
-export const getServices = (locale: Locale, query?: ServiceQuery) =>
-  serviceList('services', locale, query);
+export const getServices = (locale: Locale, query?: ServiceQuery, options?: ListOptions) =>
+  serviceList('services', locale, query, options);
 
-export const getSolutions = (locale: Locale, query?: ServiceQuery) =>
-  serviceList('solutions', locale, query);
+export const getSolutions = (locale: Locale, query?: ServiceQuery, options?: ListOptions) =>
+  serviceList('solutions', locale, query, options);
 
 export function getService(kind: 'services' | 'solutions', locale: Locale, slug: string) {
   return apiGet<ServiceDetail>(`${kind}/${slug}/`, {
@@ -147,8 +164,8 @@ interface ProjectQuery {
   page_size?: number;
 }
 
-export function getProjects(locale: Locale, query: ProjectQuery = {}) {
-  return apiGetSafe<Paginated<ProjectListItem>>(
+export function getProjects(locale: Locale, query: ProjectQuery = {}, options?: ListOptions) {
+  return listFetcher(options)<Paginated<ProjectListItem>>(
     'projects/',
     { locale, searchParams: { ...query }, revalidate: 600, tags: [CacheTags.projects] },
     emptyPage<ProjectListItem>(),
@@ -173,8 +190,12 @@ export function getProject(locale: Locale, slug: string) {
 
 // --------------------------------------------------------------- دراسات الحالة
 
-export function getCaseStudies(locale: Locale, query: { page?: number; page_size?: number } = {}) {
-  return apiGetSafe<Paginated<CaseStudyListItem>>(
+export function getCaseStudies(
+  locale: Locale,
+  query: { page?: number; page_size?: number } = {},
+  options?: ListOptions,
+) {
+  return listFetcher(options)<Paginated<CaseStudyListItem>>(
     'case-studies/',
     { locale, searchParams: { ...query }, revalidate: 600, tags: [CacheTags.caseStudies] },
     emptyPage<CaseStudyListItem>(),
@@ -246,8 +267,8 @@ interface PostQuery {
   page_size?: number;
 }
 
-export function getPosts(locale: Locale, query: PostQuery = {}) {
-  return apiGetSafe<Paginated<PostListItem>>(
+export function getPosts(locale: Locale, query: PostQuery = {}, options?: ListOptions) {
+  return listFetcher(options)<Paginated<PostListItem>>(
     'posts/',
     { locale, searchParams: { ...query }, revalidate: 300, tags: [CacheTags.posts] },
     emptyPage<PostListItem>(),

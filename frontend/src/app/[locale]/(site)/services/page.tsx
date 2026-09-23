@@ -42,7 +42,7 @@ export default async function ServicesPage({
   const [t, tNav, services] = await Promise.all([
     getTranslations('services'),
     getTranslations('nav'),
-    getServices(locale, { page_size: 50 }),
+    getServices(locale, { page_size: 50 }, { strict: true }),
   ]);
 
   return (

@@ -1,4 +1,4 @@
-import { ArrowLeft, Check, Mail } from 'lucide-react';
+import { ArrowRight, Check, Mail } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 import {
@@ -8,7 +8,9 @@ import {
   StatCard,
   TestimonialCard,
 } from '@/components/content/cards';
-import { TechLogo } from '@/components/content/media';
+import { FaqList } from '@/components/content/faq-list';
+import { CoverImage, TechLogo } from '@/components/content/media';
+import { CardGrid } from '@/components/ui/card-grid';
 import { PostCard } from '@/features/blog/post-card';
 import { NewsletterForm } from '@/features/newsletter/newsletter-form';
 import { ButtonLink } from '@/components/ui/button';
@@ -17,6 +19,7 @@ import { Card, Prose } from '@/components/ui/misc';
 import { Section, SectionHeader, type SectionTone } from '@/components/ui/section';
 import type {
   CaseStudyListItem,
+  Faq,
   PageSection,
   PostListItem,
   ProcessStep,
@@ -29,6 +32,7 @@ import type {
 } from '@/lib/api/types';
 import { Link } from '@/lib/i18n/navigation';
 import type { Locale } from '@/lib/i18n/routing';
+import { cn } from '@/lib/utils/cn';
 
 interface SectionProps {
   section: PageSection;
@@ -52,46 +56,52 @@ export async function HeroSection({
   section,
   settings,
   stats,
-}: SectionProps & { settings: SiteSettings | null; stats: Stat[] }) {
+  showcase,
+  services,
+}: SectionProps & {
+  settings: SiteSettings | null;
+  stats: Stat[];
+  /** مشروع حقيقي بلقطة تُعرض بجوار الرسالة — أقوى دليل في أول شاشة */
+  showcase?: ProjectListItem | null;
+  /** بديل نصي حين لا توجد لقطة: ما نبنيه فعلًا، من المحتوى المنشور */
+  services: ServiceListItem[];
+}) {
   const t = await getTranslations('home');
 
-  const title = section.title || settings?.tagline || '';
-  const subtitle = section.subtitle || '';
+  // العنوان من اللوحة أولًا؛ النص الاحتياطي يمنع بطلًا فارغًا إن تعذّر جلب المحتوى
+  const title = section.title || settings?.tagline || t('heroTitle');
+  const subtitle = section.subtitle || (section.title ? '' : t('heroSubtitle'));
 
-  // إبراز آخر كلمة من العنوان بتدرّج لوني — لمسة عصرية دون ضجيج
   const words = title.trim().split(' ');
   const lead = words.slice(0, -1).join(' ');
   const highlight = words.length > 1 ? words[words.length - 1] : '';
   const heroStats = stats.slice(0, 3);
+  const heroServices = services.slice(0, 4);
+  const hasAside = Boolean(showcase?.cover_image) || heroServices.length > 0;
 
   return (
     <section className="hero-surface relative overflow-hidden border-b border-border">
-      {/* كتل متدرّجة زخرفية خلف المحتوى */}
+      {/* وهج واحد خافت — كان وهجين يتكرران في الدعوة والبطاقات */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-32 end-[-6rem] -z-10 size-[26rem] rounded-full bg-brand opacity-[0.18] blur-3xl"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-40 start-[-8rem] -z-10 size-[26rem] rounded-full opacity-[0.14] blur-3xl"
-        style={{ backgroundColor: 'rgb(var(--accent))' }}
+        className="pointer-events-none absolute -top-32 end-[-6rem] -z-10 size-[26rem] rounded-full bg-brand opacity-[0.12] blur-3xl"
       />
 
-      <Container className="relative grid items-center gap-12 py-24 sm:py-32 lg:grid-cols-[1.1fr_0.9fr]">
+      <Container
+        className={cn(
+          'relative grid items-center gap-12 py-20 sm:py-28',
+          hasAside && 'lg:grid-cols-[1.05fr_0.95fr]',
+        )}
+      >
         <div className="animate-fade-up">
           <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3 py-1 text-sm font-medium text-primary backdrop-blur">
-            <span className="relative flex size-2">
-              <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary/60" />
-              <span className="relative inline-flex size-2 rounded-full bg-primary" />
-            </span>
+            <span className="inline-flex size-2 rounded-full bg-primary" aria-hidden="true" />
             {t('heroBadge')}
           </p>
 
           <h1 className="text-display font-bold [text-wrap:balance]">
             {highlight ? (
               <>
-                {/* لون كامل لا تدرّج: العنوان الممتلئ بالتدرّج القُطري
-                    أوضح ما يجعل الصفحة تبدو قالبًا جاهزًا */}
                 {lead} <span className="text-primary">{highlight}</span>
               </>
             ) : (
@@ -106,15 +116,14 @@ export async function HeroSection({
           <div className="mt-8 flex flex-wrap gap-3">
             <ButtonLink href="/request-quote" size="lg">
               {section.cta_label || t('ctaPrimary')}
-              <ArrowLeft className="size-4 flip-rtl" aria-hidden="true" />
+              <ArrowRight className="size-4 flip-rtl" aria-hidden="true" />
             </ButtonLink>
             <ButtonLink href="/projects" size="lg" variant="secondary">
               {t('ctaSecondary')}
             </ButtonLink>
           </div>
 
-          {/* شريط أرقام موجز — من البيانات الحقيقية إن وُجدت.
-              الأرقام بخط المونو وبلون صلب: تُقرأ كقياسات لا كزخرفة */}
+          {/* أرقام من اللوحة فقط (سنوات، مشاريع…) — لا مؤشرات تشغيل توضيحية */}
           {heroStats.length ? (
             <dl className="mt-12 flex flex-wrap gap-x-12 gap-y-5 border-t border-border pt-7">
               {heroStats.map((stat) => (
@@ -130,108 +139,84 @@ export async function HeroSection({
           ) : null}
         </div>
 
-        <div className="relative mt-10 lg:mt-0">
-          {/* هالة خفيفة تفصل اللوحة عن الأرضية — 0.2 كانت آخر أثر «قالب» في الصفحة */}
-          <div
-            aria-hidden="true"
-            className="absolute -inset-4 -z-10 rounded-[2rem] bg-brand opacity-[0.08] blur-3xl"
-          />
-
-          {/* واجهة إنجليزية بطبيعتها — تُرسم LTR داخل الصفحة العربية وإلا انقلبت
-              الإشارات السالبة والمسارات.
-              خط المونو على الحاوية كلها: اللوحة «طرفية» مقصودة الأسلوب، لا
-              واجهة إنجليزية بخط الجسم ضلّت طريقها إلى صفحة عربية */}
-          <div
-            dir="ltr"
-            className="overflow-hidden rounded-2xl border border-border/50 bg-surface/80 font-mono shadow-elevated backdrop-blur-xl"
-          >
-            <div className="flex items-center gap-1.5 border-b border-border/40 px-3 py-2 sm:px-4 sm:py-2.5">
-              <span className="size-2 rounded-full bg-danger/50 sm:size-2.5" />
-              <span className="size-2 rounded-full bg-warning/50 sm:size-2.5" />
-              <span className="size-2 rounded-full bg-success/50 sm:size-2.5" />
-              <span className="ms-2 flex-1 rounded-md bg-surface-hover px-2 py-0.5 text-[9px] text-muted sm:ms-3 sm:text-[10px]">
-                stingdev.pro/dashboard
-              </span>
-            </div>
-
-            <div className="p-3 sm:p-4">
-              <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
-                {/* لوحة توضيحية لا تقرير: مقاييس تشغيل عامة، لا أرقام أعمال
-                    تنافس الإحصائيات الحقيقية المعروضة بجوارها في البطل */}
-                {[
-                  { label: 'Uptime', value: '99.9%', trend: 'stable' },
-                  { label: 'API p95', value: '120ms', trend: '−18ms' },
-                  { label: 'Tests', value: '100%', trend: 'passing' },
-                ].map((m) => (
-                  <div
-                    key={m.label}
-                    className="rounded-lg border border-border/30 bg-background/60 p-2 sm:p-2.5"
-                  >
-                    <div className="text-[8px] leading-none text-muted sm:text-[10px]">
-                      {m.label}
-                    </div>
-                    <div className="mt-1 text-xs font-bold sm:text-sm">{m.value}</div>
-                    <div className="mt-0.5 text-[8px] font-medium text-success sm:text-[10px]">
-                      {m.trend}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-2 rounded-lg border border-border/30 bg-background/60 p-2 sm:mt-3 sm:p-3">
-                <div className="mb-1.5 flex items-baseline justify-between text-[8px] text-muted sm:text-[10px]">
-                  <span>Performance</span>
-                  <span className="font-bold text-foreground">98</span>
-                </div>
-                <svg
-                  viewBox="0 0 200 50"
-                  className="h-8 w-full sm:h-12"
-                  aria-hidden="true"
-                >
-                  <rect x="4" y="30" width="14" height="20" rx="2" className="fill-primary/20" />
-                  <rect x="24" y="18" width="14" height="32" rx="2" className="fill-primary/20" />
-                  <rect x="44" y="24" width="14" height="26" rx="2" className="fill-primary/25" />
-                  <rect x="64" y="10" width="14" height="40" rx="2" className="fill-primary/30" />
-                  <rect x="84" y="14" width="14" height="36" rx="2" className="fill-primary/35" />
-                  <rect x="104" y="8" width="14" height="42" rx="2" className="fill-primary/40" />
-                  <rect x="124" y="12" width="14" height="38" rx="2" className="fill-primary/50" />
-                  <rect x="144" y="5" width="14" height="45" rx="2" className="fill-primary/60" />
-                  <rect x="164" y="8" width="14" height="42" rx="2" className="fill-primary/75" />
-                  <rect x="184" y="2" width="14" height="48" rx="2" className="fill-primary" />
-                </svg>
-              </div>
-
-              <div className="mt-2 hidden space-y-1.5 sm:mt-3 sm:block">
-                <div className="flex items-center gap-2 rounded-lg border border-border/30 bg-background/60 p-2">
-                  <span className="size-1.5 rounded-full bg-success" />
-                  <span className="text-[10px] text-muted">Build #847 deployed</span>
-                  <span className="ms-auto text-[9px] text-muted/60">2m</span>
-                </div>
-                <div className="flex items-center gap-2 rounded-lg border border-border/30 bg-background/60 p-2">
-                  <span className="size-1.5 rounded-full bg-primary" />
-                  <span className="text-[10px] text-muted">API tests passed</span>
-                  <span className="ms-auto text-[9px] text-muted/60">5m</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="absolute -bottom-3 -start-3 z-10 hidden animate-float rounded-xl border border-border/50 bg-surface/95 p-2 font-mono shadow-card backdrop-blur sm:block sm:p-2.5">
-            <div className="flex items-center gap-1.5">
-              <span className="size-1.5 animate-pulse rounded-full bg-success" />
-              <span className="text-[9px] text-muted">terminal</span>
-            </div>
-            <code className="mt-1 block whitespace-nowrap text-[10px] text-success/80">
-              ✓ build passed
-            </code>
-          </div>
-
-          <div className="absolute -end-2 -top-2 z-10 hidden animate-float-reverse rounded-full border border-border/50 bg-surface/95 px-2.5 py-1 shadow-card backdrop-blur sm:block">
-            <span className="font-mono text-[10px] font-medium text-primary">v2.4.0</span>
-          </div>
-        </div>
+        {showcase?.cover_image ? (
+          <HeroShowcase project={showcase} label={t('showcaseLabel')} />
+        ) : heroServices.length ? (
+          <HeroServices services={heroServices} title={t('heroServicesTitle')} />
+        ) : null}
       </Container>
     </section>
+  );
+}
+
+/**
+ * لقطة مشروع فعلي بدل لوحة مؤشرات توضيحية: الزائر يرى ما سُلّم لا رسمًا
+ * يشبه لوحة تحكم بأرقام قد تُفهم نتائجَ مقاسة.
+ */
+async function HeroShowcase({ project, label }: { project: ProjectListItem; label: string }) {
+  return (
+    <figure className="group/showcase relative">
+      <Link
+        href={`/projects/${project.slug}`}
+        className="block overflow-hidden rounded-2xl border border-border bg-surface shadow-elevated transition-shadow duration-normal hover:shadow-card focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <CoverImage
+          media={project.cover_image}
+          alt={project.title}
+          fit="contain"
+          priority
+          ratio="aspect-[16/10]"
+          sizes="(max-width: 1024px) 100vw, 45vw"
+          className="rounded-none bg-surface-hover"
+        />
+        <figcaption className="flex items-center justify-between gap-4 border-t border-border p-4 sm:p-5">
+          <span className="min-w-0">
+            <span className="block text-label text-muted">{label}</span>
+            <span className="mt-0.5 block font-heading text-base font-semibold sm:text-lg">
+              {project.title}
+            </span>
+          </span>
+          <ArrowRight
+            className="size-5 shrink-0 text-primary transition-transform duration-fast flip-rtl group-hover/showcase:translate-x-1 rtl:group-hover/showcase:-translate-x-1"
+            aria-hidden="true"
+          />
+        </figcaption>
+      </Link>
+    </figure>
+  );
+}
+
+/** تكوين نصي منظّم حين لا توجد لقطة مشروع بعد. */
+async function HeroServices({ services, title }: { services: ServiceListItem[]; title: string }) {
+  return (
+    <div className="rounded-2xl border border-border bg-surface/80 p-6 shadow-card backdrop-blur sm:p-8">
+      <p className="mb-5 text-sm font-medium text-muted">{title}</p>
+      <ul className="divide-y divide-border">
+        {services.map((service) => (
+          <li key={service.id} className="py-4 first:pt-0 last:pb-0">
+            <Link
+              href={`/services/${service.slug}`}
+              className="group/item flex items-start justify-between gap-4"
+            >
+              <span className="min-w-0">
+                <span className="block font-heading text-base font-semibold group-hover/item:text-primary">
+                  {service.title}
+                </span>
+                {service.short_description ? (
+                  <span className="mt-1 line-clamp-2 block text-sm text-muted">
+                    {service.short_description}
+                  </span>
+                ) : null}
+              </span>
+              <ArrowRight
+                className="mt-1 size-4 shrink-0 text-muted flip-rtl group-hover/item:text-primary"
+                aria-hidden="true"
+              />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -311,11 +296,11 @@ export async function ServicesSection({
           </ButtonLink>
         }
       />
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <CardGrid count={Math.min(services.length, limit)}>
         {services.slice(0, limit).map((service) => (
           <ServiceCard key={service.id} service={service} basePath={basePath} />
         ))}
-      </div>
+      </CardGrid>
     </Section>
   );
 }
@@ -328,7 +313,8 @@ export async function ProjectsSection({
   if (!projects.length) return null;
 
   const t = await getTranslations('common');
-  const limit = section.config?.limit ?? 6;
+  // مشروعان بارزان بلقطات واسعة يقنعان أكثر من ستة مصغّرة؛ اللوحة تغيّر العدد
+  const limit = section.config?.limit ?? 2;
 
   return (
     <Section tone="dark">
@@ -342,11 +328,11 @@ export async function ProjectsSection({
           </ButtonLink>
         }
       />
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <CardGrid count={Math.min(projects.length, limit)}>
         {projects.slice(0, limit).map((project) => (
           <ProjectCard key={project.id} project={project} />
         ))}
-      </div>
+      </CardGrid>
     </Section>
   );
 }
@@ -373,11 +359,11 @@ export async function CaseStudiesSection({
           </ButtonLink>
         }
       />
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <CardGrid count={Math.min(caseStudies.length, limit)}>
         {caseStudies.slice(0, limit).map((caseStudy) => (
           <CaseStudyCard key={caseStudy.id} caseStudy={caseStudy} />
         ))}
-      </div>
+      </CardGrid>
     </Section>
   );
 }
@@ -389,20 +375,32 @@ export async function ProcessSection({
 }: SectionProps & { steps: ProcessStep[] }) {
   if (!steps.length) return null;
 
+  const t = await getTranslations('common');
+  // الرئيسية تعرض المراحل الأساسية فقط؛ التفاصيل الكاملة في صفحة «طريقة العمل»
+  const shown = steps.slice(0, 4);
+  const columns = shown.length;
+  const lgColumns =
+    columns >= 4 ? 'lg:grid-cols-4' : columns === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2';
+
   return (
     <Section tone="muted">
       <SectionHeader
         title={await resolveTitle(section)}
         subtitle={section.subtitle}
         index={index}
+        action={
+          <ButtonLink href="/process" variant="secondary" size="sm">
+            {t('details')}
+          </ButtonLink>
+        }
       />
-      <ol className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {steps.map((step, index) => (
+      <ol className={cn('grid gap-6', columns > 1 && 'sm:grid-cols-2', lgColumns)}>
+        {shown.map((step, index) => (
           <li key={step.id} className="relative">
             {/* خطّ رابط بين الخطوات على الشاشات الواسعة — يُحذف من آخر عمود
-                في كل صف (الشبكة رباعية عند lg)، وإلا امتدّ خارج الصفحة
+                في كل صف (عدد الأعمدة عند lg = عدد المراحل المعروضة)، وإلا امتدّ خارج الصفحة
                 وأنشأ تمريرًا أفقيًا بعرض 111px على 1280 */}
-            {index < steps.length - 1 && (index + 1) % 4 !== 0 ? (
+            {index < shown.length - 1 && (index + 1) % columns !== 0 ? (
               <span
                 aria-hidden="true"
                 className="absolute top-6 hidden h-px w-full bg-gradient-to-l from-border to-transparent lg:block"
@@ -489,11 +487,11 @@ export async function TestimonialsSection({
         subtitle={section.subtitle}
         index={index}
       />
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <CardGrid count={testimonials.length}>
         {testimonials.map((testimonial) => (
           <TestimonialCard key={testimonial.id} testimonial={testimonial} />
         ))}
-      </div>
+      </CardGrid>
     </Section>
   );
 }
@@ -520,11 +518,32 @@ export async function PostsSection({
           </ButtonLink>
         }
       />
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <CardGrid count={Math.min(posts.length, limit)}>
         {posts.slice(0, limit).map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
-      </div>
+      </CardGrid>
+    </Section>
+  );
+}
+
+export async function FaqSection({
+  section,
+  faqs,
+  index,
+}: SectionProps & { faqs: Faq[] }) {
+  if (!faqs.length) return null;
+
+  const limit = section.config?.limit ?? 6;
+
+  return (
+    <Section>
+      <SectionHeader
+        title={await resolveTitle(section)}
+        subtitle={section.subtitle}
+        index={index}
+      />
+      <FaqList faqs={faqs.slice(0, limit)} />
     </Section>
   );
 }
@@ -557,7 +576,7 @@ export async function CtaSection({
             className="bg-white text-primary shadow-lg hover:bg-white/90"
           >
             {section.cta_label || t('ctaPrimary')}
-            <ArrowLeft className="size-4 flip-rtl" aria-hidden="true" />
+            <ArrowRight className="size-4 flip-rtl" aria-hidden="true" />
           </ButtonLink>
         </div>
 

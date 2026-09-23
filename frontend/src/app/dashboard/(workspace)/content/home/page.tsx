@@ -35,6 +35,7 @@ const SECTION_LABELS: Record<string, string> = {
   testimonials: 'شهادات العملاء',
   posts: 'أحدث المقالات',
   newsletter: 'النشرة البريدية',
+  faq: 'أسئلة شائعة',
   cta: 'دعوة للتواصل',
 };
 

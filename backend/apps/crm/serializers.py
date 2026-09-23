@@ -12,6 +12,10 @@ from apps.crm.models import (
     ProjectRequest,
     RequestAttachment,
 )
+from apps.portfolio.models import Service
+
+#: أقصر وصف يكفي لفهم الحاجة والرد عليها — جملة واحدة لا كلمة.
+MIN_REQUEST_DESCRIPTION = 10
 
 # --------------------------------------------------------------- عام (نماذج الموقع)
 
@@ -33,9 +37,18 @@ class ContactMessageCreateSerializer(serializers.ModelSerializer):
         # الحقل اختياري؛ نطبّع الفراغات فقط دون فرض حد أدنى للطول
         return " ".join(value.split())
 
-    def validate_message(self, value):
-        # الحقل اختياري — يُقبل فارغًا
-        return value
+    def validate_email(self, value):
+        return value.lower().strip()
+
+    def validate(self, attrs):
+        # رسالة يمكن الرد عليها: نصّ ووسيلة تواصل واحدة على الأقل
+        if not (attrs.get("message") or "").strip():
+            raise serializers.ValidationError({"message": "اكتب رسالتك"})
+        if not attrs.get("email") and not (attrs.get("phone") or "").strip():
+            raise serializers.ValidationError(
+                {"contact": "أضف بريدًا إلكترونيًا أو رقم هاتف لنتمكن من الرد"}
+            )
+        return attrs
 
     def create(self, validated_data):
         validated_data.pop("website", None)
@@ -52,7 +65,23 @@ class ProjectRequestDraftSerializer(serializers.ModelSerializer):
 
 
 class ProjectRequestSubmitSerializer(serializers.ModelSerializer):
+    """الإرسال النهائي من الموقع.
+
+    الطلب يجب أن يكون قابلًا للرد: وصف مختصر للحاجة، ووسيلة تواصل واحدة
+    على الأقل (بريد أو هاتف). بقية الحقول اختيارية. الطلبات القديمة في
+    CRM لا تتأثر — القاعدة على الإرسال الجديد فقط.
+    """
+
     website = serializers.CharField(required=False, allow_blank=True, write_only=True)
+    service = serializers.SlugRelatedField(
+        slug_field="slug",
+        queryset=Service.objects.filter(is_published=True),
+        required=False,
+        allow_null=True,
+    )
+    submission_id = serializers.CharField(
+        required=False, allow_blank=True, max_length=64, write_only=True
+    )
 
     class Meta:
         model = ProjectRequest
@@ -61,7 +90,8 @@ class ProjectRequestSubmitSerializer(serializers.ModelSerializer):
             "project_type", "sector",
             "requirements", "description", "budget_range", "timeline",
             "name", "email", "phone", "whatsapp", "company",
-            "country", "city", "preferred_language", "website",
+            "country", "city", "preferred_language", "service",
+            "submission_id", "website",
         ]
         read_only_fields = ["id", "reference_code"]
 
@@ -73,9 +103,30 @@ class ProjectRequestSubmitSerializer(serializers.ModelSerializer):
     def validate_email(self, value):
         return value.lower().strip()
 
+    def validate_phone(self, value):
+        value = " ".join(value.split())
+        if value and sum(char.isdigit() for char in value) < 7:
+            raise serializers.ValidationError("رقم الهاتف غير مكتمل")
+        return value
+
+    def validate_description(self, value):
+        value = value.strip()
+        if len(value) < MIN_REQUEST_DESCRIPTION:
+            raise serializers.ValidationError("اكتب وصفًا مختصرًا لما تحتاجه")
+        return value
+
     def validate(self, attrs):
-        # كل الحقول اختيارية — يبقى الفخ المضاد للسبام (website) فقط
         attrs.pop("website", None)
+        # الوصف مطلوب حتى لو لم يُرسل الحقل أصلًا (validate_description
+        # لا تُستدعى لحقل غائب لأن النموذج يسمح بالفراغ)
+        if "description" not in attrs:
+            raise serializers.ValidationError(
+                {"description": "اكتب وصفًا مختصرًا لما تحتاجه"}
+            )
+        if not attrs.get("email") and not attrs.get("phone"):
+            raise serializers.ValidationError(
+                {"contact": "أضف بريدًا إلكترونيًا أو رقم هاتف لنتمكن من الرد"}
+            )
         return attrs
 
 
@@ -102,6 +153,8 @@ class ProjectRequestAdminSerializer(serializers.ModelSerializer):
     timeline_display = serializers.CharField(source="get_timeline_display", read_only=True)
     attachments = RequestAttachmentSerializer(many=True, read_only=True)
     lead_id = serializers.IntegerField(source="lead.id", read_only=True, default=None)
+    service_title = serializers.CharField(source="service.title_ar", read_only=True, default="")
+    service_kind = serializers.CharField(source="service.kind", read_only=True, default="")
 
     class Meta:
         model = ProjectRequest
@@ -111,10 +164,12 @@ class ProjectRequestAdminSerializer(serializers.ModelSerializer):
             "budget_range", "budget_display", "timeline", "timeline_display",
             "name", "email", "phone", "whatsapp", "company", "country", "city",
             "preferred_language", "status", "status_display", "source",
+            "service", "service_title", "service_kind",
             "assigned_to", "lead_id", "attachments", "created_at",
         ]
         read_only_fields = [
-            "id", "reference_code", "source", "lead_id", "attachments", "created_at",
+            "id", "reference_code", "source", "service", "lead_id", "attachments",
+            "created_at",
         ]
 
 

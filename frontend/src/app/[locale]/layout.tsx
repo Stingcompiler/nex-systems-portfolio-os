@@ -14,6 +14,7 @@ import { ThemeProvider, type Theme } from '@/contexts/ThemeContext';
 import { getSeoSettings, getSiteSettings } from '@/lib/api/queries';
 import { getDirection, isLocale, locales, type Locale } from '@/lib/i18n/routing';
 import { buildMetadata } from '@/lib/seo/metadata';
+import { SITE_NAME_FALLBACK } from '@/lib/constants/site';
 
 // الخطوط تُستضاف ذاتيًا: Next.js ينزّلها وقت البناء ويقدّمها من نطاقنا،
 // فلا يوجد أي طلب خارجي وقت التشغيل. `font-display: swap` وارتداد
@@ -71,7 +72,7 @@ export async function generateMetadata({
   const base = buildMetadata({
     locale,
     path: '/',
-    title: seoSettings?.default_seo_title || settings?.site_name || 'StingSystems',
+    title: seoSettings?.default_seo_title || settings?.site_name || SITE_NAME_FALLBACK,
     description: seoSettings?.default_seo_description || settings?.tagline,
     settings,
     seoSettings,
@@ -79,8 +80,8 @@ export async function generateMetadata({
 
   return {
     ...base,
-    applicationName: 'StingSystems',
-    appleWebApp: { capable: true, statusBarStyle: 'default', title: 'StingSystems' },
+    applicationName: SITE_NAME_FALLBACK,
+    appleWebApp: { capable: true, statusBarStyle: 'default', title: SITE_NAME_FALLBACK },
     icons: {
       icon: '/icons/icon-192.png',
       apple: '/icons/apple-icon-180.png',

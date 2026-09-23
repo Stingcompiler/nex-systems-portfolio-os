@@ -106,6 +106,21 @@ class ProjectRequestSubmitView(APIView):
         responses={201: OpenApiResponse(description="أُرسل الطلب وأُنشئ Lead")},
     )
     def post(self, request):
+        # إعادة المحاولة بعد استجابة مفقودة: المتصفح يرسل المعرّف نفسه،
+        # فيعود الطلب المسجَّل بدل إنشاء طلب ثانٍ وعميل محتمل مكرر.
+        submission_id = str(request.data.get("submission_id") or "").strip()
+        if submission_id:
+            existing = (
+                ProjectRequest.objects.filter(submission_id=submission_id)
+                .exclude(status=RequestStatus.DRAFT)
+                .first()
+            )
+            if existing is not None:
+                return Response(
+                    {"detail": "أُرسل طلبك بنجاح", "reference_code": existing.reference_code},
+                    status=status.HTTP_200_OK,
+                )
+
         draft_id = request.data.get("id")
         instance = None
         if draft_id and request.session.session_key:

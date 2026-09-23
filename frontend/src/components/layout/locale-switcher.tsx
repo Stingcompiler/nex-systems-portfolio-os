@@ -32,16 +32,20 @@ export function LocaleSwitcher() {
     });
   }
 
+  // اسم اللغة الهدف بلغتها — الأيقونة وحدها لا تقول إلى أي لغة سيتحوّل الموقع
+  const targetName = target === 'ar' ? 'العربية' : 'English';
+
   return (
     <button
       type="button"
       onClick={switchLocale}
       disabled={isPending}
       lang={target}
-      aria-label={t('language')}
-      className="flex size-9 items-center justify-center rounded-full text-muted transition-colors duration-fast hover:bg-surface-hover hover:text-foreground disabled:opacity-60"
+      aria-label={`${t('language')}: ${targetName}`}
+      className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-sm font-medium text-muted transition-colors duration-fast hover:bg-surface-hover hover:text-foreground disabled:opacity-60"
     >
-      <Languages className="size-[1.1rem]" aria-hidden="true" />
+      <Languages className="size-4" aria-hidden="true" />
+      {targetName}
     </button>
   );
 }

@@ -83,6 +83,12 @@ class ProjectRequest(TimeStampedModel):
     city = models.CharField("المدينة", max_length=64, blank=True)
     preferred_language = models.CharField("اللغة المفضلة", max_length=5, default="ar")
 
+    # السياق — الخدمة التي بدأ منها الزائر الطلب («اطلب هذه الخدمة»)
+    service = models.ForeignKey(
+        "portfolio.Service", verbose_name="الخدمة المطلوبة",
+        related_name="project_requests", null=True, blank=True, on_delete=models.SET_NULL,
+    )
+
     # النظام
     status = models.CharField(
         "الحالة", max_length=20, choices=RequestStatus.choices,
@@ -90,6 +96,11 @@ class ProjectRequest(TimeStampedModel):
     )
     source = models.CharField("المصدر", max_length=20, default=LeadSource.WEBSITE_FORM)
     session_key = models.CharField("مفتاح الجلسة", max_length=64, blank=True, db_index=True)
+    #: معرّف يولّده المتصفح لكل محاولة إرسال. إعادة الإرسال بعد استجابة
+    #  مفقودة تعيد الطلب نفسه بدل إنشاء طلب مكرر في CRM.
+    submission_id = models.CharField(
+        "معرّف الإرسال", max_length=64, blank=True, db_index=True
+    )
     ip_address = models.GenericIPAddressField("عنوان IP", null=True, blank=True)
     assigned_to = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name="المسؤول",

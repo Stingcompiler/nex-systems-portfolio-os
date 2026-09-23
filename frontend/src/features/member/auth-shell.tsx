@@ -5,6 +5,7 @@ import { Container } from '@/components/ui/container';
 import { getSiteSettings } from '@/lib/api/queries';
 import { Link } from '@/lib/i18n/navigation';
 import type { Locale } from '@/lib/i18n/routing';
+import { SITE_NAME_FALLBACK } from '@/lib/constants/site';
 
 export async function AuthShell({
   title,
@@ -18,7 +19,7 @@ export async function AuthShell({
   footer?: ReactNode;
 }) {
   const settings = await getSiteSettings((await getLocale()) as Locale);
-  const siteName = settings?.site_name || 'StingSystems';
+  const siteName = settings?.site_name || SITE_NAME_FALLBACK;
 
   return (
     <div className="hero-surface">

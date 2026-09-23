@@ -146,12 +146,12 @@
 
 | الطريقة | المسار | الوصول | الوصف |
 |---|---|:--:|---|
-| POST | `contact-messages/` | P | 3/ساعة/IP |
+| POST | `contact-messages/` | P | 3/ساعة/IP. يلزم نص الرسالة وبريد أو هاتف (خطأ `contact` عند غيابهما) |
 | GET | `contact-messages/` | S | |
 | PATCH | `contact-messages/{id}/` | S | تغيير الحالة |
 | POST | `project-requests/draft/` | P | حفظ جزئي بعد الخطوة 1 |
 | PATCH | `project-requests/draft/{key}/` | P | تحديث المسودة |
-| POST | `project-requests/` | P | الإرسال النهائي → Lead + إشعارات |
+| POST | `project-requests/` | P | الإرسال النهائي → Lead + إشعارات. يلزم `description` (10 أحرف فأكثر) وبريد أو هاتف (خطأ `contact`). اختياريًا: `service` (slug خدمة منشورة) و`submission_id` — إعادة الإرسال بالمعرّف نفسه تعيد الطلب القائم (200) بدل تكراره |
 | POST | `project-requests/{id}/attachments/` | P | رفع مرفقات |
 | GET | `project-requests/` | S | فلاتر: `status, sector, project_type` |
 | GET · PATCH | `project-requests/{id}/` | S | |

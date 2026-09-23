@@ -34,6 +34,7 @@ class PageSection(TranslatableMixin, OrderableModel, TimeStampedModel):
         TESTIMONIALS = "testimonials", "شهادات العملاء"
         POSTS = "posts", "أحدث المقالات"
         NEWSLETTER = "newsletter", "النشرة البريدية"
+        FAQ = "faq", "أسئلة شائعة"
         CTA = "cta", "دعوة للتواصل"
 
     translatable_fields = ("title", "subtitle", "cta_label")

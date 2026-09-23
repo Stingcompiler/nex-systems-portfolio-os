@@ -2,6 +2,7 @@ import { Check } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
+import { FaqList } from '@/components/content/faq-list';
 import { ButtonLink } from '@/components/ui/button';
 import { Container } from '@/components/ui/container';
 import { Breadcrumbs, Card, JsonLd } from '@/components/ui/misc';
@@ -47,10 +48,11 @@ export default async function ProcessPage({
   setRequestLocale(rawLocale);
   const locale = rawLocale as Locale;
 
-  const [t, tNav, tStates, steps, faqs] = await Promise.all([
+  const [t, tNav, tStates, tSections, steps, faqs] = await Promise.all([
     getTranslations('process'),
     getTranslations('nav'),
     getTranslations('states'),
+    getTranslations('sections'),
     getProcessSteps(locale),
     getFaqs(locale, 'process'),
   ]);
@@ -124,25 +126,13 @@ export default async function ProcessPage({
 
         {faqs.length ? (
           <section className="mt-16 max-w-prose">
-            <h2 className="mb-4 text-h2 font-semibold">{tNav('process')}</h2>
-            <div className="space-y-3">
-              {faqs.map((faq) => (
-                <details
-                  key={faq.id}
-                  className="rounded-lg border border-border bg-surface p-4"
-                >
-                  <summary className="cursor-pointer list-none font-medium">
-                    {faq.question}
-                  </summary>
-                  <p className="mt-3 text-sm text-muted">{faq.answer}</p>
-                </details>
-              ))}
-            </div>
+            <h2 className="mb-4 text-h2 font-semibold">{tSections('faq')}</h2>
+            <FaqList faqs={faqs} />
           </section>
         ) : null}
 
         <div className="mt-12">
-          <ButtonLink href="/contact" size="lg">
+          <ButtonLink href="/request-quote" size="lg">
             {tNav('requestQuote')}
           </ButtonLink>
         </div>

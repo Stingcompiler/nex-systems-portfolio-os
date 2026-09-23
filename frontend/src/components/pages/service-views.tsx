@@ -1,8 +1,10 @@
-import { ArrowLeft, Check, MessageCircle } from 'lucide-react';
+import { ArrowRight, Check, MessageCircle } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 import { ProjectCard, ServiceCard, TechBadge } from '@/components/content/cards';
+import { FaqList } from '@/components/content/faq-list';
 import { ButtonLink, ExternalButtonLink } from '@/components/ui/button';
+import { CardGrid } from '@/components/ui/card-grid';
 import { Container } from '@/components/ui/container';
 import { Badge, Breadcrumbs, Card, Prose } from '@/components/ui/misc';
 import { Section, SectionHeader } from '@/components/ui/section';
@@ -33,22 +35,44 @@ export async function ServiceListView({
     <Container className="py-12 sm:py-16">
       <Breadcrumbs items={[{ name: tNav('home'), href: '/' }, { name: title }]} label={tNav('breadcrumbs')} />
 
-      <header className="mb-10 max-w-prose">
+      <header className="mb-8 max-w-prose">
         <h1 className="text-h1 font-semibold">{title}</h1>
         <p className="mt-3 text-muted">{description}</p>
       </header>
 
+      {/* مساران لنفس الحاجة: خدمات تطويرية، أو حلول جاهزة لقطاع بعينه.
+          «الحلول» خرجت من الترويسة فصار الوصول إليها من هنا */}
+      <nav aria-label={tNav('services')} className="mb-10">
+        <ul className="inline-flex flex-wrap gap-1 rounded-xl border border-border bg-surface p-1">
+          {(['services', 'solutions'] as const).map((path) => (
+            <li key={path}>
+              <Link
+                href={`/${path}`}
+                aria-current={kind === path ? 'page' : undefined}
+                className={
+                  kind === path
+                    ? 'inline-flex min-h-11 items-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground'
+                    : 'inline-flex min-h-11 items-center rounded-lg px-4 text-sm font-medium text-muted hover:bg-surface-hover hover:text-foreground'
+                }
+              >
+                {tNav(path)}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
       {items.length ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <CardGrid count={items.length}>
           {items.map((service) => (
             <ServiceCard key={service.id} service={service} basePath={`/${kind}`} />
           ))}
-        </div>
+        </CardGrid>
       ) : (
         <EmptyState
           title={tStates('emptyServices')}
           body={tStates('emptyBody')}
-          action={<ButtonLink href="/contact">{tNav('requestQuote')}</ButtonLink>}
+          action={<ButtonLink href="/request-quote">{tNav('requestQuote')}</ButtonLink>}
         />
       )}
     </Container>
@@ -147,9 +171,13 @@ export async function ServiceDetailView({
               </dl>
 
               <div className="mt-6 flex flex-col gap-2">
-                <ButtonLink href="/request-quote" size="lg" className="w-full">
+                <ButtonLink
+                  href={`/request-quote?service=${encodeURIComponent(service.slug)}${kind === 'solutions' ? '&kind=solutions' : ''}`}
+                  size="lg"
+                  className="w-full"
+                >
                   {t('requestThis')}
-                  <ArrowLeft className="size-4 flip-rtl" aria-hidden="true" />
+                  <ArrowRight className="size-4 flip-rtl" aria-hidden="true" />
                 </ButtonLink>
                 {waLink ? (
                   <ExternalButtonLink href={waLink} variant="secondary" className="w-full">
@@ -222,30 +250,18 @@ export async function ServiceDetailView({
       {service.related_projects.length ? (
         <Section tone="muted">
           <SectionHeader title={t('relatedProjects')} />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <CardGrid count={service.related_projects.length}>
             {service.related_projects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
-          </div>
+          </CardGrid>
         </Section>
       ) : null}
 
       {service.faqs.length ? (
         <Section>
           <SectionHeader title={t('faq')} />
-          <div className="max-w-prose space-y-3">
-            {service.faqs.map((faq) => (
-              <details
-                key={faq.id}
-                className="rounded-lg border border-border bg-surface p-4"
-              >
-                <summary className="cursor-pointer list-none font-medium">
-                  {faq.question}
-                </summary>
-                <p className="mt-3 text-sm text-muted">{faq.answer}</p>
-              </details>
-            ))}
-          </div>
+          <FaqList faqs={service.faqs} />
         </Section>
       ) : null}
     </>

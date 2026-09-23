@@ -2,6 +2,7 @@ import { setRequestLocale } from 'next-intl/server';
 
 import {
   CtaSection,
+  FaqSection,
   HeroSection,
   NewsletterSection,
   PostsSection,
@@ -13,6 +14,7 @@ import {
 } from '@/components/sections/home';
 import { JsonLd } from '@/components/ui/misc';
 import {
+  getFaqs,
   getFeaturedProjects,
   getLatestPosts,
   getProcessSteps,
@@ -30,6 +32,39 @@ import { organizationJsonLd, professionalServiceJsonLd, websiteJsonLd } from '@/
 
 const MIN_POSTS_ON_HOME = 3;
 
+/**
+ * ترتيب احتياطي حين لا تصل أقسام الرئيسية من اللوحة (انقطاع API أو قاعدة
+ * جديدة). بدونه تُرسم صفحة فارغة بلا تفسير. العناوين فارغة فتعود كل
+ * الأقسام إلى نصوص الترجمة، والأقسام التي لا تجد محتوى تختفي كعادتها —
+ * فيبقى على الأقل البطل والدعوة للتواصل.
+ */
+const FALLBACK_SECTION_KEYS: PageSection['key'][] = [
+  'hero',
+  'projects',
+  'services',
+  'solutions',
+  'testimonials',
+  'process',
+  'faq',
+  'cta',
+];
+
+function fallbackSections(): PageSection[] {
+  return FALLBACK_SECTION_KEYS.map((key, index) => ({
+    id: -(index + 1),
+    page: 'home',
+    key,
+    title: '',
+    subtitle: '',
+    cta_label: '',
+    cta_url: '',
+    image: null,
+    is_visible: true,
+    display_order: index,
+    config: {},
+  }));
+}
+
 export default async function HomePage({
   params,
 }: {
@@ -41,7 +76,7 @@ export default async function HomePage({
 
   const [
     settings,
-    sections,
+    loadedSections,
     stats,
     services,
     solutions,
@@ -50,6 +85,7 @@ export default async function HomePage({
     technologies,
     testimonials,
     posts,
+    faqs,
   ] = await Promise.all([
     getSiteSettings(locale),
     getSections(locale, 'home'),
@@ -61,9 +97,13 @@ export default async function HomePage({
     getTechnologies(locale),
     getTestimonials(locale),
     getLatestPosts(locale),
+    getFaqs(locale, 'global'),
   ]);
 
+  const sections = loadedSections.length ? loadedSections : fallbackSections();
   const featuredTechnologies = technologies.results.filter((item) => item.is_featured);
+  // لقطة البطل: أول مشروع مميّز له غلاف فعلي
+  const showcase = projects.find((project) => project.cover_image) ?? null;
 
   /**
    * كل قسم يقرر بنفسه أن يختفي عندما لا يوجد محتوى، فلا يظهر
@@ -88,6 +128,7 @@ export default async function HomePage({
     'process',
     'technologies',
     'testimonials',
+    'faq',
     'posts',
   ]);
 
@@ -108,6 +149,8 @@ export default async function HomePage({
         return testimonials.results.length > 0;
       case 'posts':
         return posts.length >= MIN_POSTS_ON_HOME;
+      case 'faq':
+        return faqs.length > 0;
       default:
         return false;
     }
@@ -118,7 +161,16 @@ export default async function HomePage({
 
     switch (section.key) {
       case 'hero':
-        return <HeroSection section={section} settings={settings} stats={stats} locale={locale} />;
+        return (
+          <HeroSection
+            section={section}
+            settings={settings}
+            stats={stats}
+            showcase={showcase}
+            services={services.results}
+            locale={locale}
+          />
+        );
       case 'services':
         return (
           <ServicesSection
@@ -176,6 +228,8 @@ export default async function HomePage({
         ) : null;
       case 'newsletter':
         return <NewsletterSection section={section} locale={locale} />;
+      case 'faq':
+        return <FaqSection section={section} faqs={faqs} locale={locale} index={index} />;
       case 'intro':
       case 'stats':
       case 'case_studies':

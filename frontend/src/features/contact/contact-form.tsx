@@ -4,7 +4,7 @@ import { Check, LoaderCircle, Send } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useId, useState, type FormEvent, type ReactNode } from 'react';
 
-import { api, fieldError, toApiError, type ApiErrorPayload } from '@/lib/api/client';
+import { api, toApiError, type ApiErrorPayload } from '@/lib/api/client';
 import type { Locale } from '@/lib/i18n/routing';
 import { cn } from '@/lib/utils/cn';
 
@@ -23,20 +23,48 @@ export function ContactForm() {
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<ApiErrorPayload | null>(null);
+  const [errors, setErrors] = useState<Partial<Record<'message' | 'contact' | 'email', string>>>(
+    {},
+  );
 
   function set(key: keyof typeof form, value: string) {
     setForm((current) => ({ ...current, [key]: value }));
+    if (key === 'message') setErrors(({ message: _m, ...rest }) => rest);
+    if (key === 'email' || key === 'phone') setErrors(({ contact: _c, email: _e, ...rest }) => rest);
+  }
+
+  /** الرسالة يجب أن تكون قابلة للرد: نصّ ووسيلة تواصل — القاعدة نفسها في الخادم. */
+  function validate() {
+    const found: typeof errors = {};
+    if (!form.message.trim()) found.message = t('errors.message');
+    if (!form.email.trim() && !form.phone.trim()) found.contact = t('errors.contact');
+    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      found.email = t('errors.email');
+    }
+    return found;
   }
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
+    if (submitting) return;
+    const found = validate();
+    setErrors(found);
+    if (Object.keys(found).length) return;
+
     setSubmitting(true);
     setError(null);
     try {
       await api.post('/contact-messages/submit/', { ...form, language: locale });
       setSent(true);
     } catch (caught) {
-      setError(toApiError(caught));
+      const payload = toApiError(caught);
+      const server = payload.errors ?? {};
+      setErrors({
+        ...(server.message ? { message: t('errors.message') } : {}),
+        ...(server.contact ? { contact: t('errors.contact') } : {}),
+        ...(server.email ? { email: t('errors.email') } : {}),
+      });
+      setError(payload);
     } finally {
       setSubmitting(false);
     }
@@ -54,10 +82,18 @@ export function ContactForm() {
 
   return (
     <form onSubmit={onSubmit} noValidate className="rounded-lg border border-border bg-surface p-6">
-      {error && !Object.keys(error.errors).length ? (
+      <p className="mb-5 text-sm text-muted">{t('formHelp')}</p>
+
+      {error && !Object.keys(error.errors ?? {}).length ? (
         <div role="alert" className="mb-4 rounded border border-danger/40 bg-danger/10 p-3 text-sm">
-          {error.detail}
+          {t('errors.network')}
         </div>
+      ) : null}
+
+      {errors.contact ? (
+        <p role="alert" className="mb-4 rounded border border-danger/40 bg-danger-soft p-3 text-sm text-danger">
+          {errors.contact}
+        </p>
       ) : null}
 
       <input
@@ -71,11 +107,7 @@ export function ContactForm() {
       />
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field
-          required
-          label={t('nameField')}
-          error={error ? fieldError(error, 'name') : undefined}
-        >
+        <Field label={t('nameField')} optional={t('optional')}>
           {(control) => (
             <input
               {...control}
@@ -86,11 +118,7 @@ export function ContactForm() {
             />
           )}
         </Field>
-        <Field
-          required
-          label={t('emailField')}
-          error={error ? fieldError(error, 'email') : undefined}
-        >
+        <Field label={t('emailField')} error={errors.email} invalid={Boolean(errors.contact)}>
           {(control) => (
             <input
               {...control}
@@ -102,7 +130,7 @@ export function ContactForm() {
             />
           )}
         </Field>
-        <Field label={t('phoneField')}>
+        <Field label={t('phoneField')} invalid={Boolean(errors.contact)}>
           {(control) => (
             <input
               {...control}
@@ -114,7 +142,7 @@ export function ContactForm() {
             />
           )}
         </Field>
-        <Field label={t('subjectField')}>
+        <Field label={t('subjectField')} optional={t('optional')}>
           {(control) => (
             <input
               {...control}
@@ -128,11 +156,7 @@ export function ContactForm() {
       </div>
 
       <div className="mt-4">
-        <Field
-          required
-          label={t('messageField')}
-          error={error ? fieldError(error, 'message') : undefined}
-        >
+        <Field required label={t('messageField')} error={errors.message}>
           {(control) => (
             <textarea
               {...control}
@@ -164,12 +188,18 @@ export function ContactForm() {
 function Field({
   label,
   required,
+  optional,
   error,
+  invalid,
   children,
 }: {
   label: string;
   required?: boolean;
+  /** نص «اختياري» يُلحق بالتسمية */
+  optional?: string;
   error?: string;
+  /** تمييز الحقل دون رسالة خاصة (خطأ مشترك بين البريد والهاتف) */
+  invalid?: boolean;
   /** يستلم id وسمات الوصف والخطأ ليضعها على الحقل نفسه */
   children: (control: {
     id: string;
@@ -186,14 +216,19 @@ function Field({
     <div>
       <label htmlFor={id} className="mb-1.5 block text-sm font-medium">
         {label}
-        {required ? <span className="text-danger"> *</span> : null}
+        {required ? <span className="text-danger" aria-hidden="true"> *</span> : null}
+        {optional ? <span className="font-normal text-muted"> ({optional})</span> : null}
       </label>
-      <div className={cn(error && '[&_input]:border-danger [&_textarea]:border-danger')}>
+      <div
+        className={cn(
+          (error || invalid) && '[&_input]:border-danger [&_textarea]:border-danger',
+        )}
+      >
         {children({
           id,
           required,
           'aria-required': required || undefined,
-          'aria-invalid': error ? true : undefined,
+          'aria-invalid': error || invalid ? true : undefined,
           'aria-describedby': error ? errorId : undefined,
         })}
       </div>

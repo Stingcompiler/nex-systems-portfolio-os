@@ -613,24 +613,27 @@ PROJECTS = [
 # --------------------------------------------------------------- أقسام الصفحة الرئيسية
 
 HOME_SECTIONS = [
+    # الترتيب: الرسالة، ثم الدليل (الأعمال)، ثم ما نقدّمه، ثم الثقة وطريقة
+    # العمل، ثم ما يساعد على القرار، ثم الدعوة. الأقسام الفارغة تختفي تلقائيًا.
     ("hero", "حلول برمجية متكاملة للويب والموبايل وسطح المكتب",
      "Complete software solutions for web, mobile, and desktop",
      "نحلل ونصمم ونبني أنظمة وتطبيقات قابلة للتوسع، من الفكرة والمتطلبات إلى التطوير والنشر والدعم.",
      "We analyse, design, and build scalable systems and applications — from idea and requirements to development, deployment, and support.",
      {}),
-    ("intro", "نبذة", "About", "", "", {}),
-    ("stats", "بالأرقام", "By the numbers", "", "", {}),
+    ("projects", "مشاريع مختارة", "Selected work", "", "", {"limit": 2}),
     ("services", "الخدمات", "Services",
      "خدمات تطوير تغطي دورة المشروع كاملة.", "Development services covering the full project cycle.",
      {"limit": 6}),
     ("solutions", "حلول حسب القطاع", "Solutions by sector",
      "أنظمة جاهزة للتخصيص حسب مجال عملك.", "Systems ready to be tailored to your field.",
      {"limit": 6}),
-    ("projects", "مشاريع مختارة", "Selected work", "", "", {"limit": 6}),
-    ("case_studies", "دراسات حالة", "Case studies", "", "", {"limit": 3}),
+    ("testimonials", "آراء العملاء", "Client feedback", "", "", {"limit": 6}),
     ("process", "طريقة العمل", "How we work", "", "", {}),
     ("technologies", "التقنيات", "Technologies", "", "", {}),
-    ("testimonials", "آراء العملاء", "Client feedback", "", "", {"limit": 6}),
+    ("intro", "نبذة", "About", "", "", {}),
+    ("stats", "بالأرقام", "By the numbers", "", "", {}),
+    ("case_studies", "دراسات حالة", "Case studies", "", "", {"limit": 3}),
+    ("faq", "أسئلة شائعة", "Frequently asked questions", "", "", {"limit": 6}),
     ("posts", "أحدث المقالات", "Latest articles", "", "", {"limit": 3}),
     ("newsletter", "النشرة البريدية", "Newsletter",
      "مقالات ومشاريع جديدة، بلا إزعاج.", "New articles and projects, no noise.", {}),

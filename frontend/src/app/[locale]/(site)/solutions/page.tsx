@@ -42,7 +42,7 @@ export default async function SolutionsPage({
   const [t, tNav, solutions] = await Promise.all([
     getTranslations('solutions'),
     getTranslations('nav'),
-    getSolutions(locale, { page_size: 50 }),
+    getSolutions(locale, { page_size: 50 }, { strict: true }),
   ]);
 
   return (

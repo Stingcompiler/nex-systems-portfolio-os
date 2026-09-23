@@ -6,6 +6,7 @@ import { TechBadge } from '@/components/content/cards';
 import { CoverImage } from '@/components/content/media';
 import { PageCta } from '@/components/content/page-cta';
 import { ButtonLink, ExternalButtonLink } from '@/components/ui/button';
+import { CardGrid } from '@/components/ui/card-grid';
 import { Container } from '@/components/ui/container';
 import { Breadcrumbs, Card, JsonLd, Prose } from '@/components/ui/misc';
 import { Section, SectionHeader } from '@/components/ui/section';
@@ -103,15 +104,18 @@ export default async function ProjectDetailPage({
 
             {/* لقطة المشروع بنسبتها الأصلية وجودة أعلى: القص إلى 16/10
                 كان يبتر الواجهة، والضغط الافتراضي يُشوّش النصوص داخلها */}
-            <CoverImage
-              media={project.cover_image}
-              alt={project.title}
-              natural
-              quality={90}
-              priority
-              sizes="(max-width: 1024px) 100vw, 66vw"
-              className="mt-8 rounded-xl border border-border shadow-card"
-            />
+            {/* بلا غلاف لا يُرسم إطار فارغ بحجم لقطة */}
+            {project.cover_image ? (
+              <CoverImage
+                media={project.cover_image}
+                alt={project.title}
+                natural
+                quality={90}
+                priority
+                sizes="(max-width: 1024px) 100vw, 66vw"
+                className="mt-8 rounded-xl border border-border shadow-card"
+              />
+            ) : null}
 
             <div className="mt-8">
               <Prose text={project.description} />
@@ -199,7 +203,7 @@ export default async function ProjectDetailPage({
       {project.images.length ? (
         <Section tone="muted">
           <SectionHeader title={t('gallery')} />
-          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <CardGrid as="ul" count={project.images.length}>
             {project.images.map((image) => (
               <li key={image.id}>
                 <figure>
@@ -220,7 +224,7 @@ export default async function ProjectDetailPage({
                 </figure>
               </li>
             ))}
-          </ul>
+          </CardGrid>
         </Section>
       ) : null}
 

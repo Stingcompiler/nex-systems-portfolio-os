@@ -174,3 +174,31 @@ export async function apiGetSafe<T>(
     return fallback;
   }
 }
+
+/**
+ * للمحتوى الأساسي في الصفحة (قائمة الأعمال في صفحة الأعمال مثلًا).
+ *
+ * `apiGetSafe` يحوّل انقطاع الخادم إلى قائمة فارغة، فتعلن الصفحة «لم
+ * يُنشر شيء بعد» وهو غير صحيح. هنا يُرمى الخطأ فتعرض حدود الخطأ حالة
+ * قابلة لإعادة المحاولة، وعند إعادة التوليد في الخلفية يُبقي Next آخر
+ * نسخة سليمة في الذاكرة المؤقتة بدل تثبيت صفحة فارغة.
+ *
+ * يُرمى الخطأ لانقطاع الشبكة و5xx فقط؛ البناء بلا API يعود بالقيمة
+ * الفارغة كما في `apiGetSafe` (الصفحات هناك تُبطَل عند الإقلاع).
+ */
+export async function apiGetStrict<T>(
+  path: string,
+  options: FetchOptions,
+  fallback: T,
+): Promise<T> {
+  if (isOfflineBuild()) return fallback;
+  try {
+    return await apiGet<T>(path, options);
+  } catch (error) {
+    // 4xx = طلب غير صالح (فلتر من رابط قديم مثلًا) لا عطل: نتيجة فارغة كافية
+    if (error instanceof ApiError && error.status >= 400 && error.status < 500) {
+      return fallback;
+    }
+    throw error;
+  }
+}

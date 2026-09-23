@@ -23,6 +23,18 @@ def seeded(db):
 
 
 @pytest.fixture
+def make_service(db):
+    from apps.portfolio.models import Service
+
+    def factory(**fields):
+        service = Service.objects.create(title_ar="نظام مدرسي", **fields)
+        service.publish()
+        return service
+
+    return factory
+
+
+@pytest.fixture
 def crm_manager(seeded, make_user):
     return make_user(email="crm@example.com", role="crm_manager")
 
@@ -88,18 +100,31 @@ def test_contact_honeypot_blocks_spam(api_client):
     assert ContactMessage.objects.count() == 0
 
 
-def test_contact_accepts_short_or_blank_message(api_client):
-    # كل الحقول اختيارية الآن — يُقبل نص قصير أو رسالة فارغة تمامًا
-    response = api_client.post(
+def test_contact_accepts_short_message_with_one_channel(api_client):
+    # نص قصير مقبول ما دام هناك ما يُقرأ ووسيلة للرد
+    by_email = api_client.post(
         CONTACT_URL,
         {"name": "زائر", "email": "v@example.com", "message": "قصير"},
         format="json",
     )
-    assert response.status_code == 201
+    assert by_email.status_code == 201
 
-    blank = api_client.post(CONTACT_URL, {}, format="json")
-    assert blank.status_code == 201
+    by_phone = api_client.post(
+        CONTACT_URL, {"phone": "+249900000000", "message": "اتصلوا بي"}, format="json"
+    )
+    assert by_phone.status_code == 201
     assert ContactMessage.objects.count() == 2
+
+
+def test_contact_rejects_unanswerable_message(api_client):
+    blank = api_client.post(CONTACT_URL, {}, format="json")
+    assert blank.status_code == 400
+    assert "message" in blank.data["errors"]
+
+    no_channel = api_client.post(CONTACT_URL, {"message": "مرحبًا"}, format="json")
+    assert no_channel.status_code == 400
+    assert "contact" in no_channel.data["errors"]
+    assert ContactMessage.objects.count() == 0
 
 
 # --------------------------------------------------------------- طلب المشروع
@@ -141,12 +166,71 @@ def test_request_honeypot_blocks_spam(api_client):
     assert ProjectRequest.objects.count() == 0
 
 
-def test_request_accepts_blank_email_and_name(api_client):
-    # كل الحقول اختيارية الآن — يُقبل الطلب دون بريد أو اسم
+def test_request_accepts_phone_only_without_name(api_client):
+    # الاسم اختياري، والهاتف وحده وسيلة رد كافية
     response = api_client.post(
         SUBMIT_URL, {**VALID_REQUEST, "email": "", "name": ""}, format="json"
     )
     assert response.status_code == 201
+
+    lead = Lead.objects.get()
+    assert lead.phone == "+249900000000"
+    # لا بريد = لا رسالة تأكيد، دون أن يفشل الإرسال
+    assert not any(message.to == [""] for message in mail.outbox)
+
+
+def test_request_requires_a_contact_channel(api_client):
+    response = api_client.post(
+        SUBMIT_URL, {**VALID_REQUEST, "email": "", "phone": ""}, format="json"
+    )
+    assert response.status_code == 400
+    assert "contact" in response.data["errors"]
+    assert ProjectRequest.objects.count() == 0
+
+
+def test_request_requires_a_description(api_client):
+    missing = {key: value for key, value in VALID_REQUEST.items() if key != "description"}
+    for payload in (missing, {**VALID_REQUEST, "description": "   نظام  "}):
+        response = api_client.post(SUBMIT_URL, payload, format="json")
+        assert response.status_code == 400
+        assert "description" in response.data["errors"]
+    assert ProjectRequest.objects.count() == 0
+
+
+def test_request_rejects_empty_submission(api_client):
+    response = api_client.post(SUBMIT_URL, {}, format="json")
+    assert response.status_code == 400
+    assert ProjectRequest.objects.count() == 0
+
+
+def test_request_retry_with_same_submission_id_is_not_duplicated(api_client):
+    payload = {**VALID_REQUEST, "submission_id": "3f1c9a7e-retry"}
+    first = api_client.post(SUBMIT_URL, payload, format="json")
+    retry = api_client.post(SUBMIT_URL, payload, format="json")
+
+    assert first.status_code == 201
+    assert retry.status_code == 200
+    assert retry.data["reference_code"] == first.data["reference_code"]
+    assert ProjectRequest.objects.count() == 1
+    assert Lead.objects.count() == 1
+    assert Notification.objects.filter(type="project_request").count() == 1
+
+
+def test_request_carries_service_context(api_client, make_service):
+    service = make_service(slug="school-system")
+    response = api_client.post(
+        SUBMIT_URL, {**VALID_REQUEST, "service": "school-system"}, format="json"
+    )
+    assert response.status_code == 201
+    assert ProjectRequest.objects.get().service == service
+
+
+def test_request_rejects_unknown_service(api_client):
+    response = api_client.post(
+        SUBMIT_URL, {**VALID_REQUEST, "service": "does-not-exist"}, format="json"
+    )
+    assert response.status_code == 400
+    assert "service" in response.data["errors"]
 
 
 def test_draft_then_submit_completes_same_record(api_client):

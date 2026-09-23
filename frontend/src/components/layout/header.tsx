@@ -10,11 +10,16 @@ import { ButtonLink } from '@/components/ui/button';
 import { Container } from '@/components/ui/container';
 import type { SiteSettings } from '@/lib/api/types';
 import { Link } from '@/lib/i18n/navigation';
-import { MAIN_NAV } from '@/lib/constants/nav';
+import { MAIN_NAV, MOBILE_SECONDARY_NAV } from '@/lib/constants/nav';
+import { SITE_NAME_FALLBACK } from '@/lib/constants/site';
 
 export async function Header({ settings }: { settings: SiteSettings | null }) {
   const t = await getTranslations('nav');
   const items = MAIN_NAV.map((item) => ({ href: item.href, label: t(item.key) }));
+  const secondaryItems = MOBILE_SECONDARY_NAV.map((item) => ({
+    href: item.href,
+    label: t(item.key),
+  }));
 
   return (
     <header className="sticky top-0 z-30 border-b border-border/40 bg-background/75 backdrop-blur-xl">
@@ -22,19 +27,18 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
         <Link
           href="/"
           className="flex shrink-0 items-center gap-3"
-          aria-label={settings?.site_name || 'StingSystems'}
+          aria-label={settings?.site_name || SITE_NAME_FALLBACK}
         >
           <SiteMark settings={settings} />
           {/* اسم الموقع بخط العناوين وبحجم يليق بعلامة لا برابط:
               كان بخط الجسم و18px فبدا بندًا في القائمة */}
           <span className="font-heading text-xl font-bold tracking-tight sm:text-[1.375rem]">
-            {settings?.site_name || 'StingSystems'}
+            {settings?.site_name || SITE_NAME_FALLBACK}
           </span>
         </Link>
 
-        {/* ثمانية روابط لا تتسع مع الشعار وزر الطلب قبل 1280px،
-            فالقائمة الكاملة تبدأ من xl والدرج يغطي ما دونها */}
-        <nav aria-label={t('menu')} className="hidden min-w-0 flex-1 justify-center xl:flex">
+        {/* أربعة روابط تتسع مع الشعار وزر الطلب من 1024px، والدرج يغطي ما دونها */}
+        <nav aria-label={t('menu')} className="hidden min-w-0 flex-1 justify-center lg:flex">
           <NavLinks items={items} />
         </nav>
 
@@ -55,7 +59,7 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
           >
             {t('requestQuote')}
           </ButtonLink>
-          <MobileNav items={items} ctaLabel={t('requestQuote')} />
+          <MobileNav items={items} secondaryItems={secondaryItems} ctaLabel={t('requestQuote')} />
         </div>
       </Container>
     </header>
@@ -85,7 +89,7 @@ function markSize(media: { width: number | null; height: number | null }) {
 }
 
 function SiteMark({ settings }: { settings: SiteSettings | null }) {
-  const name = settings?.site_name || 'StingSystems';
+  const name = settings?.site_name || SITE_NAME_FALLBACK;
   // إحدى النسختين تكفي: تُستخدم في الوضعين عند غياب الأخرى
   const light = settings?.logo_light ?? settings?.logo_dark;
   const dark = settings?.logo_dark ?? settings?.logo_light;

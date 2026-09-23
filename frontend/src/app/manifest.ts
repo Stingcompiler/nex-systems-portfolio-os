@@ -1,5 +1,7 @@
 import type { MetadataRoute } from 'next';
 
+import { SITE_NAME_FALLBACK } from '@/lib/constants/site';
+
 /**
  * بيان التطبيق القابل للتثبيت (PWA).
  *
@@ -8,8 +10,8 @@ import type { MetadataRoute } from 'next';
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'StingSystems',
-    short_name: 'StingSystems',
+    name: SITE_NAME_FALLBACK,
+    short_name: SITE_NAME_FALLBACK,
     description: 'حلول برمجية متكاملة للويب والموبايل وسطح المكتب',
     start_url: '/ar',
     display: 'standalone',

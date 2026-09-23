@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { CaseStudyCard } from '@/components/content/cards';
 import { ButtonLink } from '@/components/ui/button';
+import { CardGrid } from '@/components/ui/card-grid';
 import { Container } from '@/components/ui/container';
 import { Breadcrumbs, JsonLd } from '@/components/ui/misc';
 import { EmptyState } from '@/components/ui/states';
@@ -46,7 +47,7 @@ export default async function CaseStudiesPage({
     getTranslations('caseStudies'),
     getTranslations('nav'),
     getTranslations('states'),
-    getCaseStudies(locale, { page_size: 50 }),
+    getCaseStudies(locale, { page_size: 50 }, { strict: true }),
   ]);
 
   return (
@@ -70,11 +71,11 @@ export default async function CaseStudiesPage({
         </header>
 
         {caseStudies.results.length ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <CardGrid count={caseStudies.results.length}>
             {caseStudies.results.map((caseStudy) => (
               <CaseStudyCard key={caseStudy.id} caseStudy={caseStudy} />
             ))}
-          </div>
+          </CardGrid>
         ) : (
           <EmptyState
             title={tStates('emptyCaseStudies')}

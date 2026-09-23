@@ -142,7 +142,7 @@ function CommentBody({ comment }: { comment: CommentReply }) {
       <div className="mb-1 flex items-center gap-2">
         <span className="font-medium">{comment.author_name}</span>
         {comment.is_mine ? (
-          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
+          <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs text-primary">
             {t('you')}
           </span>
         ) : null}

@@ -81,12 +81,7 @@ export async function HeroSection({
 
   return (
     <section className="hero-surface relative overflow-hidden border-b border-border">
-      {/* وهج واحد خافت — كان وهجين يتكرران في الدعوة والبطاقات */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-32 end-[-6rem] -z-10 size-[26rem] rounded-full bg-brand opacity-[0.12] blur-3xl"
-      />
-
+      {/* الوهج من .hero-surface وحده — الكتلة الضبابية الإضافية كانت تكرّره */}
       <Container
         className={cn(
           'relative grid items-center gap-12 py-20 sm:py-28',
@@ -558,22 +553,19 @@ export async function CtaSection({
 
   return (
     <Section tone="muted">
-      {/* لوحة دعوة بارزة: تدرّج العلامة + وهج شعاعي، نص أبيض */}
-      <div className="hero-surface brand-panel relative overflow-hidden rounded-2xl bg-brand p-8 text-center shadow-elevated sm:p-14">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 -z-10 bg-[radial-gradient(60%_60%_at_50%_0%,rgb(255_255_255/0.18),transparent_70%)]"
-        />
+      {/* لوحة دعوة بتدرّج العلامة العميق ونص أبيض كامل: الوهج الشعاعي
+          وطبقة hero-surface كانا يفتّحان الخلفية تحت النص فينخفض التباين */}
+      <div className="relative overflow-hidden rounded-2xl bg-brand p-8 text-center shadow-elevated sm:p-14">
         <h2 className="text-h2 font-semibold text-white">{title}</h2>
         {section.subtitle ? (
-          <p className="mx-auto mt-3 max-w-prose text-white/85">{section.subtitle}</p>
+          <p className="mx-auto mt-3 max-w-prose text-white">{section.subtitle}</p>
         ) : null}
 
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <ButtonLink
             href="/request-quote"
             size="lg"
-            className="bg-white text-primary shadow-lg hover:bg-white/90"
+            className="bg-white text-brand-ink shadow-lg hover:bg-white/90"
           >
             {section.cta_label || t('ctaPrimary')}
             <ArrowRight className="size-4 flip-rtl" aria-hidden="true" />
@@ -581,7 +573,7 @@ export async function CtaSection({
         </div>
 
         {settings?.whatsapp ? (
-          <p className="mt-4 inline-flex items-center gap-2 text-sm text-white/80">
+          <p className="mt-4 inline-flex items-center gap-2 text-sm text-white">
             <Check className="size-4" aria-hidden="true" />
             {tContact('preferWhatsapp')}
           </p>
@@ -599,7 +591,7 @@ export async function NewsletterSection({ section }: SectionProps) {
     <Section id="newsletter">
       <div className="grid gap-8 rounded-2xl border border-border bg-surface p-8 sm:p-12 lg:grid-cols-[1fr_1.2fr] lg:items-center">
         <div className="max-w-prose">
-          <span className="mb-4 grid size-11 place-items-center rounded-lg bg-primary/10 text-primary">
+          <span className="mb-4 grid size-11 place-items-center rounded-lg bg-primary-soft text-primary">
             <Mail className="size-5" aria-hidden="true" />
           </span>
           <h2 className="text-h2 font-semibold">{title || t('title')}</h2>

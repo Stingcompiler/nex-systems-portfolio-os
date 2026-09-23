@@ -5,6 +5,7 @@ import { LoaderCircle, MailCheck } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRef, useState, type FormEvent } from 'react';
 
+import { fieldClass } from '@/components/ui/field';
 import { InterestPicker } from '@/features/newsletter/interest-picker';
 import { fetchInterests, subscribe } from '@/features/newsletter/newsletter-api';
 import { toApiError } from '@/lib/api/client';
@@ -69,15 +70,15 @@ export function NewsletterForm({
     }
   }
 
-  const inputClass = cn(
-    'min-h-11 w-full rounded border px-3 text-sm',
-    onBrand
-      ? 'border-white/30 bg-white/10 text-white placeholder:text-white/60 focus:border-white'
-      : 'border-border bg-background',
-  );
+  const inputClass = onBrand
+    ? cn(
+        'min-h-11 w-full rounded-lg border px-3 text-base sm:text-sm',
+        'border-white/70 bg-white/10 text-white placeholder:text-white/80 focus:border-white',
+      )
+    : fieldClass();
   const buttonClass = cn(
     'inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded px-5 text-sm font-medium disabled:opacity-60',
-    onBrand ? 'bg-white text-primary hover:bg-white/90' : 'bg-primary text-primary-foreground',
+    onBrand ? 'bg-white text-brand-ink hover:bg-white/90' : 'bg-primary text-primary-foreground',
   );
 
   if (done) {
@@ -86,14 +87,14 @@ export function NewsletterForm({
         role="status"
         className={cn(
           'flex items-start gap-3 rounded-lg border p-4 text-sm',
-          onBrand ? 'border-white/30 bg-white/10 text-white' : 'border-success/40 bg-success/10',
+          onBrand ? 'border-white/30 bg-white/10 text-white' : 'border-success/40 bg-success-soft',
           className,
         )}
       >
         <MailCheck className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
         <div>
           <p className="font-semibold">{t('sentTitle')}</p>
-          <p className={cn('mt-1', onBrand ? 'text-white/85' : 'text-muted')}>{t('sent')}</p>
+          <p className={cn('mt-1', onBrand ? 'text-white' : 'text-muted')}>{t('sent')}</p>
         </div>
       </div>
     );
@@ -172,7 +173,7 @@ export function NewsletterForm({
             {pending ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : null}
             {pending ? t('subscribing') : t('subscribe')}
           </button>
-          <p className={cn('text-xs', onBrand ? 'text-white/75' : 'text-muted')}>{t('consent')}</p>
+          <p className={cn('text-xs', onBrand ? 'text-white' : 'text-muted')}>{t('consent')}</p>
         </div>
       ) : null}
 

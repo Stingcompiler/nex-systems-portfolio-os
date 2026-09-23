@@ -4,6 +4,8 @@ import { ArrowLeft, ArrowRight, Check, LoaderCircle, MessageCircle, Pencil } fro
 import { useLocale, useTranslations } from 'next-intl';
 import { useId, useRef, useState, type ReactNode } from 'react';
 
+import { buttonClass } from '@/components/ui/button';
+import { fieldClass } from '@/components/ui/field';
 import { api, toApiError } from '@/lib/api/client';
 import type { Locale } from '@/lib/i18n/routing';
 import { cn } from '@/lib/utils/cn';
@@ -373,7 +375,7 @@ export function RequestForm({
                             [module.key]: event.target.checked,
                           })
                         }
-                        className="mt-0.5 size-4"
+                        className="mt-0.5 size-4 accent-primary"
                       />
                       <span className="min-w-0">
                         <span className="block font-medium">{module.title}</span>
@@ -496,7 +498,7 @@ export function RequestForm({
             <button
               type="button"
               onClick={() => goTo((step - 1) as Step)}
-              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-border px-4 text-sm hover:bg-surface-hover"
+              className={buttonClass('secondary')}
             >
               <ArrowLeft className="size-4 flip-rtl" aria-hidden="true" />
               {t('back')}
@@ -510,7 +512,7 @@ export function RequestForm({
               <button
                 type="button"
                 onClick={() => goTo(3)}
-                className="inline-flex min-h-11 items-center rounded-lg px-4 text-sm text-muted hover:bg-surface-hover hover:text-foreground"
+                className={buttonClass('ghost', 'md', 'text-muted hover:text-foreground')}
               >
                 {t('skip')}
               </button>
@@ -519,7 +521,7 @@ export function RequestForm({
               <button
                 type="button"
                 onClick={next}
-                className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                className={buttonClass('primary')}
               >
                 {t('next')}
                 <ArrowRight className="size-4 flip-rtl" aria-hidden="true" />
@@ -530,7 +532,7 @@ export function RequestForm({
                 disabled={submitting}
                 aria-busy={submitting || undefined}
                 onClick={submit}
-                className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+                className={buttonClass('primary')}
               >
                 {submitting ? (
                   <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
@@ -733,7 +735,7 @@ function SelectField({
         id={id}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="min-h-11 w-full rounded-lg border border-border bg-background px-3 text-sm focus-visible:ring-2 focus-visible:ring-ring"
+        className={fieldClass()}
       >
         <option value="">{placeholder || '—'}</option>
         {options.map((option) => (
@@ -788,11 +790,7 @@ function TextField({
         onChange={(event) => onChange(event.target.value)}
         aria-invalid={hasError || undefined}
         aria-describedby={error ? errorId : undefined}
-        className={cn(
-          'min-h-11 w-full rounded-lg border bg-background px-3 text-base focus-visible:ring-2 focus-visible:ring-ring sm:text-sm',
-          hasError ? 'border-danger' : 'border-border',
-          dir === 'ltr' && 'text-start',
-        )}
+        className={fieldClass({ invalid: hasError, className: dir === 'ltr' ? 'text-start' : undefined })}
       />
       {error ? (
         <p id={errorId} className="mt-1 text-sm text-danger">
@@ -845,10 +843,7 @@ function TextArea({
         aria-required={required || undefined}
         aria-invalid={Boolean(error) || undefined}
         aria-describedby={[hint ? hintId : '', error ? errorId : ''].filter(Boolean).join(' ') || undefined}
-        className={cn(
-          'min-h-32 w-full rounded-lg border bg-background px-3 py-2 text-base focus-visible:ring-2 focus-visible:ring-ring sm:text-sm',
-          error ? 'border-danger' : 'border-border',
-        )}
+        className={fieldClass({ invalid: Boolean(error), multiline: true, className: 'min-h-32' })}
       />
       {error ? (
         <p id={errorId} className="mt-1 text-sm text-danger">

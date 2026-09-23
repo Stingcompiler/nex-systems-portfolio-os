@@ -4,6 +4,8 @@ import { LoaderCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
 
+import { buttonClass } from '@/components/ui/button';
+import { fieldClass } from '@/components/ui/field';
 import { useMember } from '@/contexts/MemberContext';
 import { useToast } from '@/contexts/ToastContext';
 import { api, toApiError } from '@/lib/api/client';
@@ -73,7 +75,7 @@ export default function MemberOverviewPage() {
             type="text"
             value={fullName}
             onChange={(event) => setFullName(event.target.value)}
-            className="min-h-11 w-full rounded border border-border bg-background px-3 text-sm"
+            className={fieldClass()}
           />
         </div>
         <div className="mb-4">
@@ -85,7 +87,7 @@ export default function MemberOverviewPage() {
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex min-h-11 items-center gap-2 rounded bg-primary px-5 text-sm font-medium text-primary-foreground disabled:opacity-60"
+          className={buttonClass('primary')}
         >
           {pending ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : null}
           {t('save')}

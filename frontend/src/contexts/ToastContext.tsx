@@ -31,8 +31,8 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 const ICONS = { success: CircleCheck, error: CircleAlert, info: Info } as const;
 
 const STYLES: Record<ToastKind, string> = {
-  success: 'border-success/40 bg-success/10 text-foreground',
-  error: 'border-danger/40 bg-danger/10 text-foreground',
+  success: 'border-success/40 bg-success-soft text-foreground',
+  error: 'border-danger/40 bg-danger-soft text-foreground',
   info: 'border-border bg-surface text-foreground',
 };
 

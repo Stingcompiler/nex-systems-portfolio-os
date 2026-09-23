@@ -4,6 +4,8 @@ import { Check, LoaderCircle, Send } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useId, useState, type FormEvent, type ReactNode } from 'react';
 
+import { buttonClass } from '@/components/ui/button';
+import { fieldClass } from '@/components/ui/field';
 import { api, toApiError, type ApiErrorPayload } from '@/lib/api/client';
 import type { Locale } from '@/lib/i18n/routing';
 import { cn } from '@/lib/utils/cn';
@@ -85,7 +87,7 @@ export function ContactForm() {
       <p className="mb-5 text-sm text-muted">{t('formHelp')}</p>
 
       {error && !Object.keys(error.errors ?? {}).length ? (
-        <div role="alert" className="mb-4 rounded border border-danger/40 bg-danger/10 p-3 text-sm">
+        <div role="alert" className="mb-4 rounded border border-danger/40 bg-danger-soft p-3 text-sm">
           {t('errors.network')}
         </div>
       ) : null}
@@ -114,7 +116,7 @@ export function ContactForm() {
               type="text"
               value={form.name}
               onChange={(event) => set('name', event.target.value)}
-              className="min-h-11 w-full rounded border border-border bg-background px-3 text-sm"
+              className={fieldClass()}
             />
           )}
         </Field>
@@ -126,7 +128,7 @@ export function ContactForm() {
               dir="ltr"
               value={form.email}
               onChange={(event) => set('email', event.target.value)}
-              className="min-h-11 w-full rounded border border-border bg-background px-3 text-start text-sm"
+              className={fieldClass({ className: 'text-start' })}
             />
           )}
         </Field>
@@ -138,7 +140,7 @@ export function ContactForm() {
               dir="ltr"
               value={form.phone}
               onChange={(event) => set('phone', event.target.value)}
-              className="min-h-11 w-full rounded border border-border bg-background px-3 text-start text-sm"
+              className={fieldClass({ className: 'text-start' })}
             />
           )}
         </Field>
@@ -149,7 +151,7 @@ export function ContactForm() {
               type="text"
               value={form.subject}
               onChange={(event) => set('subject', event.target.value)}
-              className="min-h-11 w-full rounded border border-border bg-background px-3 text-sm"
+              className={fieldClass()}
             />
           )}
         </Field>
@@ -163,7 +165,7 @@ export function ContactForm() {
               rows={5}
               value={form.message}
               onChange={(event) => set('message', event.target.value)}
-              className="min-h-28 w-full rounded border border-border bg-background px-3 py-2 text-sm"
+              className={fieldClass({ multiline: true })}
             />
           )}
         </Field>
@@ -172,7 +174,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="mt-6 inline-flex min-h-11 items-center gap-2 rounded bg-primary px-5 text-sm font-medium text-primary-foreground disabled:opacity-60"
+        className={buttonClass('primary', 'md', 'mt-6')}
       >
         {submitting ? (
           <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />

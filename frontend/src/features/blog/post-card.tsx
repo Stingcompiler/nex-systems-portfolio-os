@@ -48,7 +48,7 @@ export async function PostCard({
         </h3>
 
         {post.excerpt ? (
-          <p className="mb-4 flex-1 text-sm text-muted">{post.excerpt}</p>
+          <p className="mb-4 flex-1 text-base text-muted">{post.excerpt}</p>
         ) : null}
 
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">

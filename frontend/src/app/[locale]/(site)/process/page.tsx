@@ -83,7 +83,7 @@ export default async function ProcessPage({
             {steps.map((step, index) => (
               <li key={step.id}>
                 <Card className="flex flex-col gap-4 sm:flex-row sm:items-start">
-                  <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 font-bold text-primary">
+                  <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-soft font-bold text-primary">
                     <span dir="ltr">{index + 1}</span>
                   </span>
                   <div className="flex-1">

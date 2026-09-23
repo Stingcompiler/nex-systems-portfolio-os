@@ -21,7 +21,7 @@ interface MyComment {
 const STATUS_STYLE: Record<string, string> = {
   approved: 'bg-success/15 text-success',
   pending: 'bg-warning/15 text-warning',
-  rejected: 'bg-danger/10 text-danger',
+  rejected: 'bg-danger-soft text-danger',
   spam: 'bg-surface-hover text-muted',
 };
 

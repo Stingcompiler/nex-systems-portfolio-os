@@ -5,6 +5,8 @@ import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
 
+import { buttonClass } from '@/components/ui/button';
+import { fieldClass } from '@/components/ui/field';
 import { useMember } from '@/contexts/MemberContext';
 import { api, fieldError, toApiError, type ApiErrorPayload } from '@/lib/api/client';
 import { Link, useRouter } from '@/lib/i18n/navigation';
@@ -41,7 +43,7 @@ function Field({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         aria-invalid={Boolean(error)}
-        className="min-h-11 w-full rounded border border-border bg-background px-3 text-sm focus-visible:ring-2 focus-visible:ring-ring"
+        className={fieldClass()}
       />
       {error ? <p className="mt-1 text-sm text-danger">{error}</p> : null}
     </div>
@@ -53,7 +55,7 @@ function SubmitButton({ pending, label }: { pending: boolean; label: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded bg-primary px-5 font-medium text-primary-foreground disabled:opacity-60"
+      className={buttonClass('primary', 'md', 'w-full text-base')}
     >
       {pending ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : null}
       {label}
@@ -64,7 +66,7 @@ function SubmitButton({ pending, label }: { pending: boolean; label: string }) {
 function ErrorBanner({ error }: { error: ApiErrorPayload | null }) {
   if (!error || Object.keys(error.errors).length) return null;
   return (
-    <div role="alert" className="mb-4 rounded border border-danger/40 bg-danger/10 p-3 text-sm">
+    <div role="alert" className="mb-4 rounded border border-danger/40 bg-danger-soft p-3 text-sm">
       {error.detail}
     </div>
   );

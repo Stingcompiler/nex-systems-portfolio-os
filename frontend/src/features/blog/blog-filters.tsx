@@ -4,6 +4,7 @@ import { Search, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
+import { fieldClass } from '@/components/ui/field';
 import { usePathname, useRouter } from '@/lib/i18n/navigation';
 import type { Category } from '@/lib/api/types';
 import { cn } from '@/lib/utils/cn';
@@ -63,7 +64,7 @@ export function BlogFilters({
           onChange={(event) => setSearch(event.target.value)}
           placeholder={t('searchPlaceholder')}
           aria-label={t('searchLabel')}
-          className="min-h-11 w-full rounded-lg border border-border bg-surface ps-9 pe-9 text-sm focus-visible:ring-2 focus-visible:ring-ring"
+          className={fieldClass({ className: 'bg-surface ps-9 pe-9' })}
         />
         {search ? (
           <button

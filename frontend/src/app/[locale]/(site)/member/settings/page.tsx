@@ -4,6 +4,8 @@ import { LoaderCircle, TriangleAlert } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
 
+import { buttonClass } from '@/components/ui/button';
+import { fieldClass } from '@/components/ui/field';
 import { useMember } from '@/contexts/MemberContext';
 import { useToast } from '@/contexts/ToastContext';
 import { api, fieldError, toApiError, type ApiErrorPayload } from '@/lib/api/client';
@@ -62,7 +64,7 @@ export default function MemberSettingsPage() {
       <form onSubmit={changePassword} className="mb-8 rounded-lg border border-border bg-surface p-6">
         <h2 className="mb-4 text-h3 font-semibold">{t('changePassword')}</h2>
         {pwError && !Object.keys(pwError.errors).length ? (
-          <div role="alert" className="mb-4 rounded border border-danger/40 bg-danger/10 p-3 text-sm">
+          <div role="alert" className="mb-4 rounded border border-danger/40 bg-danger-soft p-3 text-sm">
             {pwError.detail}
           </div>
         ) : null}
@@ -83,7 +85,7 @@ export default function MemberSettingsPage() {
               autoComplete={key === 'current_password' ? 'current-password' : 'new-password'}
               value={pw[key]}
               onChange={(event) => setPw((c) => ({ ...c, [key]: event.target.value }))}
-              className="min-h-11 w-full rounded border border-border bg-background px-3 text-sm"
+              className={fieldClass()}
             />
             {pwError && fieldError(pwError, key) ? (
               <p className="mt-1 text-xs text-danger">{fieldError(pwError, key)}</p>
@@ -93,7 +95,7 @@ export default function MemberSettingsPage() {
         <button
           type="submit"
           disabled={pwPending}
-          className="inline-flex min-h-11 items-center gap-2 rounded bg-primary px-5 text-sm font-medium text-primary-foreground disabled:opacity-60"
+          className={buttonClass('primary')}
         >
           {pwPending ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : null}
           {t('updatePassword')}
@@ -126,14 +128,14 @@ export default function MemberSettingsPage() {
               type="password"
               value={deletePassword}
               onChange={(event) => setDeletePassword(event.target.value)}
-              className="mb-3 min-h-11 w-full rounded border border-border bg-background px-3 text-sm"
+              className={fieldClass({ className: 'mb-3' })}
             />
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={deleteAccount}
                 disabled={deletePending || !deletePassword}
-                className="inline-flex min-h-11 items-center gap-2 rounded bg-danger px-4 text-sm font-medium text-white disabled:opacity-60"
+                className={buttonClass('danger')}
               >
                 {deletePending ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : null}
                 {t('confirmDelete')}

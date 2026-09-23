@@ -34,6 +34,14 @@ const BASE =
   'duration-fast focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ' +
   'focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60';
 
+/**
+ * أصناف الزر لعنصر لا يمكن أن يكون <Button> (زر إرسال بمحتوى متغير،
+ * أو عنصر داخل مكوّن طرف ثالث) — كي لا تُكتب الأزرار يدويًا بأشكال متباينة.
+ */
+export function buttonClass(variant: Variant = 'primary', size: Size = 'md', className?: string) {
+  return cn(BASE, VARIANTS[variant], SIZES[size], className);
+}
+
 interface CommonProps {
   variant?: Variant;
   size?: Size;

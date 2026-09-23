@@ -42,7 +42,7 @@ export function InterestPicker({
                 'inline-flex items-center gap-1.5 rounded-full border px-3 text-sm transition-colors',
                 compact ? 'min-h-9' : 'min-h-10',
                 active
-                  ? 'border-primary bg-primary/10 text-primary'
+                  ? 'border-primary bg-primary-soft text-primary'
                   : 'border-border bg-background text-muted hover:border-primary/50 hover:text-foreground',
               )}
             >

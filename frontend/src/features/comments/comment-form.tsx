@@ -4,6 +4,8 @@ import { LoaderCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRef, useState, type FormEvent } from 'react';
 
+import { buttonClass } from '@/components/ui/button';
+import { fieldClass } from '@/components/ui/field';
 import { useMember } from '@/contexts/MemberContext';
 import { useCreateComment } from '@/features/comments/comments-api';
 import { fieldError, toApiError, type ApiErrorPayload } from '@/lib/api/client';
@@ -66,7 +68,7 @@ export function CommentForm({
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-3">
       {error && !Object.keys(error.errors).length ? (
-        <div role="alert" className="rounded border border-danger/40 bg-danger/10 p-3 text-sm">
+        <div role="alert" className="rounded border border-danger/40 bg-danger-soft p-3 text-sm">
           {error.detail}
         </div>
       ) : null}
@@ -93,7 +95,7 @@ export function CommentForm({
               type="text"
               value={guestName}
               onChange={(event) => setGuestName(event.target.value)}
-              className="min-h-11 w-full rounded border border-border bg-background px-3 text-sm"
+              className={fieldClass()}
             />
             {error && fieldError(error, 'guest_name') ? (
               <p className="mt-1 text-xs text-danger">{fieldError(error, 'guest_name')}</p>
@@ -109,7 +111,7 @@ export function CommentForm({
               dir="ltr"
               value={guestEmail}
               onChange={(event) => setGuestEmail(event.target.value)}
-              className="min-h-11 w-full rounded border border-border bg-background px-3 text-start text-sm"
+              className={fieldClass({ className: 'text-start' })}
             />
             {error && fieldError(error, 'guest_email') ? (
               <p className="mt-1 text-xs text-danger">{fieldError(error, 'guest_email')}</p>
@@ -130,7 +132,7 @@ export function CommentForm({
           value={content}
           onChange={(event) => setContent(event.target.value)}
           placeholder={t('placeholder')}
-          className="min-h-20 w-full rounded border border-border bg-background px-3 py-2 text-sm"
+          className={fieldClass({ multiline: true, className: 'min-h-20' })}
         />
         {error && fieldError(error, 'content') ? (
           <p className="mt-1 text-xs text-danger">{fieldError(error, 'content')}</p>
@@ -141,7 +143,7 @@ export function CommentForm({
         <button
           type="submit"
           disabled={create.isPending}
-          className="inline-flex min-h-11 items-center gap-2 rounded bg-primary px-5 text-sm font-medium text-primary-foreground disabled:opacity-60"
+          className={buttonClass('primary')}
         >
           {create.isPending ? (
             <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />

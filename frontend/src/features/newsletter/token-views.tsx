@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 
+import { fieldClass } from '@/components/ui/field';
 import { InterestPicker } from '@/features/newsletter/interest-picker';
 import {
   confirmSubscription,
@@ -234,7 +235,7 @@ export function PreferencesForm({
             type="text"
             value={name}
             onChange={(event) => setName(event.target.value)}
-            className="min-h-11 w-full rounded border border-border bg-background px-3 text-sm"
+            className={fieldClass()}
           />
         </div>
       ) : null}
@@ -247,7 +248,7 @@ export function PreferencesForm({
           id="pref-language"
           value={language}
           onChange={(event) => setLanguage(event.target.value as 'ar' | 'en')}
-          className="min-h-11 w-full rounded border border-border bg-background px-3 text-sm"
+          className={fieldClass()}
         >
           <option value="ar">العربية</option>
           <option value="en">English</option>
@@ -268,8 +269,8 @@ export function PreferencesForm({
           role={message.tone === 'error' ? 'alert' : 'status'}
           className={
             message.tone === 'error'
-              ? 'mb-4 rounded border border-danger/40 bg-danger/10 p-3 text-sm'
-              : 'mb-4 rounded border border-success/40 bg-success/10 p-3 text-sm'
+              ? 'mb-4 rounded border border-danger/40 bg-danger-soft p-3 text-sm'
+              : 'mb-4 rounded border border-success/40 bg-success-soft p-3 text-sm'
           }
         >
           {message.text}

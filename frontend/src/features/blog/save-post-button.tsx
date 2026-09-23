@@ -64,7 +64,7 @@ export function SavePostButton({
       className={cn(
         'inline-flex min-h-10 items-center gap-2 rounded-full border px-4 text-sm transition-colors',
         saved
-          ? 'border-primary bg-primary/10 text-primary'
+          ? 'border-primary bg-primary-soft text-primary'
           : 'border-border text-muted hover:text-foreground',
       )}
     >

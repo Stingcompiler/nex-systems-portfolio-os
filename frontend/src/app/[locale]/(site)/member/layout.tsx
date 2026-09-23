@@ -75,7 +75,7 @@ export default function MemberLayout({ children }: { children: ReactNode }) {
                       className={cn(
                         'flex min-h-11 items-center gap-3 rounded px-3 text-sm transition-colors',
                         active
-                          ? 'bg-primary/10 font-medium text-primary'
+                          ? 'bg-primary-soft font-medium text-primary'
                           : 'text-muted hover:bg-surface-hover hover:text-foreground',
                       )}
                     >

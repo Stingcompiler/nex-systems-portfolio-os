@@ -16,7 +16,10 @@ const config: Config = {
         'surface-hover': 'rgb(var(--surface-hover) / <alpha-value>)',
         foreground: 'rgb(var(--foreground) / <alpha-value>)',
         muted: 'rgb(var(--foreground-muted) / <alpha-value>)',
-        border: 'rgb(var(--border) / <alpha-value>)',
+        border: {
+          DEFAULT: 'rgb(var(--border) / <alpha-value>)',
+          strong: 'rgb(var(--border-strong) / <alpha-value>)',
+        },
         primary: {
           DEFAULT: 'rgb(var(--primary) / <alpha-value>)',
           foreground: 'rgb(var(--primary-foreground) / <alpha-value>)',
@@ -39,6 +42,7 @@ const config: Config = {
           soft: 'rgb(var(--danger-soft) / <alpha-value>)',
         },
         ring: 'rgb(var(--ring) / <alpha-value>)',
+        'brand-ink': 'rgb(var(--brand-ink) / <alpha-value>)',
       },
       fontFamily: {
         sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],

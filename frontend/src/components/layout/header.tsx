@@ -32,7 +32,7 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
           <SiteMark settings={settings} />
           {/* اسم الموقع بخط العناوين وبحجم يليق بعلامة لا برابط:
               كان بخط الجسم و18px فبدا بندًا في القائمة */}
-          <span className="font-heading text-xl font-bold tracking-tight sm:text-[1.375rem]">
+          <span className="font-heading text-xl font-bold ltr:tracking-tight sm:text-[1.375rem]">
             {settings?.site_name || SITE_NAME_FALLBACK}
           </span>
         </Link>

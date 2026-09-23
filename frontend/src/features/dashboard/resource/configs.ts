@@ -113,6 +113,12 @@ function serviceConfig(kind: 'service' | 'solution'): ResourceConfig {
       { name: 'description', label: 'الوصف الكامل', type: 'bilingual-textarea', tab: 'main',
         help: 'الحد الأدنى للنشر 120 كلمة عربية.' },
 
+      { name: 'problem', label: 'المشكلة التي تعالجها', type: 'bilingual-textarea', tab: 'main',
+        help: 'بلغة العميل لا بلغة التقنية: ما الذي يعطّله اليوم؟' },
+      { name: 'audience', label: 'لمن تناسب', type: 'json-list', tab: 'main',
+        help: 'نوع العميل أو الحالة، بندًا بندًا.',
+        subFields: [{ name: '', label: 'النص', type: 'bilingual-text' }] },
+
       { name: 'features', label: 'المميزات', type: 'json-list', tab: 'details',
         help: 'ثلاث مميزات على الأقل قبل النشر.',
         subFields: [
@@ -121,6 +127,12 @@ function serviceConfig(kind: 'service' | 'solution'): ResourceConfig {
         ] },
       { name: 'deliverables', label: 'المخرجات', type: 'json-list', tab: 'details',
         subFields: [{ name: '', label: 'النص', type: 'bilingual-text' }] },
+      { name: 'client_inputs', label: 'ما نحتاجه من العميل', type: 'json-list', tab: 'details',
+        help: 'ما يجهّزه العميل قبل البدء أو أثناءه: شعار، بيانات، صلاحيات…',
+        subFields: [{ name: '', label: 'النص', type: 'bilingual-text' }] },
+      { name: 'pricing_approach', label: 'كيف تُحدَّد المدة والتكلفة', type: 'bilingual-textarea',
+        tab: 'details',
+        help: 'العوامل التي تغيّر السعر والمدة. لا تذكر رقمًا غير معتمد.' },
       { name: 'price_from', label: 'السعر يبدأ من', type: 'decimal', tab: 'details' },
       { name: 'price_currency', label: 'العملة', type: 'text', tab: 'details' },
       { name: 'price_note', label: 'ملاحظة السعر', type: 'bilingual-text', tab: 'details' },
@@ -231,10 +243,12 @@ export const caseStudiesConfig: ResourceConfig = {
     { name: 'results', label: 'النتائج', type: 'bilingual-textarea', tab: 'extra' },
     { name: 'lessons', label: 'الدروس المستفادة', type: 'bilingual-textarea', tab: 'extra' },
     { name: 'metrics', label: 'أرقام النتائج', type: 'json-list', tab: 'extra',
-      help: 'أرقام حقيقية فقط.',
+      help: 'أرقام حقيقية فقط، ولكل رقم مصدره وفترة قياسه. بلا قياس؟ اكتب النتيجة نصًا في «النتائج».',
       subFields: [
         { name: 'label', label: 'التسمية', type: 'bilingual-text' },
         { name: 'value', label: 'القيمة', type: 'text' },
+        { name: 'source', label: 'المصدر', type: 'bilingual-text' },
+        { name: 'period', label: 'فترة القياس', type: 'bilingual-text' },
       ] },
     { name: 'development_phases', label: 'مراحل التطوير', type: 'json-list', tab: 'extra',
       subFields: [

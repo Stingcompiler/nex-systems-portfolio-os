@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server';
 
 import { ProjectCard, ServiceCard, TechBadge } from '@/components/content/cards';
 import { FaqList } from '@/components/content/faq-list';
+import { PageCta } from '@/components/content/page-cta';
 import { ButtonLink, ExternalButtonLink } from '@/components/ui/button';
 import { CardGrid } from '@/components/ui/card-grid';
 import { Container } from '@/components/ui/container';
@@ -75,6 +76,8 @@ export async function ServiceListView({
           action={<ButtonLink href="/request-quote">{tNav('requestQuote')}</ButtonLink>}
         />
       )}
+
+      {items.length ? <PageCta className="mt-16" /> : null}
     </Container>
   );
 }
@@ -210,6 +213,26 @@ export async function ServiceDetailView({
         </div>
       </Container>
 
+      {/* أسئلة القرار أولًا: هل هذه الخدمة لمشكلتي، وهل تناسبني؟ */}
+      {service.problem || service.audience.length ? (
+        <Section>
+          <div className="grid gap-8 lg:grid-cols-2">
+            {service.problem ? (
+              <div>
+                <h2 className="mb-4 text-h2 font-semibold">{t('problemTitle')}</h2>
+                <Prose text={service.problem} />
+              </div>
+            ) : null}
+            {service.audience.length ? (
+              <div>
+                <h2 className="mb-4 text-h2 font-semibold">{t('audienceTitle')}</h2>
+                <CheckList items={service.audience} />
+              </div>
+            ) : null}
+          </div>
+        </Section>
+      ) : null}
+
       {service.features.length ? (
         <Section tone="muted">
           <SectionHeader title={t('whatIncluded')} />
@@ -233,17 +256,41 @@ export async function ServiceDetailView({
         </Section>
       ) : null}
 
-      {service.deliverables.length ? (
+      {/* ما تستلمه مقابل ما نحتاجه منك — الالتزامان جنبًا إلى جنب */}
+      {service.deliverables.length || service.client_inputs.length ? (
         <Section>
-          <SectionHeader title={t('deliverables')} />
-          <ul className="grid max-w-prose gap-3">
-            {service.deliverables.map((item, index) => (
-              <li key={index} className="flex items-start gap-3">
-                <Check className="mt-1 size-4 shrink-0 text-success" aria-hidden="true" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
+          <div className="grid gap-10 lg:grid-cols-2">
+            {service.deliverables.length ? (
+              <div>
+                <h2 className="mb-4 text-h2 font-semibold">{t('deliverables')}</h2>
+                <CheckList items={service.deliverables} />
+              </div>
+            ) : null}
+            {service.client_inputs.length ? (
+              <div>
+                <h2 className="mb-2 text-h2 font-semibold">{t('clientInputsTitle')}</h2>
+                <p className="mb-4 text-muted">{t('clientInputsHelp')}</p>
+                <CheckList items={service.client_inputs} tone="muted" />
+              </div>
+            ) : null}
+          </div>
+        </Section>
+      ) : null}
+
+      {service.pricing_approach ? (
+        <Section>
+          {/* إطار لا خلفية: القسم التالي (مشاريع منفّذة) على السطح الخافت */}
+          <div className="max-w-3xl rounded-xl border border-border bg-surface p-6 shadow-subtle sm:p-8">
+            <h2 className="mb-4 text-h2 font-semibold">{t('pricingApproachTitle')}</h2>
+            <Prose text={service.pricing_approach} />
+            <ButtonLink
+              href={`/request-quote?service=${encodeURIComponent(service.slug)}${kind === 'solutions' ? '&kind=solutions' : ''}`}
+              variant="secondary"
+              className="mt-6"
+            >
+              {t('pricingApproachCta')}
+            </ButtonLink>
+          </div>
         </Section>
       ) : null}
 
@@ -264,6 +311,26 @@ export async function ServiceDetailView({
           <FaqList faqs={service.faqs} />
         </Section>
       ) : null}
+
+      <Container className="py-16">
+        <PageCta />
+      </Container>
     </>
+  );
+}
+
+function CheckList({ items, tone = 'success' }: { items: string[]; tone?: 'success' | 'muted' }) {
+  return (
+    <ul className="grid max-w-prose gap-3">
+      {items.map((item, index) => (
+        <li key={index} className="flex items-start gap-3">
+          <Check
+            className={tone === 'success' ? 'mt-1 size-4 shrink-0 text-success' : 'mt-1 size-4 shrink-0 text-primary'}
+            aria-hidden="true"
+          />
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
   );
 }

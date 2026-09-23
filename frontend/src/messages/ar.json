@@ -108,7 +108,13 @@
     "forWholeProject": "لكامل المشروع",
     "languages": "اللغات",
     "languagesValue": "عربي وإنجليزي",
-    "whatIncluded": "ما تشمله الخدمة"
+    "whatIncluded": "ما تشمله الخدمة",
+    "problemTitle": "المشكلة التي نحلّها",
+    "audienceTitle": "لمن تناسب هذه الخدمة",
+    "clientInputsTitle": "ما نحتاجه منك",
+    "clientInputsHelp": "تجهيز هذه مسبقًا يختصر المدة ويقلل التعديلات.",
+    "pricingApproachTitle": "كيف نحدّد المدة والتكلفة",
+    "pricingApproachCta": "اطلب تقديرًا لمشروعك"
   },
   "solutions": {
     "title": "الحلول القطاعية",
@@ -140,7 +146,11 @@
     "metrics": "أرقام النتائج",
     "testimonial": "شهادة العميل",
     "relatedServices": "خدمات ذات صلة",
-    "viewProject": "صفحة المشروع"
+    "viewProject": "صفحة المشروع",
+    "metricSource": "المصدر",
+    "metricPeriod": "الفترة",
+    "ctaTitle": "لديك تحدٍّ مشابه؟",
+    "ctaBody": "صف لنا وضعك الحالي، ونقترح عليك نطاقًا وخطة تنفيذ واقعية."
   },
   "technologies": {
     "title": "التقنيات",
@@ -178,7 +188,8 @@
     "allServices": "كل الخدمات",
     "fullProcess": "طريقة العمل كاملة",
     "stack": "ما نعمل به",
-    "allTechnologies": "كل التقنيات"
+    "allTechnologies": "كل التقنيات",
+    "publishedWork": "أعمال منشورة"
   },
   "pageCta": {
     "title": "لديك مشروع في بالك؟",

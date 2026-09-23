@@ -108,7 +108,13 @@
     "forWholeProject": "for the whole project",
     "languages": "Languages",
     "languagesValue": "Arabic & English",
-    "whatIncluded": "What's included"
+    "whatIncluded": "What's included",
+    "problemTitle": "The problem we solve",
+    "audienceTitle": "Who this service is for",
+    "clientInputsTitle": "What we need from you",
+    "clientInputsHelp": "Having these ready shortens the timeline and reduces rework.",
+    "pricingApproachTitle": "How we set the timeline and cost",
+    "pricingApproachCta": "Request an estimate"
   },
   "solutions": {
     "title": "Sector solutions",
@@ -140,7 +146,11 @@
     "metrics": "Measured results",
     "testimonial": "Client testimonial",
     "relatedServices": "Related services",
-    "viewProject": "Project page"
+    "viewProject": "Project page",
+    "metricSource": "Source",
+    "metricPeriod": "Period",
+    "ctaTitle": "Facing a similar challenge?",
+    "ctaBody": "Describe where you are today, and we will propose a realistic scope and plan."
   },
   "technologies": {
     "title": "Technologies",
@@ -178,7 +188,8 @@
     "allServices": "All services",
     "fullProcess": "Full process",
     "stack": "What we work with",
-    "allTechnologies": "All technologies"
+    "allTechnologies": "All technologies",
+    "publishedWork": "Published work"
   },
   "pageCta": {
     "title": "Have a project in mind?",

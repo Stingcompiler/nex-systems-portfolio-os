@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { CaseStudyCard } from '@/components/content/cards';
+import { PageCta } from '@/components/content/page-cta';
 import { ButtonLink } from '@/components/ui/button';
 import { CardGrid } from '@/components/ui/card-grid';
 import { Container } from '@/components/ui/container';
@@ -83,6 +84,8 @@ export default async function CaseStudiesPage({
             action={<ButtonLink href="/projects">{tNav('projects')}</ButtonLink>}
           />
         )}
+
+        <PageCta className="mt-16" />
       </Container>
     </>
   );

@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
 
-import { buttonClass } from '@/components/ui/button';
+import { buttonClass } from '@/components/ui/button-styles';
 import { fieldClass } from '@/components/ui/field';
 import { useMember } from '@/contexts/MemberContext';
 import { api, fieldError, toApiError, type ApiErrorPayload } from '@/lib/api/client';

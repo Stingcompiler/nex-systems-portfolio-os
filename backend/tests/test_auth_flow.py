@@ -383,3 +383,41 @@ def test_account_deletion_removes_user_and_clears_cookies(logged_in_client, memb
     assert response.status_code == 200
     assert User.objects.filter(pk=member.pk).exists() is False
     assert response.cookies[settings.AUTH_COOKIE_ACCESS].value == ""
+
+
+# --------------------------------------------------------------- كوكي منتهٍ
+
+
+def test_stale_access_cookie_does_not_block_public_forms(api_client):
+    """عضو انتهت جلسته يبقى قادرًا على إرسال طلب مشروع ورسالة تواصل."""
+    api_client.cookies["access_token"] = "not-a-valid-jwt"
+
+    request = api_client.post(
+        "/api/v1/project-requests/submit/",
+        {"description": "نظام لإدارة مخزون الصيدلية", "phone": "+249900000000"},
+        format="json",
+    )
+    contact = api_client.post(
+        "/api/v1/contact-messages/submit/",
+        {"message": "استفسار", "email": "v@example.com"},
+        format="json",
+    )
+    public_read = api_client.get("/api/v1/services/")
+
+    assert request.status_code == 201, request.data
+    assert contact.status_code == 201, contact.data
+    assert public_read.status_code == 200
+
+
+def test_stale_access_cookie_still_401s_protected_endpoints(api_client):
+    # الواجهة تعتمد على 401 هنا لتجديد الرمز
+    api_client.cookies["access_token"] = "not-a-valid-jwt"
+    assert api_client.get("/api/v1/auth/me/").status_code == 401
+
+
+def test_invalid_bearer_header_is_still_rejected(api_client):
+    # الموبايل يرسل الرمز صراحة؛ فشله يجب أن يُبلَّغ به لا أن يُتجاهل
+    response = api_client.get(
+        "/api/v1/services/", HTTP_AUTHORIZATION="Bearer not-a-valid-jwt"
+    )
+    assert response.status_code == 401

@@ -2,9 +2,9 @@
 
 import { ArrowLeft, ArrowRight, Check, LoaderCircle, MessageCircle, Pencil } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useId, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
-import { buttonClass } from '@/components/ui/button';
+import { buttonClass } from '@/components/ui/button-styles';
 import { fieldClass } from '@/components/ui/field';
 import { api, toApiError } from '@/lib/api/client';
 import type { Locale } from '@/lib/i18n/routing';
@@ -17,9 +17,45 @@ interface Option {
 }
 
 /** الخدمة التي بدأ منها الزائر («اطلب هذه الخدمة»). */
-export interface RequestServiceContext {
+interface RequestServiceContext {
   slug: string;
   title: string;
+}
+
+/**
+ * يقرأ `?service=<slug>&kind=solutions` من الرابط في المتصفح ويجلب عنوان
+ * الخدمة. القراءة هنا لا في الصفحة: قراءة searchParams على الخادم كانت
+ * تحوّل صفحة الطلب من مولَّدة مسبقًا إلى مصيَّرة عند كل طلب. رابط لخدمة
+ * غير موجودة يُبقي النموذج عامًا.
+ */
+function useServiceFromUrl(locale: Locale) {
+  const [service, setService] = useState<RequestServiceContext | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('service') ?? '';
+    if (!/^[\w-]+$/.test(slug)) return;
+    const kind = params.get('kind') === 'solutions' ? 'solutions' : 'services';
+
+    let cancelled = false;
+    // نقطة عامة تُطلب بلا كوكيز: كوكي جلسة منتهية يجعل الخادم يرد 401
+    // حتى على المحتوى العام، فيضيع سياق الخدمة بلا سبب
+    const base = (process.env.NEXT_PUBLIC_API_URL || '/api/v1').replace(/\/$/, '');
+    fetch(`${base}/${kind}/${slug}/?lang=${locale}`, {
+      credentials: 'omit',
+      headers: { Accept: 'application/json', 'Accept-Language': locale },
+    })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data: { slug: string; title: string } | null) => {
+        if (!cancelled && data) setService({ slug: data.slug, title: data.title });
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [locale]);
+
+  return service;
 }
 
 type Step = 1 | 2 | 3;
@@ -47,14 +83,13 @@ function newSubmissionId() {
 export function RequestForm({
   whatsapp,
   whatsappMessage,
-  service,
 }: {
   whatsapp: string;
   whatsappMessage: string;
-  service?: RequestServiceContext | null;
 }) {
   const t = useTranslations('requestForm');
   const locale = useLocale() as Locale;
+  const service = useServiceFromUrl(locale);
 
   const [step, setStep] = useState<Step>(1);
   const [submitting, setSubmitting] = useState(false);

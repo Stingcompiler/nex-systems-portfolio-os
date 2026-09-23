@@ -4,7 +4,7 @@ import { LoaderCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
 
-import { buttonClass } from '@/components/ui/button';
+import { buttonClass } from '@/components/ui/button-styles';
 import { fieldClass } from '@/components/ui/field';
 import { useMember } from '@/contexts/MemberContext';
 import { useToast } from '@/contexts/ToastContext';

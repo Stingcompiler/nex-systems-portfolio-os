@@ -4,7 +4,7 @@ import { Check, LoaderCircle, Send } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useId, useState, type FormEvent, type ReactNode } from 'react';
 
-import { buttonClass } from '@/components/ui/button';
+import { buttonClass } from '@/components/ui/button-styles';
 import { fieldClass } from '@/components/ui/field';
 import { api, toApiError, type ApiErrorPayload } from '@/lib/api/client';
 import type { Locale } from '@/lib/i18n/routing';

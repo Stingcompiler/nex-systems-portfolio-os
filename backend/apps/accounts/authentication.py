@@ -6,8 +6,9 @@
 
 from django.conf import settings
 from rest_framework.authentication import CSRFCheck
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import AuthenticationFailed, PermissionDenied
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import InvalidToken
 
 SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS", "TRACE"})
 
@@ -44,8 +45,18 @@ class CookieJWTAuthentication(JWTAuthentication):
         if not raw_token:
             return None
 
-        validated_token = self.get_validated_token(raw_token)
-        user = self.get_user(validated_token)
+        try:
+            validated_token = self.get_validated_token(raw_token)
+            user = self.get_user(validated_token)
+        except (InvalidToken, AuthenticationFailed):
+            if not from_cookie:
+                # رمز الترويسة صريح من العميل (الموبايل): فشله خطأ يُبلَّغ به
+                raise
+            # كوكي منتهٍ أو لمستخدم محذوف = زائر مجهول. رفعه كان يرد 401 على
+            # النقاط العامة نفسها، فيعجز عضو انتهت جلسته عن إرسال طلب مشروع
+            # أو رسالة. النقاط المحمية ترد 401 عبر IsAuthenticated كما هي،
+            # فيبقى تجديد الرمز في الواجهة يعمل.
+            return None
 
         # الكوكي يُرسل تلقائيًا مع كل طلب، فيلزم إثبات أن الطلب من موقعنا.
         if from_cookie:

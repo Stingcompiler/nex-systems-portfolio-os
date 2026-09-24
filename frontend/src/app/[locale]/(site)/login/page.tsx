@@ -4,6 +4,7 @@ import { Suspense } from 'react';
 
 import { AuthShell } from '@/features/member/auth-shell';
 import { LoginForm } from '@/features/member/forms';
+import { getSeoSettings, getSiteSettings } from '@/lib/api/queries';
 import { Link } from '@/lib/i18n/navigation';
 import type { Locale } from '@/lib/i18n/routing';
 import { buildMetadata } from '@/lib/seo/metadata';
@@ -14,12 +15,20 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'auth' });
+  // الإعدادات تحمل اسم الموقع بلغة الصفحة؛ بدونها يُلحق بالعنوان الاسم
+  // الاحتياطي الإنجليزي حتى في الصفحة العربية
+  const [t, settings, seoSettings] = await Promise.all([
+    getTranslations({ locale, namespace: 'auth' }),
+    getSiteSettings(locale as Locale),
+    getSeoSettings(locale as Locale),
+  ]);
   return buildMetadata({
     locale: locale as Locale,
     path: '/login',
     title: t('loginTitle'),
     noIndex: true,
+    settings,
+    seoSettings,
   });
 }
 

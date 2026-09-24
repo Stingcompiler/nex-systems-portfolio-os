@@ -4,6 +4,9 @@ import type { CSSProperties } from 'react';
 import type { MediaRef } from '@/lib/api/types';
 import { cn } from '@/lib/utils/cn';
 
+/** الصورة «طولية» حين يزيد ارتفاعها على عرضها بهذه النسبة. */
+const PORTRAIT_THRESHOLD = 1.2;
+
 /**
  * صورة غلاف.
  *
@@ -13,6 +16,10 @@ import { cn } from '@/lib/utils/cn';
  * `fit="contain"` للقطات الشاشة: القص يبتر الواجهات ويخفي ما يُفترض أن
  * تُظهره اللقطة. `natural` يلغي النسبة الثابتة ويعتمد أبعاد الصورة نفسها،
  * فلا قص ولا أشرطة فارغة.
+ *
+ * اللقطة الطولية (لقطة هاتف) استثناء من الاثنين: في إطار عريض تصير شريطًا
+ * رفيعًا مع `contain`، وعمودًا بطول الصفحة مع `natural`. تُملأ الإطارَ
+ * وتُعرض من أعلاها حيث العنوان وأول الواجهة.
  */
 export function CoverImage({
   media,
@@ -35,9 +42,14 @@ export function CoverImage({
   priority?: boolean;
   sizes?: string;
 }) {
+  const portrait = Boolean(
+    media?.width && media.height && media.height > media.width * PORTRAIT_THRESHOLD,
+  );
+  const contain = fit === 'contain' && !portrait;
+
   // النسبة الطبيعية تحتاج بعدين معلومين؛ وإلا نعود إلى النسبة الثابتة
   const intrinsic =
-    natural && media?.width && media.height
+    natural && !portrait && media?.width && media.height
       ? ({ aspectRatio: `${media.width} / ${media.height}` } as CSSProperties)
       : undefined;
 
@@ -59,10 +71,11 @@ export function CoverImage({
           quality={quality}
           priority={priority}
           className={cn(
-            fit === 'contain' ? 'object-contain' : 'object-cover',
+            contain ? 'object-contain' : 'object-cover',
+            portrait ? 'object-top' : null,
             // الحشوة على الصورة نفسها: عنصر fill مطلق لا تُزيحه حشوة الأب.
             // تجعل الشريط الفارغ حول اللقطة يبدو إطارًا مقصودًا.
-            fit === 'contain' && !intrinsic ? 'p-2 sm:p-3' : null,
+            contain && !intrinsic ? 'p-2 sm:p-3' : null,
           )}
         />
       ) : (

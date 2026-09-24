@@ -6,6 +6,12 @@ from django.utils import timezone
 
 from apps.core.models.content import PageSection
 from apps.core.models.settings import SiteSettings
+from apps.portfolio.enums import (
+    PROJECT_TYPE_LABELS_EN,
+    SECTOR_LABELS_EN,
+    ProjectType,
+    Sector,
+)
 from apps.portfolio.models import Project, Service, Technology
 
 pytestmark = pytest.mark.django_db
@@ -153,6 +159,29 @@ def test_service_decision_fields_are_localized(api_client, content):
 def test_service_decision_fields_are_empty_by_default(api_client, content):
     data = api_client.get(f"{SERVICES_URL}mobile-app-development/", **AR).data
     assert data["problem"] == "" and data["audience"] == [] and data["client_inputs"] == []
+
+
+def test_choice_labels_follow_the_request_language(api_client, content):
+    project = Project.objects.get(slug="number-one-schools")
+
+    arabic = api_client.get(PROJECTS_URL, {"search": project.title_ar}, **AR)
+    english = api_client.get(PROJECTS_URL, {"page_size": 100}, **EN)
+
+    ar_item = next(i for i in arabic.data["results"] if i["slug"] == project.slug)
+    en_item = next(i for i in english.data["results"] if i["slug"] == project.slug)
+    assert ar_item["sector_display"] == project.get_sector_display()
+    assert en_item["sector_display"] == SECTOR_LABELS_EN[project.sector]
+    assert en_item["project_type_display"] == PROJECT_TYPE_LABELS_EN[project.project_type]
+
+    services = api_client.get(SERVICES_URL, {"page_size": 100}, **EN).data["results"]
+    assert all(
+        s["sector_display"] == SECTOR_LABELS_EN[s["sector"]] for s in services if s["sector"]
+    )
+
+
+def test_every_choice_has_an_english_label():
+    assert set(SECTOR_LABELS_EN) == set(Sector.values)
+    assert set(PROJECT_TYPE_LABELS_EN) == set(ProjectType.values)
 
 
 def test_response_declares_its_content_language(api_client, content):

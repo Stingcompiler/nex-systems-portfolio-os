@@ -12,7 +12,8 @@ public/og/ar.png و public/og/en.png.
 
     DYLD_LIBRARY_PATH=/opt/homebrew/lib ../backend/.venv/bin/python scripts/generate-og.py
 
-يُعاد التشغيل فقط عند تغيير الاسم أو الشعار النصي أو الخط (Readex Pro).
+يُعاد التشغيل فقط عند تغيير الاسم أو الشعار النصي أو الرمز أو الخط (Readex Pro).
+الرمز يُقرأ من public/icons/icon-512.png — نفس رمز الترويسة والأيقونة.
 """
 
 from __future__ import annotations
@@ -34,26 +35,24 @@ OUT_DIR = ROOT / "public" / "og"
 WIDTH, HEIGHT = 1200, 630
 PAD_X, PAD_Y = 80, 72
 
-# لوحة «سَنط» من globals.css
-BG_START, BG_END = (247, 248, 245), (230, 239, 232)
-INK = (22, 33, 27)
-MUTED = (95, 114, 103)
-PRIMARY = (30, 106, 79)
-PRIMARY_FG = (244, 251, 247)
+# لوحة Vezano من globals.css: ورق #F6F8FB، حبر كحلي #12253B، تركوازي #0E7C86
+BG_START, BG_END = (246, 248, 251), (223, 236, 240)
+INK = (18, 37, 59)
+MUTED = (91, 107, 127)
+PRIMARY = (14, 124, 134)
+MARK = ROOT / "public" / "icons" / "icon-512.png"
 
 CARDS = {
     "ar": {
         "rtl": True,
-        "name": "ستينج سيستمز",
-        "mark": "س",
-        "tagline": "حلول برمجية متكاملة للويب والموبايل وسطح المكتب",
+        "name": "ستينج سيستم",
+        "tagline": "نحوّل طريقة عملك إلى نظام واضح وسهل الاستخدام",
         "domain": "stingdev.pro",
     },
     "en": {
         "rtl": False,
-        "name": "StingSystems",
-        "mark": "S",
-        "tagline": "Complete software solutions for web, mobile, and desktop",
+        "name": "StingSystem",
+        "tagline": "We turn the way you run your business into a clear, easy-to-use system",
         "domain": "stingdev.pro",
     },
 }
@@ -104,21 +103,11 @@ def draw_card(locale: str, spec: dict) -> None:
     anchor_x = WIDTH - PAD_X if rtl else PAD_X
     align = "ra" if rtl else "la"
 
-    # علامة الاسم: مربع أخضر بحرف أول، ثم الاسم
+    # الرمز نفسه المستخدم في الترويسة والأيقونة، ثم الاسم
     mark_size = 72
     mark_x = WIDTH - PAD_X - mark_size if rtl else PAD_X
-    draw.rounded_rectangle(
-        (mark_x, PAD_Y, mark_x + mark_size, PAD_Y + mark_size), radius=18, fill=PRIMARY
-    )
-    mark_font = font("Bold", 36)
-    draw.text(
-        (mark_x + mark_size / 2, PAD_Y + mark_size / 2),
-        spec["mark"],
-        font=mark_font,
-        fill=PRIMARY_FG,
-        anchor="mm",
-        **text_kwargs(rtl),
-    )
+    mark = Image.open(MARK).convert("RGBA").resize((mark_size, mark_size), Image.LANCZOS)
+    image.paste(mark, (int(mark_x), PAD_Y), mark)
     name_font = font("Bold", 40)
     name_x = mark_x - 20 if rtl else mark_x + mark_size + 20
     draw.text(
@@ -140,7 +129,7 @@ def draw_card(locale: str, spec: dict) -> None:
         draw.text((anchor_x, y), line, font=title_font, fill=INK, anchor=align, **text_kwargs(rtl))
         y += line_height
 
-    # النطاق وخط أخضر قصير في الطرف المقابل
+    # النطاق وخط تركوازي قصير في الطرف المقابل
     footer_font = font("Regular", 26)
     footer_y = HEIGHT - PAD_Y
     draw.text((anchor_x, footer_y), spec["domain"], font=footer_font, fill=MUTED, anchor="rd" if rtl else "ld")

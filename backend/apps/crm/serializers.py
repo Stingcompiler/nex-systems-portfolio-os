@@ -134,7 +134,9 @@ class MyProjectRequestSerializer(serializers.ModelSerializer):
     """طلبات العميل كما يراها هو: بياناته وحالة طلبه فقط.
 
     لا ملاحظات داخلية ولا مسؤول ولا عميل محتمل — هذه أدوات الفريق.
-    الحالة تُرسل بمفتاحها، والواجهة تترجمها إلى مرحلة بلغة العميل.
+    الحالة تُرسل بمفتاحها، والواجهة تترجمها إلى مرحلة بلغة العميل. وكذلك
+    النوع والميزانية والمدة: المفاتيح تُترجم في الواجهة (تسميات الخيارات
+    عربية)، و``*_display`` احتياط لمفتاح لا ترجمة له.
     """
 
     project_type_display = serializers.CharField(
@@ -149,7 +151,8 @@ class MyProjectRequestSerializer(serializers.ModelSerializer):
         fields = [
             "id", "reference_code", "status", "created_at", "updated_at",
             "project_type", "project_type_display", "service_title",
-            "description", "budget_display", "timeline_display",
+            "description", "budget_range", "budget_display",
+            "timeline", "timeline_display",
         ]
         read_only_fields = fields
 

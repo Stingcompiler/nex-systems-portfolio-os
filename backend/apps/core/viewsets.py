@@ -38,7 +38,12 @@ class PublicContentViewSet(DualSerializerMixin, AuditLogMixin, viewsets.ModelVie
             and self.action in ("list", "retrieve")
             and not (request.user and request.user.is_authenticated)
         )
-        if is_public_read and response.status_code == 200:
+        wants_admin_view = request.query_params.get("full") == "true"
+        if wants_admin_view:
+            # العرض الإداري لا يُخزَّن أبدًا: نسخة عامة مخزّنة للرابط نفسه
+            # كانت تُقدَّم للمحرّر بعد دخوله بدل البيانات الكاملة
+            response["Cache-Control"] = "private, no-store"
+        elif is_public_read and response.status_code == 200:
             response["Cache-Control"] = (
                 f"public, max-age={PUBLIC_CACHE_SECONDS}, "
                 f"stale-while-revalidate={PUBLIC_CACHE_SECONDS}"

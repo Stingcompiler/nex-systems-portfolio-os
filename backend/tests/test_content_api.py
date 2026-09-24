@@ -483,3 +483,33 @@ def test_seeding_twice_does_not_duplicate_records(content):
 def test_every_seeded_published_service_meets_the_content_bar(content):
     for service in Service.objects.filter(is_published=True):
         assert service.publication_blockers() == [], service.slug
+
+
+# --------------------------------------------------------------- العرض الإداري والتخزين
+
+
+def test_admin_view_with_expired_cookie_asks_for_refresh(api_client, content):
+    # اللوحة تجدد الجلسة عند 401؛ البيانات العامة الصامتة كانت تُعرض كأنها كاملة
+    api_client.cookies["access_token"] = "expired-or-invalid"
+    response = api_client.get(f"{SERVICES_URL}?full=true")
+    assert response.status_code == 401
+
+
+def test_public_read_with_expired_cookie_still_works(api_client, content):
+    api_client.cookies["access_token"] = "expired-or-invalid"
+    response = api_client.get(SERVICES_URL)
+    assert response.status_code == 200
+    assert "is_published" not in response.data["results"][0]
+
+
+def test_admin_view_is_never_cached(api_client, content_manager):
+    _login(api_client, content_manager)
+    admin = api_client.get(f"{SERVICES_URL}?full=true")
+    assert admin.status_code == 200
+    assert "is_published" in admin.data["results"][0]
+    assert admin["Cache-Control"] == "private, no-store"
+
+
+def test_anonymous_public_read_is_cacheable(api_client, content):
+    response = api_client.get(SERVICES_URL)
+    assert response["Cache-Control"].startswith("public, max-age=")

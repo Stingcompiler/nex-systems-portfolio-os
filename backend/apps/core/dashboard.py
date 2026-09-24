@@ -12,6 +12,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.accounts.models import User
+from apps.analytics.models import PageView
+from apps.blog.models import Post
 from apps.comments.models import Comment, CommentReport
 from apps.core.models.content import FAQ, ProcessStep, Stat
 from apps.core.models.settings import SEOSettings, SiteSettings, SocialLink
@@ -21,6 +23,7 @@ from apps.core.permissions import HasDashboardPermission, IsSuperAdmin
 from apps.crm.enums import ContactStatus, FollowUpStatus, RequestStatus
 from apps.crm.models import Client, ContactMessage, FollowUp, ProjectRequest
 from apps.media_library.models import MediaFile
+from apps.newsletter.models import Campaign, Subscriber
 from apps.notifications.models import Notification
 from apps.portfolio.models import (
     CaseStudy,
@@ -42,12 +45,21 @@ class ChecklistItemSerializer(serializers.Serializer):
 
 
 class DashboardSummarySerializer(serializers.Serializer):
-    content = serializers.DictField()
-    people = serializers.DictField()
-    system = serializers.DictField()
-    activity = serializers.DictField()
-    checklist = ChecklistItemSerializer(many=True)
-    completion = serializers.IntegerField()
+    """الأقسام تختلف بحسب صلاحيات المستخدم — كل قسم غائب لمن لا يملك صلاحيته.
+
+    `sections` تسرد المفاتيح الحاضرة بالترتيب الذي تُعرض به.
+    """
+
+    role = serializers.CharField()
+    role_display = serializers.CharField()
+    sections = serializers.ListField(child=serializers.CharField())
+    crm = serializers.DictField(required=False)
+    community = serializers.DictField(required=False)
+    my_posts = serializers.DictField(required=False)
+    marketing = serializers.DictField(required=False)
+    analytics = serializers.DictField(required=False)
+    site = serializers.DictField(required=False)
+    system = serializers.DictField(required=False)
 
 
 def build_checklist() -> list[dict]:
@@ -115,8 +127,8 @@ def build_checklist() -> list[dict]:
     ]
 
 
-def build_activity() -> dict:
-    """مؤشرات النشاط الحديثة: طلبات، عملاء، رسائل، تعليقات، سلسلة أسبوعية، ومتابعات اليوم."""
+def build_crm() -> dict:
+    """مؤشرات إدارة العملاء: طلبات، عملاء، رسائل، سلسلة أسبوعية، ومتابعات اليوم."""
     now = timezone.now()
     last30 = now - timedelta(days=30)
     prev30 = now - timedelta(days=60)
@@ -142,9 +154,6 @@ def build_activity() -> dict:
     unanswered = unanswered_qs.count()
     oldest = unanswered_qs.order_by("created_at").values_list("created_at", flat=True).first()
     oldest_days = (now - oldest).days if oldest else 0
-
-    pending_comments = Comment.objects.filter(status=Comment.Status.PENDING).count()
-    reported = CommentReport.objects.filter(status=CommentReport.Status.OPEN).count()
 
     # سلسلة الطلبات الأسبوعية (آخر 7 أيام) — TruncDate يعمل على SQLite وPostgreSQL معًا
     week_start = today - timedelta(days=6)
@@ -187,10 +196,87 @@ def build_activity() -> dict:
         "new_clients_month": new_clients,
         "unanswered_messages": unanswered,
         "unanswered_oldest_days": oldest_days,
-        "pending_comments": pending_comments,
-        "reported_comments": reported,
         "weekly_requests": weekly,
         "follow_ups_today": follow_ups,
+    }
+
+
+def build_community() -> dict:
+    return {
+        "pending_comments": Comment.objects.filter(status=Comment.Status.PENDING).count(),
+        "reported_comments": CommentReport.objects.filter(
+            status=CommentReport.Status.OPEN
+        ).count(),
+    }
+
+
+def build_my_posts(user) -> dict:
+    """مقالات المستخدم نفسه — ما يحتاجه المحرر كل يوم."""
+    mine = Post.objects.filter(author=user)
+    counts = dict(
+        mine.values_list("status").annotate(c=Count("id")).values_list("status", "c")
+    )
+    recent = [
+        {
+            "id": post.id,
+            "slug": post.slug,
+            "title": post.title_ar or post.title_en or "بلا عنوان",
+            "status": post.status,
+            "status_display": post.get_status_display(),
+            "updated_at": post.updated_at.isoformat(),
+        }
+        for post in mine.exclude(status=Post.Status.ARCHIVED).order_by("-updated_at")[:5]
+    ]
+    return {
+        "drafts": counts.get(Post.Status.DRAFT, 0),
+        "in_review": counts.get(Post.Status.IN_REVIEW, 0),
+        "scheduled": counts.get(Post.Status.SCHEDULED, 0),
+        "published": counts.get(Post.Status.PUBLISHED, 0),
+        "recent": recent,
+    }
+
+
+def build_marketing() -> dict:
+    now = timezone.now()
+    last30 = now - timedelta(days=30)
+    subscribers = Subscriber.objects.aggregate(
+        active=Count("id", filter=Q(status=Subscriber.Status.ACTIVE)),
+        pending=Count("id", filter=Q(status=Subscriber.Status.PENDING)),
+        new_month=Count("id", filter=Q(created_at__gte=last30)),
+        unsubscribed_month=Count(
+            "id",
+            filter=Q(status=Subscriber.Status.UNSUBSCRIBED, updated_at__gte=last30),
+        ),
+    )
+    campaigns = Campaign.objects.aggregate(
+        drafts=Count("id", filter=Q(status=Campaign.Status.DRAFT)),
+        scheduled=Count("id", filter=Q(status=Campaign.Status.SCHEDULED)),
+    )
+    last = (
+        Campaign.objects.filter(status=Campaign.Status.SENT)
+        .order_by("-sent_at")
+        .values("id", "subject_ar", "sent_at", "sent_count", "open_count", "click_count")
+        .first()
+    )
+    if last:
+        last = {**last, "sent_at": last["sent_at"].isoformat() if last["sent_at"] else None}
+    return {**subscribers, **campaigns, "last_campaign": last}
+
+
+def build_analytics() -> dict:
+    now = timezone.now()
+    last30 = now - timedelta(days=30)
+    prev30 = now - timedelta(days=60)
+    current = PageView.objects.filter(created_at__gte=last30)
+    views = current.count()
+    previous = PageView.objects.filter(created_at__gte=prev30, created_at__lt=last30).count()
+    return {
+        "views_month": views,
+        "visitors_month": current.exclude(session_hash="")
+        .values("session_hash")
+        .distinct()
+        .count(),
+        "views_delta_pct": round((views - previous) * 100 / previous) if previous else 0,
     }
 
 
@@ -202,56 +288,66 @@ class DashboardSummaryView(APIView):
 
     @extend_schema(summary="ملخص لوحة التحكم", responses={200: DashboardSummarySerializer})
     def get(self, request):
-        services = Service.objects.aggregate(
-            total=Count("id"),
-            published=Count("id", filter=Q(is_published=True)),
-            solutions=Count("id", filter=Q(kind="solution")),
-        )
-        projects = Project.objects.aggregate(
-            total=Count("id"),
-            published=Count("id", filter=Q(is_published=True)),
-            featured=Count("id", filter=Q(is_featured=True)),
-        )
+        user = request.user
+        is_super = user.is_superuser or user.role == "super_admin"
+        payload: dict = {
+            "role": user.role or "",
+            "role_display": "مدير عام" if user.is_superuser and not user.role
+            else user.get_role_display(),
+            "sections": [],
+        }
 
-        checklist = build_checklist()
-        completed = sum(1 for entry in checklist if entry["done"])
+        # كل قسم خلف صلاحية النموذج الذي يعرضه: المحرر لم يعد يرى طلبات
+        # العملاء ورسائلهم، ومدير التسويق لا يرى سجل التدقيق وأعداد الموظفين
+        def add(key: str, allowed: bool, builder):
+            if allowed:
+                payload[key] = builder()
+                payload["sections"].append(key)
 
-        return Response(
-            {
-                "content": {
-                    "services_total": services["total"],
-                    "services_published": services["published"],
-                    "solutions_total": services["solutions"],
-                    "projects_total": projects["total"],
-                    "projects_published": projects["published"],
-                    "projects_featured": projects["featured"],
-                    "case_studies": CaseStudy.objects.count(),
-                    "case_studies_published": CaseStudy.objects.filter(
-                        is_published=True
-                    ).count(),
-                    "technologies": Technology.objects.filter(is_active=True).count(),
-                    "testimonials": Testimonial.objects.count(),
-                    "process_steps": ProcessStep.objects.filter(is_active=True).count(),
-                    "media_files": MediaFile.objects.count(),
-                },
-                "people": {
-                    "members": User.objects.filter(role="member").count(),
-                    "staff": User.objects.filter(is_staff=True).count(),
-                    "unverified": User.objects.filter(is_email_verified=False).count(),
-                },
-                "system": {
-                    "unread_notifications": Notification.visible_to(request.user)
-                    .filter(is_read=False)
-                    .count(),
-                    "audit_events_today": AuditLog.objects.filter(
-                        created_at__date=timezone.localdate()
-                    ).count(),
-                },
-                "activity": build_activity(),
-                "checklist": checklist,
-                "completion": round(completed * 100 / len(checklist)) if checklist else 0,
-            }
-        )
+        add("crm", user.has_perm("crm.view_projectrequest"), build_crm)
+        add("my_posts", user.has_perm("blog.change_post"), lambda: build_my_posts(user))
+        add("community", user.has_perm("comments.view_comment"), build_community)
+        add("marketing", user.has_perm("newsletter.view_subscriber"), build_marketing)
+        add("analytics", user.has_perm("core.view_analytics"), build_analytics)
+        add("site", user.has_perm("core.change_sitesettings"), build_site)
+        add("system", is_super, lambda: build_system(user))
+
+        return Response(payload)
+
+
+def build_site() -> dict:
+    services = Service.objects.aggregate(
+        total=Count("id"),
+        published=Count("id", filter=Q(is_published=True)),
+    )
+    projects = Project.objects.aggregate(
+        total=Count("id"),
+        published=Count("id", filter=Q(is_published=True)),
+    )
+    checklist = build_checklist()
+    completed = sum(1 for entry in checklist if entry["done"])
+    return {
+        "services_total": services["total"],
+        "services_published": services["published"],
+        "projects_total": projects["total"],
+        "projects_published": projects["published"],
+        "case_studies_published": CaseStudy.objects.filter(is_published=True).count(),
+        "media_files": MediaFile.objects.count(),
+        "checklist": checklist,
+        "completion": round(completed * 100 / len(checklist)) if checklist else 0,
+    }
+
+
+def build_system(user) -> dict:
+    return {
+        "members": User.objects.filter(role="member").count(),
+        "staff": User.objects.filter(is_staff=True).count(),
+        "unverified": User.objects.filter(is_email_verified=False).count(),
+        "unread_notifications": Notification.visible_to(user).filter(is_read=False).count(),
+        "audit_events_today": AuditLog.objects.filter(
+            created_at__date=timezone.localdate()
+        ).count(),
+    }
 
 
 class AuditLogSerializer(serializers.ModelSerializer):

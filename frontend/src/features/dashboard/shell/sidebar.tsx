@@ -44,12 +44,10 @@ import { api } from '@/lib/api/client';
 import { DASHBOARD_NAV } from '@/lib/constants/dashboard-nav';
 import { cn } from '@/lib/utils/cn';
 
-interface NavActivity {
-  pending_requests: number;
-  unanswered_messages: number;
-  pending_comments: number;
-  reported_comments: number;
-  follow_ups_today: unknown[];
+/** الأقسام حاضرة بحسب صلاحيات المستخدم — الغائب منها لا شارة له. */
+interface NavSummary {
+  crm?: { pending_requests: number; unanswered_messages: number; follow_ups_today: unknown[] };
+  community?: { pending_comments: number; reported_comments: number };
 }
 
 interface MediaRefLite {
@@ -89,19 +87,26 @@ function useNavBadges(): Record<string, number> {
   const { data } = useQuery({
     queryKey: ['dashboard-summary'],
     queryFn: async () => {
-      const { data } = await api.get<{ activity: NavActivity }>('/dashboard/summary/');
+      const { data } = await api.get<NavSummary>('/dashboard/summary/');
       return data;
     },
     staleTime: 60_000,
   });
-  const a = data?.activity;
-  if (!a) return {};
+  const { crm, community } = data ?? {};
   return {
-    '/dashboard/crm/requests': a.pending_requests,
-    '/dashboard/crm/messages': a.unanswered_messages,
-    '/dashboard/crm/follow-ups': a.follow_ups_today?.length ?? 0,
-    '/dashboard/community/comments': a.pending_comments,
-    '/dashboard/community/reports': a.reported_comments,
+    ...(crm
+      ? {
+          '/dashboard/crm/requests': crm.pending_requests,
+          '/dashboard/crm/messages': crm.unanswered_messages,
+          '/dashboard/crm/follow-ups': crm.follow_ups_today?.length ?? 0,
+        }
+      : {}),
+    ...(community
+      ? {
+          '/dashboard/community/comments': community.pending_comments,
+          '/dashboard/community/reports': community.reported_comments,
+        }
+      : {}),
   };
 }
 

@@ -50,34 +50,75 @@ def test_dashboard_summary_allows_staff(api_client, seeded, make_user):
 
     response = api_client.get(SUMMARY_URL)
     assert response.status_code == 200
-    assert "checklist" in response.data
-    assert "completion" in response.data
+    assert response.data["role"] == "content_manager"
+    assert "checklist" in response.data["site"]
+    assert "completion" in response.data["site"]
 
 
-def test_dashboard_summary_includes_activity_block(api_client, seeded, make_user):
-    manager = make_user(email="activity@example.com", role="content_manager")
-    _login(api_client, manager)
-
+def _sections(api_client, make_user, role, **extra):
+    user = make_user(email=f"{role}@example.com", role=role, **extra)
+    _login(api_client, user)
     response = api_client.get(SUMMARY_URL)
-    assert response.status_code == 200
-    activity = response.data["activity"]
+    assert response.status_code == 200, response.data
+    return response.data
 
+
+@pytest.mark.parametrize(
+    "role, expected",
+    [
+        # كل دور يرى عمله فقط — والقسم الغائب غائب من الاستجابة لا فارغ
+        ("content_manager", {"my_posts", "community", "site"}),
+        ("editor", {"my_posts"}),
+        ("crm_manager", {"crm"}),
+        ("marketing_manager", {"marketing", "analytics"}),
+    ],
+)
+def test_summary_sections_follow_role(api_client, seeded, make_user, role, expected):
+    data = _sections(api_client, make_user, role)
+    assert set(data["sections"]) == expected
+    for key in {"crm", "community", "my_posts", "marketing", "analytics", "site", "system"}:
+        assert (key in data) == (key in expected), key
+
+
+def test_super_admin_sees_every_section(api_client, seeded, make_user):
+    data = _sections(api_client, make_user, "super_admin", is_superuser=True)
+    assert set(data["sections"]) == {
+        "crm", "my_posts", "community", "marketing", "analytics", "site", "system",
+    }
+
+
+def test_editor_no_longer_sees_client_data(api_client, seeded, make_user):
+    """المحرر كان يرى الطلبات والعملاء والرسائل على الصفحة الأولى."""
+    data = _sections(api_client, make_user, "editor")
+    assert "crm" not in data and "system" not in data
+
+
+def test_crm_block_shape(api_client, seeded, make_user):
+    crm = _sections(api_client, make_user, "crm_manager")["crm"]
     for key in (
-        "new_requests",
-        "new_requests_delta_pct",
-        "active_clients",
-        "new_clients_month",
-        "unanswered_messages",
-        "unanswered_oldest_days",
-        "pending_comments",
-        "reported_comments",
+        "new_requests", "new_requests_delta_pct", "pending_requests", "active_clients",
+        "new_clients_month", "unanswered_messages", "unanswered_oldest_days",
     ):
-        assert key in activity and isinstance(activity[key], int)
-
+        assert key in crm and isinstance(crm[key], int)
     # سلسلة الطلبات الأسبوعية دائمًا سبعة أيام
-    assert len(activity["weekly_requests"]) == 7
-    assert all({"date", "value"} <= set(point) for point in activity["weekly_requests"])
-    assert isinstance(activity["follow_ups_today"], list)
+    assert len(crm["weekly_requests"]) == 7
+    assert all({"date", "value"} <= set(point) for point in crm["weekly_requests"])
+    assert isinstance(crm["follow_ups_today"], list)
+
+
+def test_my_posts_counts_only_own_posts(api_client, seeded, make_user):
+    from apps.blog.models import Post
+
+    editor = make_user(email="writer@example.com", role="editor")
+    other = make_user(email="other-writer@example.com", role="editor")
+    Post.objects.create(title_ar="مسودتي", author=editor, status=Post.Status.DRAFT)
+    Post.objects.create(title_ar="بانتظار المراجعة", author=editor, status=Post.Status.IN_REVIEW)
+    Post.objects.create(title_ar="مقال زميل", author=other, status=Post.Status.DRAFT)
+    _login(api_client, editor)
+
+    mine = api_client.get(SUMMARY_URL).data["my_posts"]
+    assert mine["drafts"] == 1 and mine["in_review"] == 1
+    assert {post["title"] for post in mine["recent"]} == {"مسودتي", "بانتظار المراجعة"}
 
 
 def test_dashboard_summary_checklist_reflects_data(api_client, seeded, make_user):
@@ -86,7 +127,7 @@ def test_dashboard_summary_checklist_reflects_data(api_client, seeded, make_user
     _login(api_client, admin)
 
     response = api_client.get(SUMMARY_URL)
-    checklist = {item["key"]: item["done"] for item in response.data["checklist"]}
+    checklist = {item["key"]: item["done"] for item in response.data["site"]["checklist"]}
 
     # المسودات موجودة بعد التهيئة، فبند «استكمال المسودات» غير مكتمل
     assert checklist["drafts"] is False

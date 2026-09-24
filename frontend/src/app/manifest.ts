@@ -12,7 +12,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: SITE_NAME_FALLBACK,
     short_name: SITE_NAME_FALLBACK,
-    description: 'حلول برمجية متكاملة للويب والموبايل وسطح المكتب',
+    description: 'أنظمة إدارة ومواقع وتطبيقات تناسب طريقة عملك',
     start_url: '/ar',
     display: 'standalone',
     // يطابقان --background و--primary في globals.css

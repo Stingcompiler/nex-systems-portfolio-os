@@ -10,7 +10,7 @@ import { CardGrid } from '@/components/ui/card-grid';
 import { Container } from '@/components/ui/container';
 import { Breadcrumbs, Card, JsonLd, Prose } from '@/components/ui/misc';
 import { Section, SectionHeader } from '@/components/ui/section';
-import { findProject, loadProject, NOT_FOUND_METADATA } from '@/lib/api/detail';
+import { findProject, loadProject, notFoundMetadata } from '@/lib/api/detail';
 import { getProjects, getSeoSettings, getSiteSettings } from '@/lib/api/queries';
 import { locales, type Locale } from '@/lib/i18n/routing';
 import { breadcrumbJsonLd, creativeWorkJsonLd } from '@/lib/seo/json-ld';
@@ -36,7 +36,7 @@ export async function generateMetadata({
     getSeoSettings(locale as Locale),
   ]);
 
-  if (!project) return NOT_FOUND_METADATA;
+  if (!project) return notFoundMetadata(locale);
 
   return buildMetadata({
     locale: locale as Locale,

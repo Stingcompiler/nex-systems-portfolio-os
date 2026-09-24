@@ -1,4 +1,6 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 
 import { getCaseStudy, getProject, getService } from '@/lib/api/queries';
 import { ApiError } from '@/lib/api/server';
@@ -69,7 +71,14 @@ export function findCaseStudy(locale: Locale, slug: string) {
   return findOrNull(() => getCaseStudy(locale, slug));
 }
 
-/** وسوم صفحة غير موجودة — لا تُفهرس ولا تُتبع. */
-export const NOT_FOUND_METADATA = {
-  robots: { index: false, follow: false },
-} as const;
+/**
+ * وسوم صفحة غير موجودة — لا تُفهرس ولا تُتبع، وبعنوانها الخاص: بدون عنوان
+ * كانت الصفحة ترث عنوان الرئيسية فيبدو خطأ 404 في التبويب كأنه الرئيسية.
+ */
+export async function notFoundMetadata(locale: string): Promise<Metadata> {
+  const t = await getTranslations({ locale, namespace: 'notFound' });
+  return {
+    title: t('title'),
+    robots: { index: false, follow: false },
+  };
+}

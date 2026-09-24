@@ -363,7 +363,8 @@
       "email": "Check the email address.",
       "phone": "The phone number looks incomplete.",
       "network": "The request could not be sent. Your answers are still on this page; check your connection and try again."
-    }
+    },
+    "trackInAccount": "Track it in your account"
   },
   "blog": {
     "title": "Blog",
@@ -426,7 +427,8 @@
       "saved": "Saved articles",
       "comments": "My comments",
       "settings": "Settings",
-      "subscriptions": "Newsletter"
+      "subscriptions": "Newsletter",
+      "requests": "My requests"
     },
     "profile": "Profile",
     "fullName": "Full name",
@@ -450,7 +452,29 @@
     "confirmWithPassword": "Confirm with password",
     "confirmDelete": "Delete permanently",
     "accountDeleted": "Your account has been deleted.",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "requests": {
+      "newRequest": "New project request",
+      "verifyToSee": "Verify your email to see the requests you sent with it here.",
+      "loadError": "Your requests could not be loaded.",
+      "retry": "Try again",
+      "generalRequest": "Project request",
+      "progress": "Request stages",
+      "budget": "Budget",
+      "timeline": "Timeline",
+      "askAbout": "Ask about this request",
+      "mentionReference": "and mention its reference number.",
+      "empty": "No requests yet.",
+      "emptyHint": "Requests you send with this account's email appear here with their stage.",
+      "stage": {
+        "received": "Received",
+        "reviewing": "Under review",
+        "proposal": "Proposal sent",
+        "inProgress": "In progress",
+        "completed": "Completed",
+        "closed": "Closed"
+      }
+    }
   },
   "comments": {
     "title": "Comments",

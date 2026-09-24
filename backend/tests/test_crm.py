@@ -402,3 +402,54 @@ def test_follow_up_records_and_filters_overdue(api_client, crm_manager):
     assert overdue.status_code == 200
     assert overdue.data["count"] == 1
     assert overdue.data["results"][0]["is_overdue"] is True
+
+
+# --------------------------------------------------------------- بوابة العميل
+
+MINE_URL = "/api/v1/project-requests/mine/"
+
+
+def _submit(api_client, email, **extra):
+    response = api_client.post(SUBMIT_URL, {**VALID_REQUEST, "email": email, **extra}, format="json")
+    assert response.status_code == 201, response.data
+    api_client.cookies.clear()
+    return response.data["reference_code"]
+
+
+def test_my_requests_requires_login(api_client):
+    assert api_client.get(MINE_URL).status_code == 401
+
+
+def test_client_sees_own_requests_by_verified_email(api_client, make_user):
+    mine = _submit(api_client, "Client@Example.com")
+    _submit(api_client, "someone-else@example.com")
+    user = make_user(email="client@example.com", role="member")
+    _login(api_client, user)
+
+    data = api_client.get(MINE_URL).data
+    assert [row["reference_code"] for row in data] == [mine]
+    # بيانات العميل وحالته فقط — لا أدوات الفريق
+    assert set(data[0]) == {
+        "id", "reference_code", "status", "created_at", "updated_at",
+        "project_type", "project_type_display", "service_title",
+        "description", "budget_display", "timeline_display",
+    }
+
+
+def test_unverified_email_does_not_reveal_requests(api_client, make_user):
+    """تسجيل حساب ببريد شخص آخر دون تأكيده لا يكشف طلباته."""
+    _submit(api_client, "victim@example.com")
+    impostor = make_user(email="victim@example.com", role="member", verified=False)
+    _login(api_client, impostor)
+    assert api_client.get(MINE_URL).data == []
+
+
+def test_client_linked_by_crm_sees_requests_with_other_email(api_client, make_user):
+    _submit(api_client, "office@company.example")
+    request_obj = ProjectRequest.objects.get()
+    user = make_user(email="owner@personal.example", role="client")
+    Client.objects.create(lead=request_obj.lead, user=user, name="شركة")
+    _login(api_client, user)
+
+    data = api_client.get(MINE_URL).data
+    assert [row["reference_code"] for row in data] == [request_obj.reference_code]

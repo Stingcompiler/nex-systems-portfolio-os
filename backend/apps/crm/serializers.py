@@ -130,6 +130,33 @@ class ProjectRequestSubmitSerializer(serializers.ModelSerializer):
         return attrs
 
 
+class MyProjectRequestSerializer(serializers.ModelSerializer):
+    """طلبات العميل كما يراها هو: بياناته وحالة طلبه فقط.
+
+    لا ملاحظات داخلية ولا مسؤول ولا عميل محتمل — هذه أدوات الفريق.
+    الحالة تُرسل بمفتاحها، والواجهة تترجمها إلى مرحلة بلغة العميل.
+    """
+
+    project_type_display = serializers.CharField(
+        source="get_project_type_display", read_only=True
+    )
+    budget_display = serializers.CharField(source="get_budget_range_display", read_only=True)
+    timeline_display = serializers.CharField(source="get_timeline_display", read_only=True)
+    service_title = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProjectRequest
+        fields = [
+            "id", "reference_code", "status", "created_at", "updated_at",
+            "project_type", "project_type_display", "service_title",
+            "description", "budget_display", "timeline_display",
+        ]
+        read_only_fields = fields
+
+    def get_service_title(self, obj) -> str:
+        return obj.service.title if obj.service_id else ""
+
+
 # --------------------------------------------------------------- إداري
 
 

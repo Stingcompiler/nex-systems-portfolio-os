@@ -26,6 +26,32 @@ class ProjectType(models.TextChoices):
     OTHER = "other", "أخرى"
 
 
+#: التسميات الإنجليزية للقطاع ونوع المشروع. تسميات الخيارات عربية (لغة
+#  اللوحة)، فكانت الصفحات الإنجليزية تعرض «التعليم» و«نظام إداري متكامل».
+SECTOR_LABELS_EN: dict[str, str] = {
+    Sector.EDUCATION: "Education",
+    Sector.RETAIL: "Retail & groceries",
+    Sector.RESTAURANTS: "Restaurants",
+    Sector.ACCOUNTING: "Accounting",
+    Sector.HR: "Human resources",
+    Sector.REAL_ESTATE: "Real estate",
+    Sector.PHARMACY: "Pharmacies",
+    Sector.HEALTHCARE: "Healthcare",
+    Sector.NGO: "Organisations",
+    Sector.LOGISTICS: "Inventory & distribution",
+    Sector.GENERAL: "General",
+}
+
+PROJECT_TYPE_LABELS_EN: dict[str, str] = {
+    ProjectType.WEB: "Website or web app",
+    ProjectType.MOBILE: "Mobile app",
+    ProjectType.DESKTOP: "Desktop app",
+    ProjectType.API: "API",
+    ProjectType.SYSTEM: "Management system",
+    ProjectType.OTHER: "Other",
+}
+
+
 class ProjectStatus(models.TextChoices):
     PLANNING = "planning", "قيد التخطيط"
     IN_PROGRESS = "in_progress", "قيد التنفيذ"

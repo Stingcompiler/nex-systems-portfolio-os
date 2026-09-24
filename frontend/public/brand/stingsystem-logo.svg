@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 64" role="img" aria-label="StingSystem">
+  <defs>
+    <linearGradient id="ss-tile-full" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#12959F"/>
+      <stop offset="1" stop-color="#0B5A61"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#ss-tile-full)"/>
+  <path d="M42 19H27.5a7.5 7.5 0 0 0 0 15h9a7.5 7.5 0 0 1 0 15H21" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="47" y="9" width="6" height="6" rx="1.5" fill="#8FE0E4"/>
+  <rect x="54" y="16" width="4" height="4" rx="1" fill="#8FE0E4" opacity="0.75"/>
+  <text x="80" y="42" font-family="Inter, 'Segoe UI', Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="-0.6" fill="#12253B">Sting<tspan fill="#0E7C86">System</tspan></text>
+</svg>

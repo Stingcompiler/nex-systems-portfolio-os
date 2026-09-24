@@ -16,10 +16,13 @@ interface MyRequest {
   status: string;
   created_at: string;
   updated_at: string;
+  project_type: string;
   project_type_display: string;
   service_title: string;
   description: string;
+  budget_range: string;
   budget_display: string;
+  timeline: string;
   timeline_display: string;
 }
 
@@ -43,6 +46,10 @@ const STAGE_OF: Record<string, number> = {
 export default function MyRequestsPage() {
   const t = useTranslations('member.requests');
   const tTabs = useTranslations('member.tabs');
+  const tForm = useTranslations('requestForm');
+  // تسميات الخيارات في الخادم عربية؛ ترجمات نموذج الطلب تغطي المفاتيح نفسها
+  const choice = (group: 'projectType' | 'budget' | 'timeline', key: string, fallback: string) =>
+    key && tForm.has(`${group}.${key}`) ? tForm(`${group}.${key}`) : fallback;
   const locale = useLocale();
   const { member } = useMember();
 
@@ -92,7 +99,9 @@ export default function MyRequestsPage() {
                 <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="font-semibold">
-                      {request.service_title || request.project_type_display || t('generalRequest')}
+                      {request.service_title ||
+                        choice('projectType', request.project_type, request.project_type_display) ||
+                        t('generalRequest')}
                     </p>
                     <p className="mt-0.5 text-sm text-muted">
                       <span dir="ltr" className="font-mono">{request.reference_code}</span>
@@ -148,13 +157,17 @@ export default function MyRequestsPage() {
                     {request.budget_display ? (
                       <div className="flex gap-1">
                         <dt>{t('budget')}:</dt>
-                        <dd className="font-medium text-foreground">{request.budget_display}</dd>
+                        <dd className="font-medium text-foreground">
+                          {choice('budget', request.budget_range, request.budget_display)}
+                        </dd>
                       </div>
                     ) : null}
                     {request.timeline_display ? (
                       <div className="flex gap-1">
                         <dt>{t('timeline')}:</dt>
-                        <dd className="font-medium text-foreground">{request.timeline_display}</dd>
+                        <dd className="font-medium text-foreground">
+                          {choice('timeline', request.timeline, request.timeline_display)}
+                        </dd>
                       </div>
                     ) : null}
                   </dl>

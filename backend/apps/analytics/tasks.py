@@ -18,7 +18,8 @@ def aggregate_daily_stats() -> int:
 
     from apps.analytics.models import DailyStat, PageView
 
-    day = (timezone.now() - timedelta(days=1)).date()
+    # اليوم المحلي: فلتر __date يعمل بتوقيت TIME_ZONE لا UTC.
+    day = timezone.localdate() - timedelta(days=1)
     views = PageView.objects.filter(created_at__date=day)
 
     written = 0

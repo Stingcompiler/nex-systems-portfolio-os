@@ -163,7 +163,7 @@ export async function CaseStudyCard({ caseStudy }: { caseStudy: CaseStudyListIte
 
 export function TechBadge({ technology }: { technology: TechnologyRef }) {
   return (
-    <span className="code-inline inline-flex items-center rounded-full border border-border bg-surface px-3 py-1 font-mono text-xs font-medium text-muted transition-colors duration-fast hover:border-primary/40 hover:text-primary">
+    <span className="code-inline inline-flex items-center rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted transition-colors duration-fast hover:border-primary/40 hover:text-primary">
       {technology.name}
     </span>
   );

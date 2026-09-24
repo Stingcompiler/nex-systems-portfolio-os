@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from apps.core.fields import TranslatedField, TranslatedJSONField
+from apps.core.fields import ChoiceLabelField, TranslatedField, TranslatedJSONField
+from apps.portfolio.enums import PROJECT_TYPE_LABELS_EN, SECTOR_LABELS_EN
 from apps.media_library.models import MediaFile
 from apps.media_library.serializers import MediaFileRefSerializer
 from apps.portfolio.models import (
@@ -56,7 +57,7 @@ class ServiceListSerializer(serializers.ModelSerializer):
     title = TranslatedField()
     short_description = TranslatedField()
     cover_image = MediaFileRefSerializer(read_only=True)
-    sector_display = serializers.CharField(source="get_sector_display", read_only=True)
+    sector_display = ChoiceLabelField("sector", SECTOR_LABELS_EN)
 
     class Meta:
         model = Service
@@ -135,8 +136,8 @@ class ProjectListSerializer(serializers.ModelSerializer):
     summary = TranslatedField()
     cover_image = MediaFileRefSerializer(read_only=True)
     technologies = TechnologyRefSerializer(many=True, read_only=True)
-    sector_display = serializers.CharField(source="get_sector_display", read_only=True)
-    project_type_display = serializers.CharField(source="get_project_type_display", read_only=True)
+    sector_display = ChoiceLabelField("sector", SECTOR_LABELS_EN)
+    project_type_display = ChoiceLabelField("project_type", PROJECT_TYPE_LABELS_EN)
     client_name = serializers.CharField(source="public_client_name", read_only=True)
     has_case_study = serializers.SerializerMethodField()
 

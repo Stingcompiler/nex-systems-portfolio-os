@@ -41,6 +41,34 @@ class TranslatedField(serializers.Field):
         return explicit or get_current_language()
 
 
+@extend_schema_field(OpenApiTypes.STR)
+class ChoiceLabelField(serializers.Field):
+    """تسمية خيار بلغة الطلب.
+
+    تسميات ``TextChoices`` عربية، فتُمرَّر خريطة إنجليزية بجانبها::
+
+        sector_display = ChoiceLabelField("sector", SECTOR_LABELS_EN)
+    """
+
+    def __init__(self, field: str, labels_en: dict[str, str], **kwargs):
+        kwargs["read_only"] = True
+        kwargs["source"] = "*"
+        self.choice_field = field
+        self.labels_en = labels_en
+        super().__init__(**kwargs)
+
+    def to_representation(self, instance):
+        value = getattr(instance, self.choice_field, "")
+        if self._language() == "en" and value in self.labels_en:
+            return self.labels_en[value]
+        return getattr(instance, f"get_{self.choice_field}_display")()
+
+    def _language(self) -> str:
+        request = self.context.get("request")
+        explicit = getattr(request, "language", None) if request else None
+        return explicit or get_current_language()
+
+
 def localize_structure(value, language: str):
     """يحوّل بنية JSON ثنائية اللغة إلى نسخة بلغة واحدة.
 

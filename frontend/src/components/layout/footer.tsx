@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 
+import { SiteMark } from '@/components/layout/site-mark';
 import { Container } from '@/components/ui/container';
 import { getCaseStudies } from '@/lib/api/queries';
 import type { SiteSettings } from '@/lib/api/types';
@@ -81,9 +82,7 @@ export async function Footer({ settings }: { settings: SiteSettings | null }) {
           {/* الهوية */}
           <div className="lg:pe-8">
             <div className="flex items-center gap-2">
-              <span className="grid size-8 place-items-center rounded-lg bg-brand text-sm font-bold text-white shadow-brand">
-                {siteName.charAt(0).toUpperCase()}
-              </span>
+              <SiteMark settings={settings} size={32} />
               <span className="text-lg font-bold">{siteName}</span>
             </div>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted">

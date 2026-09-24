@@ -75,8 +75,8 @@ const config: Config = {
         card: ['0.8125rem', { lineHeight: '1.55' }],
         // التسميات الصغيرة (شارات، تواريخ، عناوين أعمدة)
         label: ['0.75rem', { lineHeight: '1.5' }],
-        // سطر الجذب فوق عناوين الأقسام — مونو صغير متباعد الأحرف
-        eyebrow: ['0.6875rem', { lineHeight: '1', letterSpacing: '0.12em' }],
+        // سطر الجذب فوق عناوين الأقسام — بلا تباعد أحرف: يفصل الحروف العربية المتصلة
+        eyebrow: ['0.875rem', { lineHeight: '1.25' }],
       },
       maxWidth: {
         content: '80rem',

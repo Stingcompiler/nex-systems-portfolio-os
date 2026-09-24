@@ -1,10 +1,10 @@
-import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
 
 import { LocaleSwitcher } from '@/components/layout/locale-switcher';
 import { MemberMenu } from '@/components/layout/member-menu';
 import { MobileNav } from '@/components/layout/mobile-nav';
 import { NavLinks } from '@/components/layout/nav-links';
+import { SiteMark } from '@/components/layout/site-mark';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { ButtonLink } from '@/components/ui/button';
 import { Container } from '@/components/ui/container';
@@ -63,71 +63,5 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
         </div>
       </Container>
     </header>
-  );
-}
-
-/**
- * علامة الموقع: الشعار المرفوع إن وُجد، وإلا أول حرف من الاسم.
- *
- * النسختان الفاتحة والداكنة تُرسمان معًا وتتبادلان الظهور بالـ CSS —
- * التخطيط عنصر خادم فلا يعرف السمة وقت التوليد، والتبديل بالصنف
- * يتجنّب وميض الشعار الخاطئ عند التحميل.
- */
-/** ارتفاع العلامة المعروض — يقابل `h-10` في الأصناف. 40px لا 32: حضور علامة. */
-const MARK_HEIGHT = 40;
-
-/**
- * أبعاد العرض لا أبعاد الملف.
- *
- * تمرير أبعاد الأصل يجعل Next يبني مجموعة مصادر بمقاسات الشاشات كاملة —
- * حُمّل شعار بعرض 1920 بكسل ليُعرض بارتفاع 32. الاشتقاق من الارتفاع
- * المعروض يبقي الصورة في حدود ما يظهر فعلًا.
- */
-function markSize(media: { width: number | null; height: number | null }) {
-  const ratio = media.width && media.height ? media.width / media.height : 1;
-  return { width: Math.max(1, Math.round(MARK_HEIGHT * ratio)), height: MARK_HEIGHT };
-}
-
-function SiteMark({ settings }: { settings: SiteSettings | null }) {
-  const name = settings?.site_name || SITE_NAME_FALLBACK;
-  // إحدى النسختين تكفي: تُستخدم في الوضعين عند غياب الأخرى
-  const light = settings?.logo_light ?? settings?.logo_dark;
-  const dark = settings?.logo_dark ?? settings?.logo_light;
-
-  if (!light || !dark) {
-    return (
-      <span className="grid size-10 place-items-center rounded-xl bg-brand font-heading text-lg font-bold text-white shadow-brand">
-        {name.charAt(0).toUpperCase()}
-      </span>
-    );
-  }
-
-  // شعار واحد مرفوع: رسم نسختين متطابقتين يضاعف التحميل بلا فائدة
-  if (light.url === dark.url) {
-    return (
-      <Image
-        src={light.url}
-        alt={light.alt || name}
-        {...markSize(light)}
-        className="h-10 w-auto object-contain"
-      />
-    );
-  }
-
-  return (
-    <>
-      <Image
-        src={light.url}
-        alt={light.alt || name}
-        {...markSize(light)}
-        className="h-10 w-auto object-contain dark:hidden"
-      />
-      <Image
-        src={dark.url}
-        alt={dark.alt || name}
-        {...markSize(dark)}
-        className="hidden h-10 w-auto object-contain dark:block"
-      />
-    </>
   );
 }

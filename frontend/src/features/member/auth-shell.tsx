@@ -1,6 +1,7 @@
 import { getLocale } from 'next-intl/server';
 import type { ReactNode } from 'react';
 
+import { SiteMark } from '@/components/layout/site-mark';
 import { Container } from '@/components/ui/container';
 import { getSiteSettings } from '@/lib/api/queries';
 import { Link } from '@/lib/i18n/navigation';
@@ -30,9 +31,7 @@ export async function AuthShell({
               href="/"
               className="mx-auto mb-4 inline-flex items-center gap-2 text-lg font-bold"
             >
-              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand text-white shadow-brand">
-                {siteName.charAt(0).toUpperCase()}
-              </span>
+              <SiteMark settings={settings} size={36} />
               {siteName}
             </Link>
             <h1 className="text-h2 font-semibold">{title}</h1>

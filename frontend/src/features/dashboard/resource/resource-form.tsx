@@ -147,6 +147,15 @@ export function ResourceForm({
   }
 
   const saving = create.isPending || update.isPending;
+  // اسم العنصر من أول عمود في الجدول (title_ar، name…) — «تعديل — الخدمات»
+  // لا يقول أي خدمة تُعدَّل
+  const itemName = isEditing ? String(values[config.columns[0]?.name ?? ''] ?? '').trim() : '';
+  const heading = isEditing
+    ? itemName
+      ? `تعديل: ${itemName}`
+      : `تعديل — ${config.title}`
+    : `إضافة — ${config.title}`;
+
   const visibleFields = config.fields.filter(
     (field) => (field.tab ?? tabs[0].key) === activeTab,
   );
@@ -156,7 +165,7 @@ export function ResourceForm({
       className="fixed inset-0 z-50 flex justify-end bg-background/80 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
-      aria-label={isEditing ? `تعديل ${config.title}` : `إضافة إلى ${config.title}`}
+      aria-label={heading}
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -167,9 +176,7 @@ export function ResourceForm({
         className="flex h-dvh w-full max-w-2xl flex-col border-s border-border bg-surface shadow-card"
       >
         <div className="flex items-center gap-3 border-b border-border p-4">
-          <h2 className="flex-1 text-h3 font-semibold">
-            {isEditing ? `تعديل — ${config.title}` : `إضافة — ${config.title}`}
-          </h2>
+          <h2 className="min-w-0 flex-1 truncate text-h3 font-semibold">{heading}</h2>
           <button
             type="button"
             onClick={onClose}

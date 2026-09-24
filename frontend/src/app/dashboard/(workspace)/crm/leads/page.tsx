@@ -158,7 +158,7 @@ export default function LeadsPage() {
             onChange={(event) => setSearch(event.target.value)}
             placeholder="بحث بالاسم أو البريد أو الهاتف"
             aria-label="بحث في العملاء المحتملين"
-            className="min-h-11 w-full rounded border border-border bg-background ps-9 pe-3 text-sm"
+            className="min-h-11 w-full rounded border border-border-strong bg-background ps-9 pe-3 text-sm"
           />
         </div>
         {view === 'table' ? (
@@ -166,7 +166,7 @@ export default function LeadsPage() {
             value={statusFilter}
             onChange={(event) => setStatusFilter(event.target.value)}
             aria-label="تصفية بالحالة"
-            className="min-h-11 rounded border border-border bg-background px-3 text-sm"
+            className="min-h-11 rounded border border-border-strong bg-background px-3 text-sm"
           >
             <option value="">كل الحالات</option>
             {LEAD_STATUSES.map((status) => (

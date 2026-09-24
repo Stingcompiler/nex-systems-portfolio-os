@@ -143,7 +143,7 @@ export function MediaPickerDialog({
               onChange={(event) => setSearch(event.target.value)}
               placeholder="ابحث بالاسم أو النص البديل"
               aria-label="بحث في الوسائط"
-              className="min-h-11 w-full rounded border border-border bg-background ps-9 pe-3 text-sm"
+              className="min-h-11 w-full rounded border border-border-strong bg-background ps-9 pe-3 text-sm"
             />
           </div>
           <input

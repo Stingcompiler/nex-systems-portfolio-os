@@ -18,7 +18,7 @@ import { api, toApiError } from '@/lib/api/client';
 import type { Paginated } from '@/lib/api/types';
 import { cn } from '@/lib/utils/cn';
 
-const INPUT = 'min-h-11 rounded border border-border bg-background px-3 text-sm';
+const INPUT = 'min-h-11 rounded border border-border-strong bg-background px-3 text-sm';
 
 export default function SubscribersPage() {
   const { can } = useAuth();

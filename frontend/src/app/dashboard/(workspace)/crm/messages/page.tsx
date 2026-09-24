@@ -55,7 +55,7 @@ export default function MessagesPage() {
           value={statusFilter}
           onChange={(event) => setStatusFilter(event.target.value)}
           aria-label="تصفية بالحالة"
-          className="min-h-11 rounded border border-border bg-background px-3 text-sm"
+          className="min-h-11 rounded border border-border-strong bg-background px-3 text-sm"
         >
           <option value="">كل الحالات</option>
           {CONTACT_STATUSES.map((status) => (
@@ -112,7 +112,7 @@ export default function MessagesPage() {
                       updateStatus.mutate({ id: message.id, status: event.target.value })
                     }
                     aria-label="الحالة"
-                    className="min-h-9 rounded border border-border bg-background px-2 text-xs"
+                    className="min-h-9 rounded border border-border-strong bg-background px-2 text-xs"
                   >
                     {CONTACT_STATUSES.map((status) => (
                       <option key={status.value} value={status.value}>

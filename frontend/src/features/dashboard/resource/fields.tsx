@@ -19,8 +19,9 @@ interface FieldProps {
   errors: Record<string, string[]>;
 }
 
+// حد الحقل بـ border-strong (3.3:1) — حد border (1.25:1) لا يكفي ليُرى الحقل حقلًا
 const INPUT =
-  'min-h-11 w-full rounded border border-border bg-background px-3 text-sm ' +
+  'min-h-11 w-full rounded border border-border-strong bg-background px-3 text-sm ' +
   'focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60';
 
 function Wrapper({

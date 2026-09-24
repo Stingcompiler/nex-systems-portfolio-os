@@ -166,7 +166,7 @@ export function LeadDetailDrawer({
                 value={lead.status}
                 onChange={(event) => updateField.mutate({ status: event.target.value })}
                 aria-label="الحالة"
-                className="min-h-11 rounded border border-border bg-background px-3 text-sm"
+                className="min-h-11 rounded border border-border-strong bg-background px-3 text-sm"
               >
                 {LEAD_STATUSES.map((status) => (
                   <option key={status.value} value={status.value}>
@@ -178,7 +178,7 @@ export function LeadDetailDrawer({
                 value={lead.priority}
                 onChange={(event) => updateField.mutate({ priority: event.target.value })}
                 aria-label="الأولوية"
-                className="min-h-11 rounded border border-border bg-background px-3 text-sm"
+                className="min-h-11 rounded border border-border-strong bg-background px-3 text-sm"
               >
                 {PRIORITIES.map((priority) => (
                   <option key={priority.value} value={priority.value}>
@@ -226,7 +226,7 @@ export function LeadDetailDrawer({
                   value={interactionType}
                   onChange={(event) => setInteractionType(event.target.value)}
                   aria-label="نوع التواصل"
-                  className="min-h-11 rounded border border-border bg-background px-2 text-sm"
+                  className="min-h-11 rounded border border-border-strong bg-background px-2 text-sm"
                 >
                   {INTERACTION_TYPES.map((type) => (
                     <option key={type.value} value={type.value}>
@@ -239,7 +239,7 @@ export function LeadDetailDrawer({
                   value={interactionSummary}
                   onChange={(event) => setInteractionSummary(event.target.value)}
                   placeholder="ملخص التواصل"
-                  className="min-h-11 flex-1 rounded border border-border bg-background px-3 text-sm"
+                  className="min-h-11 flex-1 rounded border border-border-strong bg-background px-3 text-sm"
                 />
                 <button
                   type="button"
@@ -278,7 +278,7 @@ export function LeadDetailDrawer({
                   value={noteText}
                   onChange={(event) => setNoteText(event.target.value)}
                   placeholder="أضف ملاحظة"
-                  className="min-h-11 flex-1 rounded border border-border bg-background px-3 text-sm"
+                  className="min-h-11 flex-1 rounded border border-border-strong bg-background px-3 text-sm"
                 />
                 <button
                   type="button"

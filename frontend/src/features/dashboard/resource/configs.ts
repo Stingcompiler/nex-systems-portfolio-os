@@ -73,7 +73,7 @@ function serviceConfig(kind: 'service' | 'solution'): ResourceConfig {
     identifier: 'slug',
     title: isService ? 'الخدمات' : 'الحلول القطاعية',
     description: isService
-      ? 'خدمات التطوير التي تقدّمها. لا تُنشر صفحة دون 120 كلمة عربية على الأقل.'
+      ? 'خدمات التطوير التي تقدّمها. يُنصح بوصف عربي من 120 كلمة فأكثر — الصفحات القصيرة أضعف في محركات البحث.'
       : 'أنظمة جاهزة للتخصيص حسب القطاع.',
     permission: 'portfolio.change_service',
     publishAction: true,
@@ -102,16 +102,17 @@ function serviceConfig(kind: 'service' | 'solution'): ResourceConfig {
       SEO_TAB,
       PUBLISH_TAB,
     ],
+    // حقل «الأيقونة» (هنا وفي مراحل العمل والإحصائيات) أُزيل من النماذج: لا
+    // يعرضه الموقع في أي مكان، فكان إدخال اسم أيقونة lucide يدويًا بلا أثر.
+    // القيمة المخزّنة باقية في قاعدة البيانات إن احتيج إليها لاحقًا.
     fields: [
       { name: 'title', label: 'العنوان', type: 'bilingual-text', tab: 'main' },
       { name: 'sector', label: 'القطاع', type: 'select', options: SECTORS, tab: 'main' },
-      { name: 'icon', label: 'الأيقونة', type: 'text', tab: 'main',
-        help: 'اسم أيقونة من lucide، مثل: school' },
       { name: 'cover_image', label: 'صورة الغلاف', type: 'media', tab: 'main' },
       { name: 'short_description', label: 'الوصف المختصر', type: 'bilingual-textarea',
         tab: 'main', help: 'يظهر في البطاقات — جملتان على الأكثر.' },
       { name: 'description', label: 'الوصف الكامل', type: 'bilingual-textarea', tab: 'main',
-        help: 'الحد الأدنى للنشر 120 كلمة عربية.' },
+        help: 'يُنصح بـ 120 كلمة عربية فأكثر. النشر لا يُمنع، لكن اللوحة تنبّهك.' },
 
       { name: 'problem', label: 'المشكلة التي تعالجها', type: 'bilingual-textarea', tab: 'main',
         help: 'بلغة العميل لا بلغة التقنية: ما الذي يعطّله اليوم؟' },
@@ -120,7 +121,7 @@ function serviceConfig(kind: 'service' | 'solution'): ResourceConfig {
         subFields: [{ name: '', label: 'النص', type: 'bilingual-text' }] },
 
       { name: 'features', label: 'المميزات', type: 'json-list', tab: 'details',
-        help: 'ثلاث مميزات على الأقل قبل النشر.',
+        help: 'يُنصح بثلاث مميزات على الأقل.',
         subFields: [
           { name: 'title', label: 'العنوان', type: 'bilingual-text' },
           { name: 'description', label: 'الوصف', type: 'bilingual-textarea' },
@@ -347,7 +348,6 @@ export const processStepsConfig: ResourceConfig = {
     { name: 'title', label: 'العنوان', type: 'bilingual-text' },
     { name: 'description', label: 'الوصف', type: 'bilingual-textarea' },
     { name: 'duration', label: 'المدة', type: 'bilingual-text' },
-    { name: 'icon', label: 'الأيقونة', type: 'text' },
     { name: 'is_active', label: 'مفعّلة', type: 'switch' },
     { name: 'display_order', label: 'الترتيب', type: 'number' },
   ],
@@ -403,7 +403,6 @@ export const statsConfig: ResourceConfig = {
     { name: 'value', label: 'القيمة', type: 'text', placeholder: '7' },
     { name: 'label', label: 'التسمية', type: 'bilingual-text' },
     { name: 'suffix', label: 'اللاحقة', type: 'bilingual-text', placeholder: '+' },
-    { name: 'icon', label: 'الأيقونة', type: 'text' },
     { name: 'is_active', label: 'مفعّلة', type: 'switch' },
     { name: 'display_order', label: 'الترتيب', type: 'number' },
   ],
@@ -602,7 +601,7 @@ export const postsConfig: ResourceConfig = {
     { name: 'excerpt', label: 'الملخص', type: 'bilingual-textarea', tab: 'main',
       help: 'يظهر في البطاقات ونتائج البحث — مطلوب للنشر.' },
     { name: 'content', label: 'المحتوى', type: 'bilingual-textarea', tab: 'main',
-      help: 'الحد الأدنى للنشر 100 كلمة عربية. فقرات مفصولة بسطر فارغ.' },
+      help: 'يُنصح بـ 100 كلمة عربية فأكثر. فقرات مفصولة بسطر فارغ.' },
     { name: 'cover_image', label: 'صورة الغلاف', type: 'media', tab: 'main' },
 
     { name: 'category', label: 'التصنيف', type: 'relation',

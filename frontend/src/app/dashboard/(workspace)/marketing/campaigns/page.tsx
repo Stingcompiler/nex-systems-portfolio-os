@@ -64,10 +64,10 @@ export default function CampaignsPage() {
             onChange={(event) => setSearch(event.target.value)}
             placeholder="بحث بالاسم أو الموضوع"
             aria-label="بحث في الحملات"
-            className="min-h-11 w-full rounded border border-border bg-background ps-9 pe-3 text-sm"
+            className="min-h-11 w-full rounded border border-border-strong bg-background ps-9 pe-3 text-sm"
           />
         </div>
-        <select value={status} onChange={(e) => setStatus(e.target.value)} aria-label="الحالة" className="min-h-11 rounded border border-border bg-background px-3 text-sm">
+        <select value={status} onChange={(e) => setStatus(e.target.value)} aria-label="الحالة" className="min-h-11 rounded border border-border-strong bg-background px-3 text-sm">
           <option value="">كل الحالات</option>
           {CAMPAIGN_STATUSES.map((item) => (
             <option key={item.value} value={item.value}>{item.label}</option>

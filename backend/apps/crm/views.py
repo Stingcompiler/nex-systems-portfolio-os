@@ -1,12 +1,12 @@
 import csv
 
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import HttpResponse
 from django.utils import timezone
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -39,6 +39,7 @@ from apps.crm.serializers import (
     LeadDetailSerializer,
     LeadListSerializer,
     LeadWriteSerializer,
+    MyProjectRequestSerializer,
     ProjectRequestAdminSerializer,
     ProjectRequestDraftSerializer,
     ProjectRequestSubmitSerializer,
@@ -147,6 +148,34 @@ class ProjectRequestSubmitView(APIView):
             },
             status=status.HTTP_201_CREATED,
         )
+
+
+class MyProjectRequestsView(APIView):
+    """طلبات المستخدم نفسه — بوابة العميل في منطقة العضو.
+
+    تُطابَق بطريقتين: بريد الطلب يساوي بريد الحساب المؤكَّد (فمن أرسل
+    طلبًا ثم أنشأ حسابًا بالبريد نفسه يجد طلبه)، أو الطلب مرتبط بسجل
+    العميل الذي ربطه الفريق بهذا الحساب. البريد غير المؤكَّد لا يكفي:
+    وإلا لاطّلع أي شخص على طلبات غيره بتسجيل حساب ببريده.
+    """
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = MyProjectRequestSerializer
+
+    @extend_schema(summary="طلباتي", responses={200: MyProjectRequestSerializer(many=True)})
+    def get(self, request):
+        user = request.user
+        match = Q(lead__client__user=user)
+        if user.is_email_verified and user.email:
+            match |= Q(email__iexact=user.email)
+        requests = (
+            ProjectRequest.objects.filter(match)
+            .exclude(status=RequestStatus.DRAFT)
+            .select_related("service")
+            .order_by("-created_at")
+            .distinct()
+        )
+        return Response(MyProjectRequestSerializer(requests, many=True).data)
 
 
 # --------------------------------------------------------------- إداري

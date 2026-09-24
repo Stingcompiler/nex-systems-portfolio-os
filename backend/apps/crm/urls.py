@@ -20,6 +20,7 @@ public_patterns = [
     path("contact-messages/submit/", views.ContactMessageCreateView.as_view(), name="contact-create"),
     path("project-requests/draft/", views.ProjectRequestDraftView.as_view(), name="request-draft"),
     path("project-requests/submit/", views.ProjectRequestSubmitView.as_view(), name="request-submit"),
+    path("project-requests/mine/", views.MyProjectRequestsView.as_view(), name="request-mine"),
 ]
 
 urlpatterns = public_patterns + [path("", include(router.urls))]

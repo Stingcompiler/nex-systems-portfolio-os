@@ -6,7 +6,9 @@ import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
 import { buttonClass } from '@/components/ui/button-styles';
 import { fieldClass } from '@/components/ui/field';
+import { useMember } from '@/contexts/MemberContext';
 import { api, toApiError } from '@/lib/api/client';
+import { Link } from '@/lib/i18n/navigation';
 import type { Locale } from '@/lib/i18n/routing';
 import { cn } from '@/lib/utils/cn';
 import { whatsappLink } from '@/lib/utils/format';
@@ -90,6 +92,7 @@ export function RequestForm({
   const t = useTranslations('requestForm');
   const locale = useLocale() as Locale;
   const service = useServiceFromUrl(locale);
+  const { member } = useMember();
 
   const [step, setStep] = useState<Step>(1);
   const [submitting, setSubmitting] = useState(false);
@@ -121,6 +124,17 @@ export function RequestForm({
     company: '',
     website: '', // honeypot
   });
+
+  // العضو المسجّل لا يعيد كتابة اسمه وبريده؛ والبريد نفسه هو ما يربط
+  // الطلب بصفحة «طلباتي» في حسابه
+  useEffect(() => {
+    if (!member) return;
+    setForm((current) => ({
+      ...current,
+      email: current.email || member.email,
+      name: current.name || member.full_name,
+    }));
+  }, [member]);
 
   const projectTypes: Option[] = [
     'website', 'mobile', 'desktop', 'system', 'existing', 'api', 'hosting', 'consulting', UNSURE,
@@ -274,12 +288,20 @@ export function RequestForm({
             {t('replyPromise')}
           </p>
         </div>
+        {member ? (
+          <Link
+            href="/member/requests"
+            className="mt-6 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary hover:underline"
+          >
+            {t('trackInAccount')}
+          </Link>
+        ) : null}
         {waLink ? (
           <a
             href={waLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary hover:underline"
+            className="mt-6 ms-4 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary hover:underline"
           >
             <MessageCircle className="size-4" aria-hidden="true" />
             {t('whatsappFollowUp')}

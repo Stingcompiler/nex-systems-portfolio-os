@@ -1,6 +1,6 @@
 'use client';
 
-import { Bookmark, LoaderCircle, LogOut, Mail, MessageSquare, Settings, User } from 'lucide-react';
+import { Bookmark, FileText, LoaderCircle, LogOut, Mail, MessageSquare, Settings, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, type ReactNode } from 'react';
 
@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils/cn';
 
 const TABS = [
   { href: '/member', key: 'overview', icon: User, exact: true },
+  { href: '/member/requests', key: 'requests', icon: FileText },
   { href: '/member/saved', key: 'saved', icon: Bookmark },
   { href: '/member/comments', key: 'comments', icon: MessageSquare },
   { href: '/member/subscriptions', key: 'subscriptions', icon: Mail },

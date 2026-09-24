@@ -61,6 +61,43 @@ PY
     )
     if [ "$result" = "ok" ]; then
       echo "Build-time page cache purged."
+      # الإبطال يعلّم الصفحات قديمة فقط: أول زائر لكل صفحة كان يتلقى النسخة
+      # المخبوزة وقت البناء (بلا إعدادات: اسم احتياطي وبلا واتساب) بينما
+      # تُعاد توليدها في الخلفية. زيارة صفحات خريطة الموقع هنا — واحدة
+      # تلو الأخرى كي لا تُثقل العامل الوحيد — تجعل إعادة التوليد تسبق الزوار.
+      python - "$PORT" <<'PY' || true
+import re, sys, time, urllib.request
+
+port = sys.argv[1]
+base = f"http://127.0.0.1:{port}"
+# خريطة الموقع نفسها قد تكون النسخة المخبوزة: الطلب الأول يُطلق توليدها
+sitemap = ""
+for _ in range(2):
+    try:
+        with urllib.request.urlopen(f"{base}/sitemap.xml", timeout=30) as response:
+            sitemap = response.read().decode("utf-8", "replace")
+    except Exception:  # noqa: BLE001
+        pass
+    time.sleep(2)
+
+core = [f"/{locale}{page}" for locale in ("ar", "en") for page in (
+    "", "/services", "/solutions", "/projects", "/process", "/about",
+    "/blog", "/contact", "/request-quote", "/technologies", "/case-studies",
+)]
+paths = sorted(set(core) | {re.sub(r"^https?://[^/]+", "", url) or "/"
+                            for url in re.findall(r"<loc>([^<]+)</loc>", sitemap)})
+warmed = 0
+for path in paths:
+    # مرتان: الأولى تُطلق إعادة التوليد وتُعيد القديمة، والثانية تنتظر الجديدة
+    for _ in range(2):
+        try:
+            urllib.request.urlopen(f"{base}{path}", timeout=60).read()
+        except Exception:  # noqa: BLE001
+            pass
+        time.sleep(0.3)
+    warmed += 1
+print(f"Warmed {warmed} pages.")
+PY
       break
     fi
     case "$result" in

@@ -58,8 +58,13 @@ function listFetcher(options?: ListOptions) {
 
 // --------------------------------------------------------------- الإعدادات
 
+/**
+ * الإعدادات صارمة: كل صفحة تحمل منها الاسم ورقم واتساب وعناوين SEO، وفشل
+ * جلبها بصمت كان يُنتج صفحة كاملة المظهر بلا واتساب وباسم احتياطي، تُخزَّن
+ * خمس دقائق. الفشل الآن يُسقط إعادة التوليد، فيبقي Next آخر نسخة سليمة.
+ */
 export function getSiteSettings(locale: Locale) {
-  return apiGetSafe<SiteSettings | null>(
+  return apiGetStrict<SiteSettings | null>(
     'settings/',
     { locale, revalidate: 600, tags: [CacheTags.settings] },
     null,
@@ -67,7 +72,7 @@ export function getSiteSettings(locale: Locale) {
 }
 
 export function getSeoSettings(locale: Locale) {
-  return apiGetSafe<SeoSettings | null>(
+  return apiGetStrict<SeoSettings | null>(
     'settings/seo/',
     { locale, revalidate: 3600, tags: [CacheTags.settings] },
     null,

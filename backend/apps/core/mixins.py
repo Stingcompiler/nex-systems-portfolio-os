@@ -1,6 +1,8 @@
 """Mixins مشتركة للمسلسلات والـ ViewSets."""
 
+from django.conf import settings
 from django.forms.models import model_to_dict
+from rest_framework.exceptions import NotAuthenticated
 
 from apps.core.audit import diff_instance, log_action
 from apps.core.models.system import AuditLog
@@ -17,6 +19,19 @@ class DualSerializerMixin:
     public_serializer_class = None
     admin_serializer_class = None
     detail_serializer_class = None
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        # طلب العرض الإداري بكوكي جلسة منتهٍ: المصادقة تعامل الكوكي غير الصالح
+        # كزائر (كي لا تُحجب النماذج العامة)، لكن هنا يجب أن يعرف العميل أن
+        # جلسته انتهت فيجددها. بدون 401 كانت اللوحة تتلقى البيانات العامة
+        # بصمت — بلا مسودات ولا حقول اللغتين — وتعرضها كأنها المحتوى الكامل.
+        if (
+            request.query_params.get("full") == "true"
+            and not (request.user and request.user.is_authenticated)
+            and settings.AUTH_COOKIE_ACCESS in request.COOKIES
+        ):
+            raise NotAuthenticated("انتهت الجلسة")
 
     def get_serializer_class(self):
         if self.action not in ("list", "retrieve"):

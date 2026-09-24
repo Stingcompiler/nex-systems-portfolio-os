@@ -102,11 +102,12 @@ function serviceConfig(kind: 'service' | 'solution'): ResourceConfig {
       SEO_TAB,
       PUBLISH_TAB,
     ],
+    // حقل «الأيقونة» (هنا وفي مراحل العمل والإحصائيات) أُزيل من النماذج: لا
+    // يعرضه الموقع في أي مكان، فكان إدخال اسم أيقونة lucide يدويًا بلا أثر.
+    // القيمة المخزّنة باقية في قاعدة البيانات إن احتيج إليها لاحقًا.
     fields: [
       { name: 'title', label: 'العنوان', type: 'bilingual-text', tab: 'main' },
       { name: 'sector', label: 'القطاع', type: 'select', options: SECTORS, tab: 'main' },
-      { name: 'icon', label: 'الأيقونة', type: 'text', tab: 'main',
-        help: 'اسم أيقونة من lucide، مثل: school' },
       { name: 'cover_image', label: 'صورة الغلاف', type: 'media', tab: 'main' },
       { name: 'short_description', label: 'الوصف المختصر', type: 'bilingual-textarea',
         tab: 'main', help: 'يظهر في البطاقات — جملتان على الأكثر.' },
@@ -347,7 +348,6 @@ export const processStepsConfig: ResourceConfig = {
     { name: 'title', label: 'العنوان', type: 'bilingual-text' },
     { name: 'description', label: 'الوصف', type: 'bilingual-textarea' },
     { name: 'duration', label: 'المدة', type: 'bilingual-text' },
-    { name: 'icon', label: 'الأيقونة', type: 'text' },
     { name: 'is_active', label: 'مفعّلة', type: 'switch' },
     { name: 'display_order', label: 'الترتيب', type: 'number' },
   ],
@@ -403,7 +403,6 @@ export const statsConfig: ResourceConfig = {
     { name: 'value', label: 'القيمة', type: 'text', placeholder: '7' },
     { name: 'label', label: 'التسمية', type: 'bilingual-text' },
     { name: 'suffix', label: 'اللاحقة', type: 'bilingual-text', placeholder: '+' },
-    { name: 'icon', label: 'الأيقونة', type: 'text' },
     { name: 'is_active', label: 'مفعّلة', type: 'switch' },
     { name: 'display_order', label: 'الترتيب', type: 'number' },
   ],

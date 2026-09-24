@@ -220,7 +220,7 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
                   value={searchInput}
                   onChange={(event) => setSearchInput(event.target.value)}
                   placeholder={t('search.placeholder')}
-                  className="min-h-11 w-full rounded-lg border border-border bg-background ps-9 pe-3 text-sm"
+                  className="min-h-11 w-full rounded-lg border border-border-strong bg-background ps-9 pe-3 text-sm"
                 />
               </div>
             </div>
@@ -240,7 +240,7 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
                 onChange={(event) =>
                   setFilters((current) => ({ ...current, [filter.name]: event.target.value }))
                 }
-                className="min-h-11 rounded-lg border border-border bg-background px-3 text-sm"
+                className="min-h-11 rounded-lg border border-border-strong bg-background px-3 text-sm"
               >
                 <option value="">{t('filters.all')}</option>
                 {filter.options.map((option) => (
@@ -332,10 +332,25 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
                   key={row.id}
                   className="border-b border-border last:border-0 hover:bg-surface-hover"
                 >
-                  {config.columns.map((column) => (
+                  {config.columns.map((column, columnIndex) => (
                     // [بند 7] حشوة رأسية 14px تناسب ارتفاع السطر العربي
                     <td key={column.name} className="max-w-64 px-4 py-3.5">
-                      <Cell column={column} row={row} locale={locale} t={t} />
+                      {/* العمود الأول يفتح التعديل: زر القلم وحده هدف صغير
+                          في طرف الصف، والمتوقع أن يُنقر اسم العنصر نفسه */}
+                      {columnIndex === 0 ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingId(identifierOf(config, row));
+                            setFormOpen(true);
+                          }}
+                          className="w-full rounded text-start font-medium hover:text-primary hover:underline"
+                        >
+                          <Cell column={column} row={row} locale={locale} t={t} />
+                        </button>
+                      ) : (
+                        <Cell column={column} row={row} locale={locale} t={t} />
+                      )}
                     </td>
                   ))}
                   <td className="px-4 py-3.5">

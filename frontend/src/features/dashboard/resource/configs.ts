@@ -73,7 +73,7 @@ function serviceConfig(kind: 'service' | 'solution'): ResourceConfig {
     identifier: 'slug',
     title: isService ? 'الخدمات' : 'الحلول القطاعية',
     description: isService
-      ? 'خدمات التطوير التي تقدّمها. لا تُنشر صفحة دون 120 كلمة عربية على الأقل.'
+      ? 'خدمات التطوير التي تقدّمها. يُنصح بوصف عربي من 120 كلمة فأكثر — الصفحات القصيرة أضعف في محركات البحث.'
       : 'أنظمة جاهزة للتخصيص حسب القطاع.',
     permission: 'portfolio.change_service',
     publishAction: true,
@@ -111,7 +111,7 @@ function serviceConfig(kind: 'service' | 'solution'): ResourceConfig {
       { name: 'short_description', label: 'الوصف المختصر', type: 'bilingual-textarea',
         tab: 'main', help: 'يظهر في البطاقات — جملتان على الأكثر.' },
       { name: 'description', label: 'الوصف الكامل', type: 'bilingual-textarea', tab: 'main',
-        help: 'الحد الأدنى للنشر 120 كلمة عربية.' },
+        help: 'يُنصح بـ 120 كلمة عربية فأكثر. النشر لا يُمنع، لكن اللوحة تنبّهك.' },
 
       { name: 'problem', label: 'المشكلة التي تعالجها', type: 'bilingual-textarea', tab: 'main',
         help: 'بلغة العميل لا بلغة التقنية: ما الذي يعطّله اليوم؟' },
@@ -120,7 +120,7 @@ function serviceConfig(kind: 'service' | 'solution'): ResourceConfig {
         subFields: [{ name: '', label: 'النص', type: 'bilingual-text' }] },
 
       { name: 'features', label: 'المميزات', type: 'json-list', tab: 'details',
-        help: 'ثلاث مميزات على الأقل قبل النشر.',
+        help: 'يُنصح بثلاث مميزات على الأقل.',
         subFields: [
           { name: 'title', label: 'العنوان', type: 'bilingual-text' },
           { name: 'description', label: 'الوصف', type: 'bilingual-textarea' },
@@ -602,7 +602,7 @@ export const postsConfig: ResourceConfig = {
     { name: 'excerpt', label: 'الملخص', type: 'bilingual-textarea', tab: 'main',
       help: 'يظهر في البطاقات ونتائج البحث — مطلوب للنشر.' },
     { name: 'content', label: 'المحتوى', type: 'bilingual-textarea', tab: 'main',
-      help: 'الحد الأدنى للنشر 100 كلمة عربية. فقرات مفصولة بسطر فارغ.' },
+      help: 'يُنصح بـ 100 كلمة عربية فأكثر. فقرات مفصولة بسطر فارغ.' },
     { name: 'cover_image', label: 'صورة الغلاف', type: 'media', tab: 'main' },
 
     { name: 'category', label: 'التصنيف', type: 'relation',

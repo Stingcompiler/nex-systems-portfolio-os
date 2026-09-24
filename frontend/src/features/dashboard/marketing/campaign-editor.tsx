@@ -32,7 +32,7 @@ import type { Paginated } from '@/lib/api/types';
 import { cn } from '@/lib/utils/cn';
 
 const INPUT =
-  'min-h-11 w-full rounded border border-border bg-background px-3 text-sm ' +
+  'min-h-11 w-full rounded border border-border-strong bg-background px-3 text-sm ' +
   'focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60';
 
 type Draft = Pick<

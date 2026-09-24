@@ -80,14 +80,14 @@ export default function RequestsPage() {
             onChange={(event) => setSearch(event.target.value)}
             placeholder="بحث بالرمز أو الاسم أو البريد"
             aria-label="بحث في الطلبات"
-            className="min-h-11 w-full rounded border border-border bg-background ps-9 pe-3 text-sm"
+            className="min-h-11 w-full rounded border border-border-strong bg-background ps-9 pe-3 text-sm"
           />
         </div>
         <select
           value={statusFilter}
           onChange={(event) => setStatusFilter(event.target.value)}
           aria-label="تصفية بالحالة"
-          className="min-h-11 rounded border border-border bg-background px-3 text-sm"
+          className="min-h-11 rounded border border-border-strong bg-background px-3 text-sm"
         >
           <option value="">كل الحالات</option>
           {REQUEST_STATUSES.map((status) => (
@@ -180,7 +180,7 @@ export default function RequestsPage() {
                   setSelected({ ...selected, status: event.target.value });
                 }}
                 aria-label="حالة الطلب"
-                className="min-h-11 w-full rounded border border-border bg-background px-3"
+                className="min-h-11 w-full rounded border border-border-strong bg-background px-3"
               >
                 {REQUEST_STATUSES.map((status) => (
                   <option key={status.value} value={status.value}>

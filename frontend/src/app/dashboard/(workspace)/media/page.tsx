@@ -116,14 +116,14 @@ export default function MediaLibraryPage() {
             onChange={(event) => setSearch(event.target.value)}
             placeholder="ابحث بالاسم أو النص البديل"
             aria-label="بحث في الوسائط"
-            className="min-h-11 w-full rounded border border-border bg-background ps-9 pe-3 text-sm"
+            className="min-h-11 w-full rounded border border-border-strong bg-background ps-9 pe-3 text-sm"
           />
         </div>
         <select
           value={fileType}
           onChange={(event) => setFileType(event.target.value)}
           aria-label="نوع الملف"
-          className="min-h-11 rounded border border-border bg-background px-3 text-sm"
+          className="min-h-11 rounded border border-border-strong bg-background px-3 text-sm"
         >
           {TYPE_FILTERS.map((option) => (
             <option key={option.value} value={option.value}>

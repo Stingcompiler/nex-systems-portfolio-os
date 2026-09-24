@@ -178,7 +178,7 @@ export default function RequestDetailPage() {
             onChange={(event) => updateStatus.mutate(event.target.value)}
             disabled={updateStatus.isPending}
             aria-label="حالة الطلب"
-            className="min-h-11 min-w-44 rounded-lg border border-border bg-background px-3 text-sm text-foreground"
+            className="min-h-11 min-w-44 rounded-lg border border-border-strong bg-background px-3 text-sm text-foreground"
           >
             {REQUEST_STATUSES.map((status) => (
               <option key={status.value} value={status.value}>

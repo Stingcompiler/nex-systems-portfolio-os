@@ -52,7 +52,7 @@ export default function ClientsPage() {
           onChange={(event) => setSearch(event.target.value)}
           placeholder="بحث بالاسم أو الشركة"
           aria-label="بحث في العملاء"
-          className="min-h-11 w-full rounded border border-border bg-background ps-9 pe-3 text-sm"
+          className="min-h-11 w-full rounded border border-border-strong bg-background ps-9 pe-3 text-sm"
         />
       </div>
 

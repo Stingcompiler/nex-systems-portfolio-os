@@ -88,7 +88,7 @@ function LoginForm() {
               onChange={(event) => setEmail(event.target.value)}
               aria-invalid={Boolean(fieldError(error ?? { detail: '', code: '', errors: {} }, 'email'))}
               aria-describedby={error ? 'email-error' : undefined}
-              className="min-h-11 w-full rounded border border-border bg-background px-3 text-start focus-visible:ring-2 focus-visible:ring-ring"
+              className="min-h-11 w-full rounded border border-border-strong bg-background px-3 text-start focus-visible:ring-2 focus-visible:ring-ring"
             />
             {error && fieldError(error, 'email') ? (
               <p id="email-error" className="mt-1 text-sm text-danger">
@@ -109,7 +109,7 @@ function LoginForm() {
               autoComplete="current-password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="min-h-11 w-full rounded border border-border bg-background px-3 focus-visible:ring-2 focus-visible:ring-ring"
+              className="min-h-11 w-full rounded border border-border-strong bg-background px-3 focus-visible:ring-2 focus-visible:ring-ring"
             />
           </div>
 

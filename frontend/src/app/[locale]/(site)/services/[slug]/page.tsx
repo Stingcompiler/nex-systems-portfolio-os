@@ -3,7 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { ServiceDetailView } from '@/components/pages/service-views';
 import { JsonLd } from '@/components/ui/misc';
-import { findService, loadService, NOT_FOUND_METADATA } from '@/lib/api/detail';
+import { findService, loadService, notFoundMetadata } from '@/lib/api/detail';
 import { getSeoSettings, getServiceSlugs, getSiteSettings } from '@/lib/api/queries';
 import { locales, type Locale } from '@/lib/i18n/routing';
 import { breadcrumbJsonLd, faqJsonLd, serviceJsonLd } from '@/lib/seo/json-ld';
@@ -28,7 +28,7 @@ export async function generateMetadata({
     getSeoSettings(locale as Locale),
   ]);
 
-  if (!service) return NOT_FOUND_METADATA;
+  if (!service) return notFoundMetadata(locale);
 
   return buildMetadata({
     locale: locale as Locale,

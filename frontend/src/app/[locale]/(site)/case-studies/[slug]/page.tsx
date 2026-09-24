@@ -9,7 +9,7 @@ import { CardGrid } from '@/components/ui/card-grid';
 import { Container } from '@/components/ui/container';
 import { Breadcrumbs, Card, JsonLd, Prose } from '@/components/ui/misc';
 import { Section, SectionHeader } from '@/components/ui/section';
-import { findCaseStudy, loadCaseStudy, NOT_FOUND_METADATA } from '@/lib/api/detail';
+import { findCaseStudy, loadCaseStudy, notFoundMetadata } from '@/lib/api/detail';
 import { getCaseStudies, getSeoSettings, getSiteSettings } from '@/lib/api/queries';
 import type { CaseStudyDetail } from '@/lib/api/types';
 import { locales, type Locale } from '@/lib/i18n/routing';
@@ -36,7 +36,7 @@ export async function generateMetadata({
     getSeoSettings(locale as Locale),
   ]);
 
-  if (!caseStudy) return NOT_FOUND_METADATA;
+  if (!caseStudy) return notFoundMetadata(locale);
 
   return buildMetadata({
     locale: locale as Locale,

@@ -67,7 +67,9 @@ export function toParagraphs(text: string | null | undefined): string[] {
 
 /** رابط واتساب برسالة مُعبّأة مسبقًا حسب السياق. */
 export function whatsappLink(number: string, message: string): string {
-  const digits = (number || '').replace(/\D/g, '');
+  // wa.me يقبل الصيغة الدولية فقط (249902929451). الرقم المحلي المخزّن
+  // (0902929451) كان يُمرَّر كما هو فيفتح واتساب على «رقم غير صالح».
+  const digits = toE164(number).replace(/\D/g, '');
   if (!digits) return '';
   const text = message ? `?text=${encodeURIComponent(message)}` : '';
   return `https://wa.me/${digits}${text}`;

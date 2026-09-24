@@ -42,7 +42,8 @@ export async function generateMetadata({
   return buildMetadata({
     locale: locale as Locale,
     path: '/about',
-    title: settings?.site_name ? `${t('title')} — ${settings.site_name}` : t('title'),
+    // buildMetadata يُلحق اسم الموقع — إضافته هنا كانت تكرّره: «من نحن — X | X»
+    title: t('title'),
     description: settings?.tagline || t('description'),
     // لا الشعار: بطاقة اللغة الافتراضية أنسب كمعاينة من شعار خام
     image: settings?.owner_photo?.url ?? null,

@@ -83,7 +83,12 @@ export async function generateMetadata({
     applicationName: SITE_NAME_FALLBACK,
     appleWebApp: { capable: true, statusBarStyle: 'default', title: SITE_NAME_FALLBACK },
     icons: {
-      icon: '/icons/icon-192.png',
+      // SVG حاد بأي مقاس؛ PNG للمتصفحات التي لا تقبله
+      icon: [
+        { url: '/brand/stingsystem-mark.svg', type: 'image/svg+xml' },
+        { url: '/icons/favicon-48.png', sizes: '48x48', type: 'image/png' },
+        { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+      ],
       apple: '/icons/apple-icon-180.png',
     },
   };

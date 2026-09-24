@@ -1,6 +1,18 @@
 #!/bin/bash
 set -e
 
+# سر الإبطال يربط ثلاثة أطراف في هذه الحاوية: Django (يُبطل الصفحات عند
+# الحفظ من اللوحة)، وNext (مسار /api/revalidate)، وإبطال الإقلاع أدناه.
+# إن لم يُضبط في بيئة Render كان Django يستخدم "change-me" وNext بلا قيمة،
+# فيُرفض كل إبطال بـ401: تبقى صفحات البناء الفارغة لأول زائر، ويتأخر ظهور
+# تعديلات اللوحة حتى تنتهي مهلة التخزين. سرّ عشوائي لكل إقلاع يكفي لأن
+# الأطراف الثلاثة تقرأ البيئة نفسها — ولا يمس قيمة مضبوطة مسبقًا.
+if [ -z "${REVALIDATE_SECRET:-}" ]; then
+  REVALIDATE_SECRET="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
+  export REVALIDATE_SECRET
+  echo "REVALIDATE_SECRET was not set; generated one for this boot."
+fi
+
 cd /app/backend
 python manage.py migrate --noinput
 python manage.py seed_content --only-if-empty

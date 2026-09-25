@@ -39,6 +39,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 
+import { BRAND_MARK_SRC } from '@/components/layout/site-mark';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api/client';
 import { DASHBOARD_NAV } from '@/lib/constants/dashboard-nav';
@@ -181,9 +182,7 @@ function SidebarBrand() {
   if (!light || !dark) {
     return (
       <>
-        <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-brand text-white shadow-[0_2px_10px_-2px_rgb(var(--primary)/0.6)]">
-          {name.charAt(0).toUpperCase()}
-        </span>
+        <NextImage src={BRAND_MARK_SRC} alt="" width={32} height={32} className="size-8 shrink-0" />
         <span className="truncate">{name}</span>
       </>
     );

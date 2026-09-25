@@ -5,6 +5,7 @@ import { Bell, Check, CheckCheck, LoaderCircle, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 import { useToast } from '@/contexts/ToastContext';
+import { PushToggle } from '@/features/dashboard/push-toggle';
 import { api, toApiError } from '@/lib/api/client';
 import type { Paginated } from '@/lib/api/types';
 import { cn } from '@/lib/utils/cn';
@@ -70,6 +71,7 @@ export default function NotificationsPage() {
 
   return (
     <div>
+      <PushToggle className="mb-6" />
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-h2 font-semibold">الإشعارات</h1>
         {hasUnread ? (

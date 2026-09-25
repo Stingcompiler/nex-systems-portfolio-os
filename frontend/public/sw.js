@@ -8,7 +8,7 @@
  *  - الصفحات العامة: الشبكة أولًا، مع ارتداد إلى صفحة عدم الاتصال.
  *  - الأصول الثابتة (_next/static): من الذاكرة أولًا (محتوى مُبصَّم لا يتغيّر).
  */
-const VERSION = 'stingdev-v2';
+const VERSION = 'stingdev-v3';
 // العربية هي اللغة الافتراضية — صفحة عدم الاتصال المخزَّنة مسبقًا
 const OFFLINE_URL = '/ar/offline';
 const PRECACHE = [OFFLINE_URL, '/icons/icon-192.png'];
@@ -78,4 +78,47 @@ self.addEventListener('fetch', (event) => {
         .catch(() => caches.match(request).then((cached) => cached || caches.match(OFFLINE_URL))),
     );
   }
+});
+
+// ------------------------------------------------------------ إشعارات الفريق
+// الخادم يرسل {title, body, url, tag} مشفّرًا؛ المتصفح يفكّه ويسلّمه هنا.
+
+self.addEventListener('push', (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch {
+    data = { body: event.data ? event.data.text() : '' };
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'ستينج سيستم', {
+      body: data.body || '',
+      icon: '/icons/icon-192.png',
+      badge: '/icons/favicon-48.png',
+      dir: 'rtl',
+      lang: 'ar',
+      // الوسم نفسه يستبدل الإشعار القديم بدل تكديس نسخ للطلب نفسه
+      tag: data.tag,
+      data: { url: data.url || '/dashboard' },
+    }),
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const target = new URL(event.notification.data?.url || '/dashboard', self.location.origin);
+  // روابط الموقع فقط — لا يُفتح عنوان خارجي من محتوى إشعار
+  if (target.origin !== self.location.origin) return;
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windows) => {
+      const open = windows.find((client) => new URL(client.url).pathname === target.pathname);
+      if (open) return open.focus();
+      const dashboard = windows.find((client) => new URL(client.url).pathname.startsWith('/dashboard'));
+      if (dashboard && 'navigate' in dashboard) {
+        return dashboard.navigate(target.href).then((client) => client && client.focus());
+      }
+      return self.clients.openWindow(target.href);
+    }),
+  );
 });

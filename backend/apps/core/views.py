@@ -75,9 +75,22 @@ class SingletonSettingsView(RetrieveUpdateAPIView):
         return self.model.load()
 
     def get_serializer_class(self):
-        if self.request.method == "GET" and not self._is_manager():
+        # القراءة الكاملة بطلب صريح (?full=true) كبقية الواجهة: المدير الذي
+        # يتصفح اللوحة كان يتلقى الصيغة الإدارية حيث يُنتظر الشكل العام —
+        # الشعار رقمًا (60) لا كائنًا بعنوان، فظهر في الشريط الجانبي صورةً مكسورة
+        if self.request.method == "GET" and not self._wants_admin_view():
             return self.public_serializer_class
         return self.admin_serializer_class
+
+    def _wants_admin_view(self) -> bool:
+        return self.request.query_params.get("full") == "true" and self._is_manager()
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        response = super().finalize_response(request, response, *args, **kwargs)
+        if request.method == "GET" and self._wants_admin_view():
+            # حقول داخلية (مفاتيح التحليلات، وضع الصيانة): لا تُخزَّن في وسيط
+            response["Cache-Control"] = "private, no-store"
+        return response
 
     def _is_manager(self) -> bool:
         user = self.request.user

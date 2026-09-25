@@ -39,7 +39,10 @@ export default function NotificationsPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['notifications', 'list'],
     queryFn: async () => {
-      const { data: list } = await api.get<Paginated<NotificationItem>>('/notifications/');
+      // اللوحة عربية: لغة المتصفح (الإنجليزية مثلًا) كانت تعيد العناوين بالإنجليزية
+      const { data: list } = await api.get<Paginated<NotificationItem>>('/notifications/', {
+        params: { lang: 'ar' },
+      });
       return list;
     },
   });

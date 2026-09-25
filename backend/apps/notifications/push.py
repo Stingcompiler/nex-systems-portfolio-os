@@ -105,6 +105,13 @@ def queue_push(notification) -> None:
             send_notification(notification.pk)
         except Exception:  # noqa: BLE001
             logger.exception("فشل إرسال إشعارات المتصفح للإشعار %s", notification.pk)
+        finally:
+            if not getattr(settings, "PUSH_SYNC", False):
+                # الخيط يفتح اتصال قاعدة بيانات خاصًا به؛ بلا إغلاق يتراكم
+                # اتصال مع كل طلب حتى تنفد اتصالات قاعدة البيانات
+                from django.db import connections
+
+                connections.close_all()
 
     def start():
         if getattr(settings, "PUSH_SYNC", False):

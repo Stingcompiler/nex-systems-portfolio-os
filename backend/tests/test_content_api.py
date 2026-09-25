@@ -296,12 +296,27 @@ def test_settings_are_not_editable_by_anonymous_visitors(api_client, content):
     assert SiteSettings.load().site_name_ar == "ستينج سيستم"
 
 
-def test_superuser_sees_the_full_settings_record(api_client, content, make_user):
+def test_superuser_sees_the_full_settings_record_on_request(api_client, content, make_user):
     admin = make_user(email="root@example.com", role="super_admin", is_superuser=True)
     _login(api_client, admin)
 
-    response = api_client.get(SETTINGS_URL)
+    response = api_client.get(SETTINGS_URL, {"full": "true"})
     assert "email_from_address" in response.data
+    assert "no-store" in response["Cache-Control"]
+
+
+def test_superuser_gets_the_public_shape_by_default(api_client, content, make_user):
+    """الشريط الجانبي يقرأ الإعدادات بلا full: الشعار كائن بعنوان لا رقم."""
+    from apps.media_library.models import MediaFile
+
+    logo = MediaFile.objects.create(title_ar="شعار", file="library/image/logo.svg")
+    SiteSettings.objects.filter(pk=SiteSettings.load().pk).update(logo_light=logo)
+    admin = make_user(email="root@example.com", role="super_admin", is_superuser=True)
+    _login(api_client, admin)
+
+    data = api_client.get(SETTINGS_URL).data
+    assert "email_from_address" not in data
+    assert data["logo_light"]["url"].endswith("logo.svg")
 
 
 # --------------------------------------------------------------- الأقسام

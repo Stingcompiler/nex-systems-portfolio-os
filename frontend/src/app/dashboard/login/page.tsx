@@ -4,6 +4,7 @@ import { LoaderCircle, LogIn } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState, type FormEvent } from 'react';
 
+import { InstallAppButton } from '@/components/layout/install-app-button';
 import { BRAND_MARK_SRC } from '@/components/layout/site-mark';
 import { useAuth } from '@/contexts/AuthContext';
 import { fieldError, toApiError, type ApiErrorPayload } from '@/lib/api/client';
@@ -132,6 +133,8 @@ function LoginForm() {
             {submitting ? 'جارٍ الدخول…' : 'تسجيل الدخول'}
           </button>
         </form>
+
+        <InstallAppButton className="mt-6" />
 
         <p className="mt-6 text-center text-sm text-muted">
           <a href="/ar" className="hover:text-foreground">

@@ -676,5 +676,19 @@
       "messageRead": "The team has read your message and is working on a reply.",
       "messageReplied": "We've replied to your message — see the reply below and in your email if you gave one."
     }
+  },
+  "install": {
+    "button": "Install the app on your device",
+    "hint": "Open it from your home screen like any app, and get notifications on it.",
+    "installed": "The app is installed on this device.",
+    "iosTitle": "Install on iPhone",
+    "iosSafari": "Open this page in Safari (install from Safari).",
+    "iosStep1": "Tap the Share button at the bottom of the screen.",
+    "iosStep2": "Scroll down and choose “Add to Home Screen”.",
+    "iosStep3": "Tap “Add”, then open the app from your home screen.",
+    "androidTitle": "Install on this device",
+    "androidStep1": "Open the browser menu ⋮ at the top.",
+    "androidStep2": "Choose “Install app” or “Add to Home screen”.",
+    "close": "Close"
   }
 }

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Suspense } from 'react';
 
+import { InstallAppButton } from '@/components/layout/install-app-button';
 import { AuthShell } from '@/features/member/auth-shell';
 import { LoginForm } from '@/features/member/forms';
 import { getSeoSettings, getSiteSettings } from '@/lib/api/queries';
@@ -57,6 +58,7 @@ export default async function LoginPage({
       <Suspense fallback={null}>
         <LoginForm />
       </Suspense>
+      <InstallAppButton className="mt-6" />
     </AuthShell>
   );
 }

@@ -5,6 +5,7 @@ import type { CSSProperties, ReactNode } from 'react';
 
 import '@/app/globals.css';
 
+import { ServiceWorkerRegister } from '@/components/layout/sw-register';
 import { ThemeScript } from '@/components/layout/theme-script';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { QueryProvider } from '@/contexts/QueryProvider';
@@ -81,6 +82,9 @@ export default function DashboardRootLayout({ children }: { children: ReactNode 
             </QueryProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
+        {/* قابلية التثبيت وإشعارات المتصفح تحتاجان Service Worker مسجّلًا —
+            كان يُسجَّل من صفحات الموقع فقط، ومن يفتح اللوحة أولًا لا يجده */}
+        <ServiceWorkerRegister />
       </body>
     </html>
   );

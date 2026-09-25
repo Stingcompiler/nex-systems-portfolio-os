@@ -120,7 +120,9 @@ export async function ProjectCard({
           </Link>
         </h3>
 
-        <p className="mb-5 flex-1 text-base text-muted">{project.summary}</p>
+        {/* ثلاثة أسطر: في صف من أربع بطاقات كان الملخص الكامل سبعة أسطر (176px)
+            فتضاعف ارتفاع البطاقة؛ النص كاملًا في صفحة المشروع */}
+        <p className="mb-5 line-clamp-3 flex-1 text-base text-muted">{project.summary}</p>
 
         <div className="flex flex-wrap items-center justify-between gap-2 text-label text-muted">
           <span>{project.client_name || t('anonymous')}</span>

@@ -10,6 +10,44 @@ from apps.accounts.tasks import send_template_email
 logger = logging.getLogger(__name__)
 
 
+def tracking_url(token: str | None, language: str) -> str:
+    """رابط صفحة المتابعة، أو صفحة البحث إن غاب الرمز."""
+    base = f"{settings.FRONTEND_URL}/{language}/track"
+    return f"{base}/{token}" if token else base
+
+
+def send_reply_notification(reply_id: int) -> bool:
+    """يرسل رد الفريق إلى بريد صاحب الطلب أو الرسالة مع رابط المتابعة."""
+    from apps.crm.models import ClientReply
+
+    reply = (
+        ClientReply.objects.select_related("request", "message").filter(pk=reply_id).first()
+    )
+    target = reply.target if reply else None
+    if target is None or not target.email:
+        return False
+
+    is_request = reply.request_id is not None
+    language = getattr(target, "preferred_language", None) or getattr(target, "language", "ar")
+    language = language if language in ("ar", "en") else "ar"
+    what = {
+        ("ar", True): "طلبك", ("ar", False): "رسالتك",
+        ("en", True): "your request", ("en", False): "your message",
+    }[(language, is_request)]
+    return send_template_email(
+        "client_reply",
+        target.email,
+        language,
+        {
+            "user_name": target.name or "",
+            "what": what,
+            "reference_code": target.reference_code,
+            "body": reply.body,
+            "action_url": tracking_url(target.tracking_token, language),
+        },
+    )
+
+
 def send_request_confirmation(request_id: int) -> bool:
     from apps.crm.models import ProjectRequest
 
@@ -26,7 +64,7 @@ def send_request_confirmation(request_id: int) -> bool:
             "user_name": request.name or "",
             "reference_code": request.reference_code,
             "project_type": request.get_project_type_display(),
-            "action_url": f"{settings.FRONTEND_URL}/{language}",
+            "action_url": tracking_url(request.tracking_token, language),
         },
     )
 
@@ -45,7 +83,8 @@ def send_contact_confirmation(message_id: int) -> bool:
         language,
         {
             "user_name": message.name,
-            "action_url": f"{settings.FRONTEND_URL}/{language}",
+            "reference_code": message.reference_code,
+            "action_url": tracking_url(message.tracking_token, language),
         },
     )
 

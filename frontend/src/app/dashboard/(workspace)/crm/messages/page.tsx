@@ -5,6 +5,7 @@ import { LoaderCircle, Mail, TriangleAlert } from 'lucide-react';
 import { useState } from 'react';
 
 import { useToast } from '@/contexts/ToastContext';
+import { ClientReplies, type ClientReply } from '@/features/dashboard/crm/client-replies';
 import { CONTACT_STATUSES, crmDateTime } from '@/features/dashboard/crm/shared';
 import { api, toApiError } from '@/lib/api/client';
 import type { Paginated } from '@/lib/api/types';
@@ -12,6 +13,10 @@ import { cn } from '@/lib/utils/cn';
 
 interface Message {
   id: number;
+  reference_code: string | null;
+  language: string;
+  tracking_token: string | null;
+  replies: ClientReply[];
   name: string;
   email: string;
   phone: string;
@@ -26,6 +31,7 @@ export default function MessagesPage() {
   const queryClient = useQueryClient();
   const toast = useToast();
   const [statusFilter, setStatusFilter] = useState('');
+  const [replyingTo, setReplyingTo] = useState<number | null>(null);
 
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['contact-messages', statusFilter],
@@ -100,9 +106,13 @@ export default function MessagesPage() {
                       {message.email}
                     </span>
                   </p>
-                  {message.subject ? (
-                    <p className="mt-0.5 text-sm text-muted">{message.subject}</p>
-                  ) : null}
+                  <p className="mt-0.5 text-sm text-muted">
+                    {message.reference_code ? (
+                      <span dir="ltr" className="font-mono">{message.reference_code}</span>
+                    ) : null}
+                    {message.reference_code && message.subject ? ' · ' : null}
+                    {message.subject}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <time className="text-xs text-muted">{crmDateTime(message.created_at)}</time>
@@ -123,10 +133,22 @@ export default function MessagesPage() {
                 </div>
               </div>
               <p className="mt-3 whitespace-pre-wrap text-sm">{message.message}</p>
-              <div className="mt-3 flex gap-3 text-sm">
-                <a href={`mailto:${message.email}`} className="text-primary hover:underline">
-                  الرد بالبريد
-                </a>
+              <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+                <button
+                  type="button"
+                  onClick={() => setReplyingTo(replyingTo === message.id ? null : message.id)}
+                  aria-expanded={replyingTo === message.id}
+                  className="font-medium text-primary hover:underline"
+                >
+                  {message.replies.length
+                    ? `الردود (${message.replies.length})`
+                    : 'الرد على العميل'}
+                </button>
+                {message.email ? (
+                  <a href={`mailto:${message.email}`} className="text-muted hover:text-foreground">
+                    مراسلة بالبريد
+                  </a>
+                ) : null}
                 {message.phone ? (
                   <a
                     href={`tel:${message.phone}`}
@@ -137,6 +159,17 @@ export default function MessagesPage() {
                   </a>
                 ) : null}
               </div>
+              {replyingTo === message.id ? (
+                <ClientReplies
+                  className="mt-4"
+                  endpoint={`/contact-messages/${message.id}`}
+                  replies={message.replies}
+                  trackingToken={message.tracking_token}
+                  language={message.language}
+                  hasEmail={Boolean(message.email)}
+                  invalidate={[['contact-messages'], ['dashboard-summary']]}
+                />
+              ) : null}
             </li>
           ))}
         </ul>

@@ -604,5 +604,63 @@
     "statusNone": "Not subscribed yet",
     "unsubscribe": "Unsubscribe",
     "memberIntro": "Emails go to your account address. The first time you subscribe we send a confirmation link."
+  },
+  "track": {
+    "title": "Track your request",
+    "intro": "Check the status of the project request or message you sent, and read our replies.",
+    "boxTitle": "Track your request",
+    "boxHint": "Enter two keys: your request or message number with the email or phone you used.",
+    "firstLabel": "Request number, email or phone",
+    "firstPlaceholder": "REQ-2026-0001",
+    "secondLabel": "To confirm: email or phone",
+    "secondPlaceholder": "name@example.com",
+    "submit": "Show status",
+    "searching": "Searching…",
+    "notFound": "We couldn't find a request with these details. Check them as you entered them when sending.",
+    "tooMany": "Too many attempts. Wait a few minutes and try again.",
+    "errorGeneric": "Search isn't available right now. Try again shortly.",
+    "errors": {
+      "unrecognized": "Enter the request number, email or phone number as you entered it.",
+      "same_kind": "Enter two different keys, for example the request number with your email or phone."
+    },
+    "results": "We found more than one item:",
+    "kind": {
+      "request": "Project request",
+      "message": "Message"
+    },
+    "open": "Open",
+    "whyTwo": "We ask for two keys because this page shows your request details, so only you can see them.",
+    "greeting": "Hi {name}",
+    "referenceLabel": "Reference",
+    "sentOn": "Sent on {date}",
+    "updatedOn": "Last update {date}",
+    "yourRequest": "Your request",
+    "yourMessage": "Your message",
+    "replies": "Replies from the team",
+    "noReplies": "No replies yet. We'll write to you here and by email once we review your request.",
+    "noRepliesMessage": "No replies yet. We'll answer you here and by email soon.",
+    "teamName": "StingSystem team",
+    "askMore": "Something to add or ask? Message us and mention your reference.",
+    "contact": "Message us",
+    "invalidLink": "This tracking link is invalid or has expired.",
+    "searchAgain": "Find your request",
+    "loadError": "Couldn't load the request status.",
+    "retry": "Try again",
+    "keepLink": "Save this page: its link opens your request directly.",
+    "progress": "Progress",
+    "stage": {
+      "received": "Received",
+      "reviewing": "Under review",
+      "proposal": "Proposal sent",
+      "inProgress": "In progress",
+      "completed": "Completed",
+      "closed": "Closed",
+      "messageReceived": "Received",
+      "messageRead": "Read",
+      "messageReplied": "Replied"
+    },
+    "trackLink": "Track your request",
+    "trackMessageLink": "Track your message",
+    "detailsAndReplies": "Details and replies"
   }
 }

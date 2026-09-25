@@ -6,6 +6,7 @@ from django.utils import timezone
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -14,10 +15,12 @@ from apps.core.audit import get_client_ip, log_action
 from apps.core.mixins import AuditLogMixin
 from apps.core.models.system import AuditLog
 from apps.core.pagination import LargePagination, StandardPagination
-from apps.core.throttling import AnonWriteThrottle
-from apps.crm.enums import CLOSED_LEAD_STATUSES, LeadStatus, RequestStatus
+from apps.core.throttling import AnonWriteThrottle, TrackLookupThrottle
+from apps.crm import tracking
+from apps.crm.enums import CLOSED_LEAD_STATUSES, ContactStatus, LeadStatus, RequestStatus
 from apps.crm.models import (
     Client,
+    ClientReply,
     ContactMessage,
     CrmAttachment,
     CrmNote,
@@ -28,6 +31,7 @@ from apps.crm.models import (
 )
 from apps.crm.permissions import IsCrmStaff
 from apps.crm.serializers import (
+    ClientReplySerializer,
     ClientSerializer,
     ContactMessageAdminSerializer,
     ContactMessageCreateSerializer,
@@ -43,6 +47,9 @@ from apps.crm.serializers import (
     ProjectRequestAdminSerializer,
     ProjectRequestDraftSerializer,
     ProjectRequestSubmitSerializer,
+    TrackDetailSerializer,
+    TrackLookupSerializer,
+    TrackResultSerializer,
 )
 from apps.crm.services import convert_lead_to_client
 
@@ -62,9 +69,13 @@ class ContactMessageCreateView(APIView):
     def post(self, request):
         serializer = ContactMessageCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(ip_address=get_client_ip(request))
+        message = serializer.save(ip_address=get_client_ip(request))
         return Response(
-            {"detail": "وصلتنا رسالتك، وسنرد عليك قريبًا"},
+            {
+                "detail": "وصلتنا رسالتك، وسنرد عليك قريبًا",
+                "reference_code": message.reference_code,
+                "tracking_token": message.tracking_token,
+            },
             status=status.HTTP_201_CREATED,
         )
 
@@ -118,7 +129,11 @@ class ProjectRequestSubmitView(APIView):
             )
             if existing is not None:
                 return Response(
-                    {"detail": "أُرسل طلبك بنجاح", "reference_code": existing.reference_code},
+                    {
+                        "detail": "أُرسل طلبك بنجاح",
+                        "reference_code": existing.reference_code,
+                        "tracking_token": existing.tracking_token,
+                    },
                     status=status.HTTP_200_OK,
                 )
 
@@ -145,6 +160,7 @@ class ProjectRequestSubmitView(APIView):
             {
                 "detail": "أُرسل طلبك بنجاح",
                 "reference_code": project_request.reference_code,
+                "tracking_token": project_request.tracking_token,
             },
             status=status.HTTP_201_CREATED,
         )
@@ -178,6 +194,96 @@ class MyProjectRequestsView(APIView):
         return Response(MyProjectRequestSerializer(requests, many=True).data)
 
 
+class TrackLookupView(APIView):
+    """البحث عن طلب أو رسالة بمفتاحين (رقم مرجعي، بريد، هاتف)."""
+
+    permission_classes = [AllowAny]
+    throttle_classes = [TrackLookupThrottle]
+    serializer_class = TrackLookupSerializer
+
+    @extend_schema(
+        summary="البحث عن طلب للمتابعة",
+        request=TrackLookupSerializer,
+        responses={200: TrackResultSerializer(many=True)},
+    )
+    def post(self, request):
+        serializer = TrackLookupSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            results = tracking.lookup(
+                serializer.validated_data["first"], serializer.validated_data["second"]
+            )
+        except ValueError as error:
+            messages = {
+                "unrecognized": "اكتب رقم الطلب أو البريد أو رقم الهاتف كما أدخلته",
+                "same_kind": "أدخل مفتاحين مختلفين: الرقم المرجعي مع البريد أو الهاتف مثلًا",
+            }
+            code = str(error)
+            return Response(
+                {"detail": messages.get(code, messages["unrecognized"]), "code": code,
+                 "errors": {}},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if not results:
+            # رسالة واحدة لكل حالات الفشل: لا تكشف أي المفتاحين صحيح
+            return Response(
+                {"detail": "لم نجد طلبًا بهذه البيانات", "code": "not_found", "errors": {}},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        return Response(TrackResultSerializer(results, many=True).data)
+
+
+class TrackDetailView(APIView):
+    """صفحة المتابعة برمزها العشوائي."""
+
+    permission_classes = [AllowAny]
+    serializer_class = TrackDetailSerializer
+
+    @extend_schema(summary="حالة الطلب وردود الفريق", responses={200: TrackDetailSerializer})
+    def get(self, request, token: str):
+        record = tracking.find_by_token(token)
+        if record is None:
+            return Response(
+                {"detail": "رابط المتابعة غير صحيح", "code": "not_found", "errors": {}},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        response = Response(TrackDetailSerializer(record).data)
+        # حالة شخصية تتغير: لا تُخزَّن في أي وسيط
+        response["Cache-Control"] = "private, no-store"
+        return response
+
+
+class ClientReplyMixin:
+    """``POST …/{id}/replies/``: رد مكتوب للعميل يظهر في صفحة متابعته ويصل بريده."""
+
+    reply_target_field = ""
+
+    def create(self, request, *args, **kwargs):
+        # POST مسموح للردود وحدها؛ السجلات تأتي من نماذج الموقع لا من اللوحة
+        raise MethodNotAllowed("POST")
+
+    @extend_schema(summary="الرد على العميل", request=ClientReplySerializer,
+                   responses={201: ClientReplySerializer})
+    @action(detail=True, methods=["post"], url_path="replies")
+    def replies(self, request, pk=None):
+        from apps.crm import emails
+
+        target = self.get_object()
+        serializer = ClientReplySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        reply = serializer.save(author=request.user, **{self.reply_target_field: target})
+        self.after_reply(target)
+        emails.queue_reply_notification(reply)
+        log_action(
+            AuditLog.Action.UPDATE, instance=target, request=request,
+            changes={"reply": reply.body[:200]},
+        )
+        return Response(ClientReplySerializer(reply).data, status=status.HTTP_201_CREATED)
+
+    def after_reply(self, target) -> None:
+        pass
+
+
 # --------------------------------------------------------------- إداري
 
 
@@ -191,15 +297,16 @@ class CrmBaseViewSet(AuditLogMixin, viewsets.ModelViewSet):
     retrieve=extend_schema(summary="تفاصيل طلب"),
     partial_update=extend_schema(summary="تحديث حالة الطلب"),
 )
-class ProjectRequestViewSet(CrmBaseViewSet):
+class ProjectRequestViewSet(ClientReplyMixin, CrmBaseViewSet):
     queryset = ProjectRequest.objects.select_related("lead", "assigned_to").prefetch_related(
         "attachments"
     )
+    reply_target_field = "request"
     serializer_class = ProjectRequestAdminSerializer
     filterset_fields = ["status", "project_type", "sector", "assigned_to"]
     search_fields = ["reference_code", "name", "email", "company"]
     ordering_fields = ["created_at", "status"]
-    http_method_names = ["get", "patch", "delete", "head", "options"]
+    http_method_names = ["get", "post", "patch", "delete", "head", "options"]
 
     def get_queryset(self):
         # المسودات المهجورة تظهر منفصلة عن الطلبات الحقيقية
@@ -228,13 +335,19 @@ class ProjectRequestViewSet(CrmBaseViewSet):
     list=extend_schema(summary="رسائل التواصل"),
     partial_update=extend_schema(summary="تحديث حالة الرسالة"),
 )
-class ContactMessageViewSet(CrmBaseViewSet):
+class ContactMessageViewSet(ClientReplyMixin, CrmBaseViewSet):
     queryset = ContactMessage.objects.select_related("lead").all()
+    reply_target_field = "message"
+
+    def after_reply(self, target) -> None:
+        if target.status != ContactStatus.REPLIED:
+            target.status = ContactStatus.REPLIED
+            target.save(update_fields=["status", "updated_at"])
     serializer_class = ContactMessageAdminSerializer
     filterset_fields = ["status"]
-    search_fields = ["name", "email", "subject"]
+    search_fields = ["reference_code", "name", "email", "subject"]
     ordering_fields = ["created_at"]
-    http_method_names = ["get", "patch", "delete", "head", "options"]
+    http_method_names = ["get", "post", "patch", "delete", "head", "options"]
 
 
 @extend_schema_view(

@@ -1,11 +1,12 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { Check, FileText, LoaderCircle } from 'lucide-react';
+import { FileText, LoaderCircle } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
 import { buttonClass } from '@/components/ui/button-styles';
 import { useMember } from '@/contexts/MemberContext';
+import { StageBadge, StageProgress, stageOf } from '@/features/track/stages';
 import { api } from '@/lib/api/client';
 import { Link } from '@/lib/i18n/navigation';
 import { cn } from '@/lib/utils/cn';
@@ -24,29 +25,14 @@ interface MyRequest {
   budget_display: string;
   timeline: string;
   timeline_display: string;
+  tracking_token: string | null;
 }
-
-/**
- * مراحل الطلب كما يفهمها العميل. حالات الفريق الداخلية أدق (تمت المراجعة،
- * تم التواصل، موعد محدد…) لكنها كلها عند العميل «قيد الدراسة».
- */
-const STAGES = ['received', 'reviewing', 'proposal', 'inProgress', 'completed'] as const;
-
-const STAGE_OF: Record<string, number> = {
-  new: 0,
-  reviewed: 1,
-  contacted: 1,
-  meeting_scheduled: 1,
-  proposal_sent: 2,
-  accepted: 3,
-  in_progress: 3,
-  completed: 4,
-};
 
 export default function MyRequestsPage() {
   const t = useTranslations('member.requests');
   const tTabs = useTranslations('member.tabs');
   const tForm = useTranslations('requestForm');
+  const tTrack = useTranslations('track');
   // تسميات الخيارات في الخادم عربية؛ ترجمات نموذج الطلب تغطي المفاتيح نفسها
   const choice = (group: 'projectType' | 'budget' | 'timeline', key: string, fallback: string) =>
     key && tForm.has(`${group}.${key}`) ? tForm(`${group}.${key}`) : fallback;
@@ -92,8 +78,7 @@ export default function MyRequestsPage() {
       ) : data && data.length ? (
         <ul className="space-y-4">
           {data.map((request) => {
-            const closed = request.status === 'rejected';
-            const stage = STAGE_OF[request.status] ?? 0;
+            const info = stageOf('request', request.status);
             return (
               <li key={request.id} className="rounded-xl border border-border bg-surface p-5 shadow-subtle">
                 <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
@@ -109,46 +94,10 @@ export default function MyRequestsPage() {
                       {dateFmt.format(new Date(request.created_at))}
                     </p>
                   </div>
-                  <span
-                    className={cn(
-                      'rounded-full px-3 py-1 text-xs font-medium',
-                      closed
-                        ? 'bg-surface-hover text-muted'
-                        : stage === STAGES.length - 1
-                          ? 'bg-success-soft text-success'
-                          : 'bg-primary-soft text-primary',
-                    )}
-                  >
-                    {closed ? t('stage.closed') : t(`stage.${STAGES[stage]}`)}
-                  </span>
+                  <StageBadge info={info} />
                 </div>
 
-                {/* شريط المراحل: ما مضى مكتمل، والحالي مميز، والقادم باهت */}
-                {closed ? null : (
-                  <ol className="mb-4 grid grid-cols-5 gap-1.5" aria-label={t('progress')}>
-                    {STAGES.map((name, index) => (
-                      <li key={name} className="min-w-0">
-                        <span
-                          className={cn(
-                            'block h-1.5 rounded-full',
-                            index <= stage ? 'bg-primary' : 'bg-surface-hover',
-                          )}
-                          aria-hidden="true"
-                        />
-                        <span
-                          className={cn(
-                            'mt-1.5 flex items-center gap-1 text-xs',
-                            index === stage ? 'font-medium text-foreground' : 'text-muted',
-                          )}
-                          aria-current={index === stage ? 'step' : undefined}
-                        >
-                          {index < stage ? <Check className="size-3 shrink-0" aria-hidden="true" /> : null}
-                          <span className="truncate">{t(`stage.${name}`)}</span>
-                        </span>
-                      </li>
-                    ))}
-                  </ol>
-                )}
+                <StageProgress info={info} className="mb-4" />
 
                 <p className="line-clamp-3 whitespace-pre-line text-sm text-muted">{request.description}</p>
 
@@ -174,6 +123,17 @@ export default function MyRequestsPage() {
                 ) : null}
 
                 <p className="mt-4 border-t border-border pt-3 text-sm">
+                  {request.tracking_token ? (
+                    <>
+                      <Link
+                        href={`/track/${request.tracking_token}`}
+                        className="font-medium text-primary hover:underline"
+                      >
+                        {tTrack('detailsAndReplies')}
+                      </Link>
+                      <span className="text-muted"> · </span>
+                    </>
+                  ) : null}
                   <Link href={`/contact`} className="text-primary hover:underline">
                     {t('askAbout')}
                   </Link>{' '}

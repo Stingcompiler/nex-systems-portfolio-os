@@ -23,3 +23,13 @@ def queue_contact_confirmation(message) -> None:
         async_task("apps.crm.tasks.send_contact_confirmation", message.pk)
     except Exception:  # noqa: BLE001
         logger.exception("تعذّرت جدولة تأكيد رسالة التواصل %s", message.pk)
+
+
+def queue_reply_notification(reply) -> None:
+    target = reply.target
+    if not target or not target.email:
+        return
+    try:
+        async_task("apps.crm.tasks.send_reply_notification", reply.pk)
+    except Exception:  # noqa: BLE001
+        logger.exception("تعذّرت جدولة إرسال الرد %s", reply.pk)

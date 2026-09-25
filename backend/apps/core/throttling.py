@@ -82,3 +82,9 @@ class AnonWriteThrottle(FlexibleRateMixin, AnonRateThrottle):
     """للنماذج العامة: التواصل، التعليقات، الاشتراك في النشرة."""
 
     scope = "anon_write"
+
+
+class TrackLookupThrottle(ScopedThrottle):
+    """البحث عن طلب بمفتاحين: يمنع تجربة أرقام مرجعية وبريد بالجملة."""
+
+    scope = "track_lookup"

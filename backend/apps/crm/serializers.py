@@ -3,6 +3,7 @@ from rest_framework import serializers
 from apps.crm.enums import RequestStatus
 from apps.crm.models import (
     Client,
+    ClientReply,
     ContactMessage,
     CrmAttachment,
     CrmNote,
@@ -152,7 +153,7 @@ class MyProjectRequestSerializer(serializers.ModelSerializer):
             "id", "reference_code", "status", "created_at", "updated_at",
             "project_type", "project_type_display", "service_title",
             "description", "budget_range", "budget_display",
-            "timeline", "timeline_display",
+            "timeline", "timeline_display", "tracking_token",
         ]
         read_only_fields = fields
 
@@ -185,6 +186,7 @@ class ProjectRequestAdminSerializer(serializers.ModelSerializer):
     lead_id = serializers.IntegerField(source="lead.id", read_only=True, default=None)
     service_title = serializers.CharField(source="service.title_ar", read_only=True, default="")
     service_kind = serializers.CharField(source="service.kind", read_only=True, default="")
+    replies = serializers.SerializerMethodField()
 
     class Meta:
         model = ProjectRequest
@@ -196,24 +198,128 @@ class ProjectRequestAdminSerializer(serializers.ModelSerializer):
             "preferred_language", "status", "status_display", "source",
             "service", "service_title", "service_kind",
             "assigned_to", "lead_id", "attachments", "created_at",
+            "tracking_token", "replies",
         ]
         read_only_fields = [
             "id", "reference_code", "source", "service", "lead_id", "attachments",
-            "created_at",
+            "created_at", "tracking_token", "replies",
         ]
+
+    def get_replies(self, obj) -> list:
+        return ClientReplySerializer(obj.replies.select_related("author"), many=True).data
 
 
 class ContactMessageAdminSerializer(serializers.ModelSerializer):
     status_display = serializers.CharField(source="get_status_display", read_only=True)
+    replies = serializers.SerializerMethodField()
 
     class Meta:
         model = ContactMessage
         fields = [
-            "id", "name", "email", "phone", "subject", "message",
+            "id", "reference_code", "name", "email", "phone", "subject", "message",
             "language", "status", "status_display", "created_at",
+            "tracking_token", "replies",
         ]
-        read_only_fields = ["id", "name", "email", "phone", "subject", "message",
-                            "language", "created_at"]
+        read_only_fields = ["id", "reference_code", "name", "email", "phone", "subject",
+                            "message", "language", "created_at", "tracking_token", "replies"]
+
+    def get_replies(self, obj) -> list:
+        return ClientReplySerializer(obj.replies.select_related("author"), many=True).data
+
+
+class ClientReplySerializer(serializers.ModelSerializer):
+    """رد الفريق كما تراه اللوحة: مع كاتبه."""
+
+    author_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ClientReply
+        fields = ["id", "body", "author_name", "created_at"]
+        read_only_fields = ["id", "author_name", "created_at"]
+
+    def get_author_name(self, obj) -> str:
+        return (obj.author.full_name or obj.author.email) if obj.author else ""
+
+    def validate_body(self, value):
+        value = (value or "").strip()
+        if len(value) < 2:
+            raise serializers.ValidationError("اكتب نص الرد")
+        return value
+
+
+# --------------------------------------------------------------- المتابعة العامة
+
+
+class TrackLookupSerializer(serializers.Serializer):
+    first = serializers.CharField(max_length=200)
+    second = serializers.CharField(max_length=200)
+
+
+class TrackResultSerializer(serializers.Serializer):
+    """سطر في نتائج البحث: ما يكفي لاختيار الطلب والانتقال إليه."""
+
+    kind = serializers.SerializerMethodField()
+    reference_code = serializers.CharField()
+    tracking_token = serializers.CharField()
+    created_at = serializers.DateTimeField()
+
+    def get_kind(self, obj) -> str:
+        from apps.crm.tracking import kind_of
+
+        return kind_of(obj)
+
+
+class PublicReplySerializer(serializers.ModelSerializer):
+    """الرد كما يراه العميل: النص والتاريخ فقط — اسم الموظف شأن داخلي."""
+
+    class Meta:
+        model = ClientReply
+        fields = ["id", "body", "created_at"]
+
+
+class TrackDetailSerializer(serializers.Serializer):
+    """صفحة المتابعة: حالة الطلب أو الرسالة وردود الفريق.
+
+    لا بريد ولا هاتف ولا ملاحظات داخلية: الرابط قد يُعاد توجيهه. الحالة
+    تُرسل بمفتاحها، والواجهة تترجمها إلى مرحلة بلغة الزائر.
+    """
+
+    kind = serializers.SerializerMethodField()
+    reference_code = serializers.CharField()
+    status = serializers.CharField()
+    name = serializers.SerializerMethodField()
+    created_at = serializers.DateTimeField()
+    updated_at = serializers.DateTimeField()
+    project_type = serializers.CharField(default="")
+    project_type_display = serializers.SerializerMethodField()
+    service_title = serializers.SerializerMethodField()
+    subject = serializers.CharField(default="")
+    body = serializers.SerializerMethodField()
+    budget_range = serializers.CharField(default="")
+    timeline = serializers.CharField(default="")
+    replies = serializers.SerializerMethodField()
+
+    def get_kind(self, obj) -> str:
+        from apps.crm.tracking import kind_of
+
+        return kind_of(obj)
+
+    def get_name(self, obj) -> str:
+        # الاسم الأول للتحية فقط
+        return (obj.name or "").split(" ")[0]
+
+    def get_project_type_display(self, obj) -> str:
+        return obj.get_project_type_display() if isinstance(obj, ProjectRequest) else ""
+
+    def get_service_title(self, obj) -> str:
+        service = getattr(obj, "service", None)
+        return service.title if service else ""
+
+    def get_body(self, obj) -> str:
+        return obj.description if isinstance(obj, ProjectRequest) else obj.message
+
+    def get_replies(self, obj) -> list:
+        return PublicReplySerializer(obj.replies.all(), many=True).data
 
 
 class LeadListSerializer(serializers.ModelSerializer):

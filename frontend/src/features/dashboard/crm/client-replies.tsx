@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Copy, ExternalLink, LoaderCircle, Send } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Copy, ExternalLink, LoaderCircle, Send } from 'lucide-react';
+import { useState, type FormEvent } from 'react';
 
-import { useToast } from "@/contexts/ToastContext";
-import { crmDateTime } from "@/features/dashboard/crm/shared";
-import { api, toApiError } from "@/lib/api/client";
-import { cn } from "@/lib/utils/cn";
+import { useToast } from '@/contexts/ToastContext';
+import { crmDateTime } from '@/features/dashboard/crm/shared';
+import { api, toApiError } from '@/lib/api/client';
+import { cn } from '@/lib/utils/cn';
 
 export interface ClientReply {
   id: number;
@@ -42,25 +42,18 @@ export function ClientReplies({
   invalidate: unknown[][];
   className?: string;
 }) {
-  const [body, setBody] = useState("");
+  const [body, setBody] = useState('');
   const queryClient = useQueryClient();
   const toast = useToast();
-  const lang = language === "en" ? "en" : "ar";
-  const trackPath = trackingToken ? `/${lang}/track/${trackingToken}` : "";
+  const lang = language === 'en' ? 'en' : 'ar';
+  const trackPath = trackingToken ? `/${lang}/track/${trackingToken}` : '';
 
   const send = useMutation({
-    mutationFn: (text: string) =>
-      api.post(`${endpoint}/replies/`, { body: text }),
+    mutationFn: (text: string) => api.post(`${endpoint}/replies/`, { body: text }),
     onSuccess: () => {
-      setBody("");
-      invalidate.forEach((queryKey) =>
-        queryClient.invalidateQueries({ queryKey }),
-      );
-      toast.success(
-        hasEmail
-          ? "أُرسل الرد وسيصل بريد العميل"
-          : "حُفظ الرد في صفحة المتابعة",
-      );
+      setBody('');
+      invalidate.forEach((queryKey) => queryClient.invalidateQueries({ queryKey }));
+      toast.success(hasEmail ? 'أُرسل الرد وسيصل بريد العميل' : 'حُفظ الرد في صفحة المتابعة');
     },
     onError: (caught) => toast.error(toApiError(caught).detail),
   });
@@ -72,21 +65,16 @@ export function ClientReplies({
 
   async function copyLink() {
     try {
-      await navigator.clipboard.writeText(
-        `${window.location.origin}${trackPath}`,
-      );
-      toast.success("نُسخ رابط المتابعة");
+      await navigator.clipboard.writeText(`${window.location.origin}${trackPath}`);
+      toast.success('نُسخ رابط المتابعة');
     } catch {
-      toast.error("تعذّر النسخ");
+      toast.error('تعذّر النسخ');
     }
   }
 
   return (
     <section
-      className={cn(
-        "rounded-xl border border-border bg-surface p-5 shadow-subtle",
-        className,
-      )}
+      className={cn('rounded-xl border border-border bg-surface p-5 shadow-subtle', className)}
     >
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-sm font-semibold">الرد على العميل</h2>
@@ -121,10 +109,8 @@ export function ClientReplies({
               className="rounded-lg border-s-4 border-primary bg-primary-soft/40 p-3"
             >
               <p className="mb-1 flex flex-wrap justify-between gap-2 text-xs text-muted">
-                <span>{reply.author_name || "الفريق"}</span>
-                <time dateTime={reply.created_at}>
-                  {crmDateTime(reply.created_at)}
-                </time>
+                <span>{reply.author_name || 'الفريق'}</span>
+                <time dateTime={reply.created_at}>{crmDateTime(reply.created_at)}</time>
               </p>
               <p className="whitespace-pre-line text-sm">{reply.body}</p>
             </li>
@@ -147,8 +133,8 @@ export function ClientReplies({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="text-xs text-muted">
             {hasEmail
-              ? "يظهر في صفحة المتابعة ويُرسل إلى بريد العميل."
-              : "لا بريد لهذا العميل: يظهر الرد في صفحة المتابعة فقط — أرسل له الرابط عبر واتساب."}
+              ? 'يظهر في صفحة المتابعة ويُرسل إلى بريد العميل.'
+              : 'لا بريد لهذا العميل: يظهر الرد في صفحة المتابعة فقط — أرسل له الرابط عبر واتساب.'}
           </p>
           <button
             type="submit"
@@ -156,10 +142,7 @@ export function ClientReplies({
             className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
           >
             {send.isPending ? (
-              <LoaderCircle
-                className="size-4 animate-spin"
-                aria-hidden="true"
-              />
+              <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
             ) : (
               <Send className="size-4 flip-rtl" aria-hidden="true" />
             )}

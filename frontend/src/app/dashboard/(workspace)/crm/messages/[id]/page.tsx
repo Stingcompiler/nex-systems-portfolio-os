@@ -1,19 +1,16 @@
-"use client";
+'use client';
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { ArrowRight, LoaderCircle, TriangleAlert } from "lucide-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import { ArrowRight, LoaderCircle, TriangleAlert } from 'lucide-react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useEffect, useRef } from 'react';
 
-import { useToast } from "@/contexts/ToastContext";
-import {
-  ClientReplies,
-  type ClientReply,
-} from "@/features/dashboard/crm/client-replies";
-import { CONTACT_STATUSES, crmDateTime } from "@/features/dashboard/crm/shared";
-import { api, toApiError } from "@/lib/api/client";
+import { useToast } from '@/contexts/ToastContext';
+import { ClientReplies, type ClientReply } from '@/features/dashboard/crm/client-replies';
+import { CONTACT_STATUSES, crmDateTime } from '@/features/dashboard/crm/shared';
+import { api, toApiError } from '@/lib/api/client';
 
 interface MessageDetail {
   id: number;
@@ -42,30 +39,27 @@ export default function MessageDetailPage() {
   const markedRead = useRef(false);
 
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["contact-message", id],
+    queryKey: ['contact-message', id],
     queryFn: async () => {
-      const { data: message } = await api.get<MessageDetail>(
-        `/contact-messages/${id}/`,
-      );
+      const { data: message } = await api.get<MessageDetail>(`/contact-messages/${id}/`);
       return message;
     },
   });
 
   const updateStatus = useMutation({
-    mutationFn: (status: string) =>
-      api.patch(`/contact-messages/${id}/`, { status }),
+    mutationFn: (status: string) => api.patch(`/contact-messages/${id}/`, { status }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["contact-message", id] });
-      queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
-      queryClient.invalidateQueries({ queryKey: ["dashboard-summary"] });
+      queryClient.invalidateQueries({ queryKey: ['contact-message', id] });
+      queryClient.invalidateQueries({ queryKey: ['contact-messages'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
     },
     onError: (caught) => toast.error(toApiError(caught).detail),
   });
 
   useEffect(() => {
-    if (data?.status === "new" && !markedRead.current) {
+    if (data?.status === 'new' && !markedRead.current) {
       markedRead.current = true;
-      updateStatus.mutate("read");
+      updateStatus.mutate('read');
     }
   }, [data?.status, updateStatus]);
 
@@ -89,20 +83,14 @@ export default function MessageDetailPage() {
   }
 
   if (isError || !data) {
-    const notFound =
-      axios.isAxiosError(error) && error.response?.status === 404;
+    const notFound = axios.isAxiosError(error) && error.response?.status === 404;
     return (
       <div>
         <div className="mb-6">{backLink}</div>
         <div className="rounded-xl border border-danger/30 bg-danger-soft p-8 text-center">
-          <TriangleAlert
-            className="mx-auto mb-3 size-8 text-danger"
-            aria-hidden="true"
-          />
+          <TriangleAlert className="mx-auto mb-3 size-8 text-danger" aria-hidden="true" />
           <p className="mb-4">
-            {notFound
-              ? "هذه الرسالة غير موجودة أو حُذفت."
-              : toApiError(error).detail}
+            {notFound ? 'هذه الرسالة غير موجودة أو حُذفت.' : toApiError(error).detail}
           </p>
           {!notFound ? (
             <button
@@ -125,7 +113,7 @@ export default function MessageDetailPage() {
       <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-h2 font-semibold">
-            {data.subject || `رسالة من ${data.name || "زائر"}`}
+            {data.subject || `رسالة من ${data.name || 'زائر'}`}
           </h1>
           <p className="mt-1 text-sm text-muted">
             {data.reference_code ? (
@@ -133,7 +121,7 @@ export default function MessageDetailPage() {
                 <span dir="ltr" className="font-mono">
                   {data.reference_code}
                 </span>
-                {" · "}
+                {' · '}
               </>
             ) : null}
             وصلت {crmDateTime(data.created_at)}
@@ -161,9 +149,7 @@ export default function MessageDetailPage() {
         <div className="flex flex-col gap-6">
           <section className="rounded-xl border border-border bg-surface p-5 shadow-subtle">
             <h2 className="mb-3 text-sm font-semibold">الرسالة</h2>
-            <p className="whitespace-pre-wrap text-sm leading-relaxed">
-              {data.message}
-            </p>
+            <p className="whitespace-pre-wrap text-sm leading-relaxed">{data.message}</p>
           </section>
 
           <ClientReplies
@@ -172,11 +158,7 @@ export default function MessageDetailPage() {
             trackingToken={data.tracking_token}
             language={data.language}
             hasEmail={Boolean(data.email)}
-            invalidate={[
-              ["contact-message", id],
-              ["contact-messages"],
-              ["dashboard-summary"],
-            ]}
+            invalidate={[['contact-message', id], ['contact-messages'], ['dashboard-summary']]}
           />
         </div>
 
@@ -186,18 +168,18 @@ export default function MessageDetailPage() {
             <dl className="grid gap-4 text-sm">
               <div>
                 <dt className="text-xs text-muted">الاسم</dt>
-                <dd className="mt-0.5 font-medium">{data.name || "—"}</dd>
+                <dd className="mt-0.5 font-medium">{data.name || '—'}</dd>
               </div>
               <div>
                 <dt className="text-xs text-muted">البريد</dt>
                 <dd className="mt-0.5 font-medium" dir="ltr">
-                  {data.email || "—"}
+                  {data.email || '—'}
                 </dd>
               </div>
               <div>
                 <dt className="text-xs text-muted">الهاتف</dt>
                 <dd className="mt-0.5 font-medium" dir="ltr">
-                  {data.phone || "—"}
+                  {data.phone || '—'}
                 </dd>
               </div>
             </dl>
@@ -212,7 +194,7 @@ export default function MessageDetailPage() {
               ) : null}
               {data.phone ? (
                 <a
-                  href={`tel:${data.phone.replace(/\s+/g, "")}`}
+                  href={`tel:${data.phone.replace(/\s+/g, '')}`}
                   className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-4 text-sm hover:bg-surface-hover"
                 >
                   اتصال هاتفي

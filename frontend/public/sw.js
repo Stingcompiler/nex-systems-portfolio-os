@@ -8,7 +8,7 @@
  *  - الصفحات العامة: الشبكة أولًا، مع ارتداد إلى صفحة عدم الاتصال.
  *  - الأصول الثابتة (_next/static): من الذاكرة أولًا (محتوى مُبصَّم لا يتغيّر).
  */
-const VERSION = 'stingdev-v1';
+const VERSION = 'stingdev-v2';
 // العربية هي اللغة الافتراضية — صفحة عدم الاتصال المخزَّنة مسبقًا
 const OFFLINE_URL = '/ar/offline';
 const PRECACHE = [OFFLINE_URL, '/icons/icon-192.png'];
@@ -34,7 +34,9 @@ function isPrivate(url) {
     url.pathname.startsWith('/admin') ||
     url.pathname.startsWith('/dashboard') ||
     /\/member(\/|$)/.test(url.pathname) ||
-    /\/newsletter\//.test(url.pathname)
+    /\/newsletter\//.test(url.pathname) ||
+    // صفحات المتابعة برموز شخصية
+    /\/track\//.test(url.pathname)
   );
 }
 

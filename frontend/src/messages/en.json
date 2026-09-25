@@ -661,6 +661,20 @@
     },
     "trackLink": "Track your request",
     "trackMessageLink": "Track your message",
-    "detailsAndReplies": "Details and replies"
+    "detailsAndReplies": "Details and replies",
+    "stageGuideTitle": "What do the stages mean?",
+    "currentStage": "Your current stage",
+    "youAreHere": "You are here",
+    "stageHelp": {
+      "received": "Your request arrived and is logged under its number. We'll read it and start reviewing within a working day.",
+      "reviewing": "We're studying your needs: reviewing the requirements, and we may contact you with a question or to book a short call.",
+      "proposal": "We sent you a proposal with scope, timeline and cost. Review it and tell us your decision or any changes.",
+      "inProgress": "You approved the proposal and we've started building. We'll update you at each milestone.",
+      "completed": "We've delivered the project. We stay with you for support and future improvements.",
+      "closed": "This request was closed without going ahead. If things change, message us or send a new request.",
+      "messageReceived": "Your message arrived and is logged under its number; it will be read soon.",
+      "messageRead": "The team has read your message and is working on a reply.",
+      "messageReplied": "We've replied to your message — see the reply below and in your email if you gave one."
+    }
   }
 }

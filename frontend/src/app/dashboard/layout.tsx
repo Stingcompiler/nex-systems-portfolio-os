@@ -51,6 +51,10 @@ export const metadata: Metadata = {
     ],
     apple: '/icons/apple-icon-180.png',
   },
+  // تطبيق مستقل يفتح على اللوحة: على iPhone لا تصل إشعارات الويب إلا من
+  // تطبيق مثبّت على الشاشة الرئيسية
+  manifest: '/dashboard.webmanifest',
+  appleWebApp: { capable: true, title: 'لوحة ستينج', statusBarStyle: 'default' },
 };
 
 export default function DashboardRootLayout({ children }: { children: ReactNode }) {

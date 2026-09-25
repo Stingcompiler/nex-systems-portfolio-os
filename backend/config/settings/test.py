@@ -25,3 +25,4 @@ DATABASES = {
         "TEST": {"NAME": ":memory:"},
     }
 }
+PUSH_SYNC = True

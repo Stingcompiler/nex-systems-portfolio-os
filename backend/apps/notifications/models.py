@@ -83,8 +83,8 @@ class Notification(TranslatableMixin, models.Model):
         instance=None,
         recipient=None,
     ) -> "Notification":
-        """ينشئ إشعارًا. يُستدعى من الإشارات والمهام الخلفية."""
-        return cls.objects.create(
+        """ينشئ إشعارًا ويرسله إلى أجهزة الفريق إن كان من الأنواع العاجلة."""
+        notification = cls.objects.create(
             recipient=recipient,
             type=notification_type,
             title_ar=title_ar[:200],
@@ -95,6 +95,10 @@ class Notification(TranslatableMixin, models.Model):
             model_name=instance.__class__.__name__ if instance is not None else "",
             object_id=str(getattr(instance, "pk", "") or "") if instance is not None else "",
         )
+        from apps.notifications.push import queue_push
+
+        queue_push(notification)
+        return notification
 
     @classmethod
     def visible_to(cls, user):
@@ -108,3 +112,71 @@ class Notification(TranslatableMixin, models.Model):
                 models.Q(recipient=user) | models.Q(recipient__isnull=True)
             )
         return queryset.select_related("recipient")
+
+
+class PushSubscription(models.Model):
+    """جهاز فعّل إشعارات المتصفح (Web Push) لعضو في فريق اللوحة.
+
+    ``endpoint`` عنوان خدمة الإشعارات لدى المتصفح (Google/Mozilla/Apple)،
+    والمفتاحان يشفّران محتوى الإشعار فلا يقرؤه وسيط الخدمة.
+    """
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name="المستخدم",
+        related_name="push_subscriptions", on_delete=models.CASCADE,
+    )
+    endpoint = models.URLField("عنوان الاشتراك", max_length=600, unique=True)
+    p256dh = models.CharField("مفتاح التشفير", max_length=200)
+    auth = models.CharField("مفتاح المصادقة", max_length=100)
+    user_agent = models.CharField("المتصفح", max_length=200, blank=True)
+    created_at = models.DateTimeField("تاريخ التفعيل", auto_now_add=True)
+    last_used_at = models.DateTimeField("آخر إرسال", null=True, blank=True)
+
+    class Meta:
+        verbose_name = "اشتراك إشعارات"
+        verbose_name_plural = "اشتراكات الإشعارات"
+
+    def __str__(self):
+        return f"{self.user} — {self.user_agent[:40]}"
+
+
+class PushKeys(models.Model):
+    """مفتاحا VAPID للموقع: يُولَّدان مرة واحدة ويُحفظان.
+
+    المتصفح يربط كل اشتراك بالمفتاح العام؛ تغييره يُبطل الاشتراكات كلها،
+    لذلك يُحفظ في قاعدة البيانات لا في ذاكرة العملية — ولا يحتاج إعدادًا
+    يدويًا في بيئة الاستضافة.
+    """
+
+    public_key = models.CharField("المفتاح العام", max_length=200)
+    private_pem = models.TextField("المفتاح الخاص")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "مفاتيح الإشعارات"
+        verbose_name_plural = "مفاتيح الإشعارات"
+
+    @classmethod
+    def load(cls) -> "PushKeys":
+        keys = cls.objects.order_by("pk").first()
+        if keys is not None:
+            return keys
+
+        import base64
+
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric import ec
+
+        private = ec.generate_private_key(ec.SECP256R1())
+        public_raw = private.public_key().public_bytes(
+            serialization.Encoding.X962, serialization.PublicFormat.UncompressedPoint
+        )
+        pem = private.private_bytes(
+            serialization.Encoding.PEM,
+            serialization.PrivateFormat.PKCS8,
+            serialization.NoEncryption(),
+        ).decode()
+        return cls.objects.create(
+            public_key=base64.urlsafe_b64encode(public_raw).decode().rstrip("="),
+            private_pem=pem,
+        )

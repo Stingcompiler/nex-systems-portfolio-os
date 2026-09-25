@@ -13,6 +13,7 @@ import { useParams } from 'next/navigation';
 
 import { Badge } from '@/components/ui/misc';
 import { useToast } from '@/contexts/ToastContext';
+import { ClientReplies, type ClientReply } from '@/features/dashboard/crm/client-replies';
 import { formatBytes } from '@/features/dashboard/media/media-picker';
 import { crmDateTime, REQUEST_STATUSES } from '@/features/dashboard/crm/shared';
 import { api, toApiError } from '@/lib/api/client';
@@ -56,6 +57,8 @@ interface ProjectRequestDetail {
   lead_id: number | null;
   attachments: Attachment[];
   created_at: string;
+  tracking_token: string | null;
+  replies: ClientReply[];
 }
 
 const STATUS_TONE: Record<string, BadgeTone> = {
@@ -229,6 +232,15 @@ export default function RequestDetailPage() {
               </div>
             ) : null}
           </section>
+
+          <ClientReplies
+            endpoint={`/project-requests/${data.id}`}
+            replies={data.replies ?? []}
+            trackingToken={data.tracking_token}
+            language={data.preferred_language}
+            hasEmail={Boolean(data.email)}
+            invalidate={[['project-request', id]]}
+          />
 
           {data.attachments.length ? (
             <section className="rounded-xl border border-border bg-surface p-5 shadow-subtle">

@@ -214,6 +214,7 @@ REST_FRAMEWORK = {
         "password_forgot": "3/1h",
         "resend_verification": "1/10m",
         "anon_write": "20/1h",
+        "track_lookup": "10/10m",
     },
     "UNAUTHENTICATED_USER": "django.contrib.auth.models.AnonymousUser",
 }

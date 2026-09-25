@@ -7,11 +7,13 @@ import { useId, useState, type FormEvent, type ReactNode } from 'react';
 import { buttonClass } from '@/components/ui/button-styles';
 import { fieldClass } from '@/components/ui/field';
 import { api, toApiError, type ApiErrorPayload } from '@/lib/api/client';
+import { Link } from '@/lib/i18n/navigation';
 import type { Locale } from '@/lib/i18n/routing';
 import { cn } from '@/lib/utils/cn';
 
 export function ContactForm() {
   const t = useTranslations('contact');
+  const tTrack = useTranslations('track');
   const locale = useLocale() as Locale;
 
   const [form, setForm] = useState({
@@ -23,7 +25,9 @@ export function ContactForm() {
     website: '', // honeypot
   });
   const [submitting, setSubmitting] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [sent, setSent] = useState<{ reference_code?: string; tracking_token?: string } | null>(
+    null,
+  );
   const [error, setError] = useState<ApiErrorPayload | null>(null);
   const [errors, setErrors] = useState<Partial<Record<'message' | 'contact' | 'email', string>>>(
     {},
@@ -56,8 +60,11 @@ export function ContactForm() {
     setSubmitting(true);
     setError(null);
     try {
-      await api.post('/contact-messages/submit/', { ...form, language: locale });
-      setSent(true);
+      const { data } = await api.post<{ reference_code?: string; tracking_token?: string }>(
+        '/contact-messages/submit/',
+        { ...form, language: locale },
+      );
+      setSent(data ?? {});
     } catch (caught) {
       const payload = toApiError(caught);
       const server = payload.errors ?? {};
@@ -78,6 +85,19 @@ export function ContactForm() {
         <Check className="mx-auto mb-2 size-8 text-success" aria-hidden="true" />
         <p className="font-medium">{t('sentTitle')}</p>
         <p className="mt-1 text-sm text-muted">{t('sentBody')}</p>
+        {sent.reference_code ? (
+          <p className="mt-4 inline-block rounded-lg bg-surface-hover px-4 py-2 text-sm">
+            {tTrack('referenceLabel')}:{' '}
+            <strong dir="ltr" className="font-mono">{sent.reference_code}</strong>
+          </p>
+        ) : null}
+        {sent.tracking_token ? (
+          <div className="mt-4">
+            <Link href={`/track/${sent.tracking_token}`} className={buttonClass('primary', 'sm')}>
+              {tTrack('trackMessageLink')}
+            </Link>
+          </div>
+        ) : null}
       </div>
     );
   }

@@ -34,6 +34,10 @@ _SUBJECTS = {
         "ar": "استلمنا رسالتك",
         "en": "We received your message",
     },
+    "client_reply": {
+        "ar": "رد جديد من ستينج سيستم",
+        "en": "New reply from StingSystem",
+    },
 }
 
 

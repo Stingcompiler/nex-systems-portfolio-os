@@ -433,6 +433,7 @@ def test_client_sees_own_requests_by_verified_email(api_client, make_user):
         "id", "reference_code", "status", "created_at", "updated_at",
         "project_type", "project_type_display", "service_title",
         "description", "budget_range", "budget_display", "timeline", "timeline_display",
+        "tracking_token",
     }
 
 

@@ -90,6 +90,7 @@ export function RequestForm({
   whatsappMessage: string;
 }) {
   const t = useTranslations('requestForm');
+  const tTrack = useTranslations('track');
   const locale = useLocale() as Locale;
   const service = useServiceFromUrl(locale);
   const { member } = useMember();
@@ -99,6 +100,7 @@ export function RequestForm({
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [reference, setReference] = useState<string | null>(null);
+  const [trackingToken, setTrackingToken] = useState<string | null>(null);
   const [submissionId] = useState(newSubmissionId);
   // حارس متزامن: الحالة لا تتحدّث قبل النقرة الثانية السريعة
   const inFlight = useRef(false);
@@ -222,7 +224,7 @@ export function RequestForm({
     setFormError(null);
     try {
       const { project_type, ...rest } = form;
-      const { data } = await api.post<{ reference_code: string }>(
+      const { data } = await api.post<{ reference_code: string; tracking_token?: string }>(
         '/project-requests/submit/',
         {
           ...rest,
@@ -235,6 +237,7 @@ export function RequestForm({
           preferred_language: locale,
         },
       );
+      setTrackingToken(data.tracking_token ?? null);
       setReference(data.reference_code);
     } catch (caught) {
       const payload = toApiError(caught);
@@ -288,6 +291,13 @@ export function RequestForm({
             {t('replyPromise')}
           </p>
         </div>
+        {trackingToken ? (
+          <div className="mt-6">
+            <Link href={`/track/${trackingToken}`} className={buttonClass('primary')}>
+              {tTrack('trackLink')}
+            </Link>
+          </div>
+        ) : null}
         {member ? (
           <Link
             href="/member/requests"

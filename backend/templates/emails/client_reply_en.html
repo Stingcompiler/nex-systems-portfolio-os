@@ -1,0 +1,21 @@
+{% extends "emails/base_en.html" %}
+
+{% block title %}New reply on {{ what }}{% endblock %}
+
+{% block content %}
+<p style="margin:0 0 16px;">Hi {{ user_name }},</p>
+<p style="margin:0 0 16px;">
+  We added a reply on {{ what }} <strong dir="ltr">{{ reference_code }}</strong>:
+</p>
+<div style="margin:0 0 24px;padding:16px 18px;background-color:#f1f5f9;border-radius:8px;border-inline-start:4px solid #0E7C86;white-space:pre-line;">{{ body }}</div>
+<p style="margin:0 0 24px;text-align:center;">
+  <a href="{{ action_url }}"
+     style="display:inline-block;background-color:#0E7C86;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:10px;font-weight:600;font-size:16px;">
+    View status and replies
+  </a>
+</p>
+{% endblock %}
+
+{% block footer %}
+To answer, message us on WhatsApp or through the contact form and mention your reference.
+{% endblock %}

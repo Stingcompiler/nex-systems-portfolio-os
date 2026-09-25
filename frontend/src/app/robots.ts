@@ -13,6 +13,8 @@ export default function robots(): MetadataRoute.Robots {
           '/api/', '/dashboard/', '/admin/',
           '/ar/member/', '/en/member/',
           '/ar/newsletter/', '/en/newsletter/',
+          // صفحات المتابعة برموز سرية؛ «/ar/track» نفسها (البحث) تبقى متاحة
+          '/ar/track/', '/en/track/',
         ],
       },
     ],

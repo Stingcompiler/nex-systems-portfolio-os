@@ -14,6 +14,7 @@ import {
 import { getLocale, getTranslations } from 'next-intl/server';
 
 import { SiteMark } from '@/components/layout/site-mark';
+import { FooterTrackBox } from '@/features/track/track-box';
 import { Container } from '@/components/ui/container';
 import { getCaseStudies } from '@/lib/api/queries';
 import type { SiteSettings } from '@/lib/api/types';
@@ -174,6 +175,8 @@ export async function Footer({ settings }: { settings: SiteSettings | null }) {
             </ul>
           </nav>
         </div>
+
+        <FooterTrackBox className="mt-12" />
 
         <div className="mt-12 flex flex-col gap-3 border-t border-border pt-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
           <p>

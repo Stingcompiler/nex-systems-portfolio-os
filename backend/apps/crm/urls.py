@@ -21,6 +21,8 @@ public_patterns = [
     path("project-requests/draft/", views.ProjectRequestDraftView.as_view(), name="request-draft"),
     path("project-requests/submit/", views.ProjectRequestSubmitView.as_view(), name="request-submit"),
     path("project-requests/mine/", views.MyProjectRequestsView.as_view(), name="request-mine"),
+    path("track/", views.TrackLookupView.as_view(), name="track-lookup"),
+    path("track/<str:token>/", views.TrackDetailView.as_view(), name="track-detail"),
 ]
 
 urlpatterns = public_patterns + [path("", include(router.urls))]

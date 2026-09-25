@@ -24,13 +24,18 @@ export function websiteJsonLd(settings: SiteSettings | null, locale: Locale): Js
   };
 }
 
+/** شعار الهوية للنتائج المنسّقة في محركات البحث. */
+const BRAND_LOGO_PNG = '/icons/icon-512.png';
+
 export function organizationJsonLd(settings: SiteSettings | null, locale: Locale): Json {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: settings?.site_name || SITE_NAME_FALLBACK,
     url: absoluteUrl(`/${locale}`),
-    logo: settings?.logo_light?.url ? absoluteUrl(settings.logo_light.url) : undefined,
+    // PNG مربّع ثابت لا الشعار المرفوع: Google يطلب صورة نقطية 112px فأكثر
+    // بعنوان مستقر، والمرفوع قد يكون SVG أو شعارًا عريضًا
+    logo: absoluteUrl(BRAND_LOGO_PNG),
     email: settings?.email || undefined,
     telephone: toE164(settings?.phone) || undefined,
     sameAs: settings?.social_links?.map((link) => link.url) ?? undefined,

@@ -1,3 +1,5 @@
+import secrets
+
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -18,9 +20,42 @@ from apps.crm.enums import (
 )
 
 
+def new_tracking_token() -> str:
+    """رمز رابط المتابعة: 22 حرفًا عشوائيًا (128 بت) لا يُخمَّن.
+
+    الرقم المرجعي تسلسلي (REQ-2026-0001) فيُعرف ما قبله وما بعده؛ لذلك
+    لا يفتح صفحة المتابعة وحده، والرابط المباشر يحمل هذا الرمز.
+    """
+    return secrets.token_urlsafe(16)
+
+
+def next_reference(model, prefix: str) -> str:
+    """الرقم المرجعي التالي بصيغة ``PREFIX-YYYY-0001`` لكل سنة."""
+    year_prefix = f"{prefix}-{timezone.now().year}-"
+    last = (
+        model.objects.filter(reference_code__startswith=year_prefix)
+        .order_by("-reference_code")
+        .values_list("reference_code", flat=True)
+        .first()
+    )
+    sequence = 1
+    if last:
+        try:
+            sequence = int(last.rsplit("-", 1)[1]) + 1
+        except (ValueError, IndexError):
+            sequence = model.objects.count() + 1
+    return f"{year_prefix}{sequence:04d}"
+
+
 class ContactMessage(TimeStampedModel):
     """رسالة من نموذج التواصل العام."""
 
+    reference_code = models.CharField(
+        "الرقم المرجعي", max_length=20, unique=True, null=True, blank=True
+    )
+    tracking_token = models.CharField(
+        "رمز المتابعة", max_length=32, unique=True, null=True, blank=True, editable=False
+    )
     name = models.CharField("الاسم", max_length=120, blank=True)
     email = models.EmailField("البريد", blank=True)
     phone = models.CharField("الهاتف", max_length=32, blank=True)
@@ -45,6 +80,13 @@ class ContactMessage(TimeStampedModel):
     def __str__(self):
         return f"{self.name} — {self.subject or 'بلا موضوع'}"
 
+    def save(self, *args, **kwargs):
+        if not self.reference_code:
+            self.reference_code = next_reference(ContactMessage, "MSG")
+        if not self.tracking_token:
+            self.tracking_token = new_tracking_token()
+        super().save(*args, **kwargs)
+
 
 class ProjectRequest(TimeStampedModel):
     """طلب مشروع من النموذج متعدد الخطوات.
@@ -55,6 +97,9 @@ class ProjectRequest(TimeStampedModel):
 
     reference_code = models.CharField(
         "الرمز المرجعي", max_length=20, unique=True, blank=True, db_index=True
+    )
+    tracking_token = models.CharField(
+        "رمز المتابعة", max_length=32, unique=True, null=True, blank=True, editable=False
     )
 
     # الخطوة 1
@@ -122,29 +167,57 @@ class ProjectRequest(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         if not self.reference_code:
-            self.reference_code = self._generate_reference()
+            self.reference_code = next_reference(ProjectRequest, "REQ")
+        if not self.tracking_token:
+            self.tracking_token = new_tracking_token()
         super().save(*args, **kwargs)
-
-    @staticmethod
-    def _generate_reference() -> str:
-        year = timezone.now().year
-        prefix = f"REQ-{year}-"
-        last = (
-            ProjectRequest.objects.filter(reference_code__startswith=prefix)
-            .order_by("-reference_code")
-            .first()
-        )
-        sequence = 1
-        if last and last.reference_code:
-            try:
-                sequence = int(last.reference_code.rsplit("-", 1)[1]) + 1
-            except (ValueError, IndexError):
-                sequence = ProjectRequest.objects.count() + 1
-        return f"{prefix}{sequence:04d}"
 
     @property
     def is_complete(self) -> bool:
         return bool(self.email and self.status != RequestStatus.DRAFT)
+
+
+class ClientReply(TimeStampedModel):
+    """رد الفريق على طلب مشروع أو رسالة تواصل — يراه صاحبه في صفحة المتابعة.
+
+    خلاف ``CrmNote`` (ملاحظة داخلية)، هذا نص موجَّه إلى العميل: يُعرض في
+    صفحة المتابعة ويُرسل إلى بريده.
+    """
+
+    request = models.ForeignKey(
+        ProjectRequest, verbose_name="الطلب", related_name="replies",
+        null=True, blank=True, on_delete=models.CASCADE,
+    )
+    message = models.ForeignKey(
+        ContactMessage, verbose_name="الرسالة", related_name="replies",
+        null=True, blank=True, on_delete=models.CASCADE,
+    )
+    body = models.TextField("نص الرد")
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name="كاتب الرد", related_name="client_replies",
+        null=True, blank=True, on_delete=models.SET_NULL,
+    )
+
+    class Meta:
+        verbose_name = "رد على العميل"
+        verbose_name_plural = "الردود على العملاء"
+        ordering = ["created_at"]
+        constraints = [
+            models.CheckConstraint(
+                name="clientreply_single_target",
+                condition=(
+                    models.Q(request__isnull=False, message__isnull=True)
+                    | models.Q(request__isnull=True, message__isnull=False)
+                ),
+            )
+        ]
+
+    def __str__(self):
+        return self.body[:60]
+
+    @property
+    def target(self):
+        return self.request or self.message
 
 
 class RequestAttachment(TimeStampedModel):

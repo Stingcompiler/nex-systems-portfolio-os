@@ -609,19 +609,19 @@
     "title": "Track your request",
     "intro": "Check the status of the project request or message you sent, and read our replies.",
     "boxTitle": "Track your request",
-    "boxHint": "Enter two keys: your request or message number with the email or phone you used.",
-    "firstLabel": "Request number, email or phone",
-    "firstPlaceholder": "REQ-2026-0001",
-    "secondLabel": "To confirm: email or phone",
-    "secondPlaceholder": "name@example.com",
+    "boxHint": "Enter any two of: request number, your name, email or phone.",
+    "firstLabel": "Request number, name or email",
+    "firstPlaceholder": "e.g. 48213",
+    "secondLabel": "To confirm: name, email or phone",
+    "secondPlaceholder": "e.g. your name as you entered it",
     "submit": "Show status",
     "searching": "Searching…",
-    "notFound": "We couldn't find a request with these details. Check them as you entered them when sending.",
+    "notFound": "We couldn't find a request with these details. Enter them as you did when sending.",
     "tooMany": "Too many attempts. Wait a few minutes and try again.",
     "errorGeneric": "Search isn't available right now. Try again shortly.",
     "errors": {
-      "unrecognized": "Enter the request number, email or phone number as you entered it.",
-      "same_kind": "Enter two different keys, for example the request number with your email or phone."
+      "unrecognized": "Enter the request number, your name, email or phone as you entered it.",
+      "same_kind": "Enter two different details, for example the request number with your name."
     },
     "results": "We found more than one item:",
     "kind": {
@@ -629,7 +629,7 @@
       "message": "Message"
     },
     "open": "Open",
-    "whyTwo": "We ask for two keys because this page shows your request details, so only you can see them.",
+    "whyTwo": "We ask for two details because this page shows your request and our replies, so someone who only knows your name can't see it.",
     "greeting": "Hi {name}",
     "referenceLabel": "Reference",
     "sentOn": "Sent on {date}",

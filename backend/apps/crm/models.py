@@ -29,22 +29,25 @@ def new_tracking_token() -> str:
     return secrets.token_urlsafe(16)
 
 
-def next_reference(model, prefix: str) -> str:
-    """الرقم المرجعي التالي بصيغة ``PREFIX-YYYY-0001`` لكل سنة."""
-    year_prefix = f"{prefix}-{timezone.now().year}-"
-    last = (
-        model.objects.filter(reference_code__startswith=year_prefix)
-        .order_by("-reference_code")
-        .values_list("reference_code", flat=True)
-        .first()
-    )
-    sequence = 1
-    if last:
-        try:
-            sequence = int(last.rsplit("-", 1)[1]) + 1
-        except (ValueError, IndexError):
-            sequence = model.objects.count() + 1
-    return f"{year_prefix}{sequence:04d}"
+#: الرقم المرجعي: خمسة أرقام تُحفظ وتُقال بالهاتف (48213) بدل REQ-2026-0004.
+#  عشوائي لا تسلسلي: التسلسل يكشف عدد الطلبات. لا يفتح صفحة المتابعة وحده —
+#  البحث يطلب مفتاحًا ثانيًا (الاسم أو البريد أو الهاتف).
+REFERENCE_MIN = 10000
+REFERENCE_MAX = 99999
+
+
+def new_reference() -> str:
+    """رقم من خمس خانات فريد بين الطلبات والرسائل معًا — الرقم يدل على سجل واحد."""
+    for _ in range(50):
+        candidate = str(secrets.randbelow(REFERENCE_MAX - REFERENCE_MIN + 1) + REFERENCE_MIN)
+        taken = (
+            ProjectRequest.objects.filter(reference_code=candidate).exists()
+            or ContactMessage.objects.filter(reference_code=candidate).exists()
+        )
+        if not taken:
+            return candidate
+    # مساحة الأرقام مزدحمة (عشرات آلاف السجلات): ست خانات
+    return str(secrets.randbelow(900000) + 100000)
 
 
 class ContactMessage(TimeStampedModel):
@@ -52,6 +55,10 @@ class ContactMessage(TimeStampedModel):
 
     reference_code = models.CharField(
         "الرقم المرجعي", max_length=20, unique=True, null=True, blank=True
+    )
+    #: الرقم بالصيغة القديمة (MSG-2026-0001) — ما زال في رسائل أُرسلت فيُقبل في البحث
+    legacy_reference = models.CharField(
+        "الرقم القديم", max_length=20, blank=True, db_index=True, editable=False
     )
     tracking_token = models.CharField(
         "رمز المتابعة", max_length=32, unique=True, null=True, blank=True, editable=False
@@ -82,7 +89,7 @@ class ContactMessage(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         if not self.reference_code:
-            self.reference_code = next_reference(ContactMessage, "MSG")
+            self.reference_code = new_reference()
         if not self.tracking_token:
             self.tracking_token = new_tracking_token()
         super().save(*args, **kwargs)
@@ -97,6 +104,10 @@ class ProjectRequest(TimeStampedModel):
 
     reference_code = models.CharField(
         "الرمز المرجعي", max_length=20, unique=True, blank=True, db_index=True
+    )
+    #: الرقم بالصيغة القديمة (REQ-2026-0001) — ما زال في رسائل أُرسلت فيُقبل في البحث
+    legacy_reference = models.CharField(
+        "الرقم القديم", max_length=20, blank=True, db_index=True, editable=False
     )
     tracking_token = models.CharField(
         "رمز المتابعة", max_length=32, unique=True, null=True, blank=True, editable=False
@@ -167,7 +178,7 @@ class ProjectRequest(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         if not self.reference_code:
-            self.reference_code = next_reference(ProjectRequest, "REQ")
+            self.reference_code = new_reference()
         if not self.tracking_token:
             self.tracking_token = new_tracking_token()
         super().save(*args, **kwargs)

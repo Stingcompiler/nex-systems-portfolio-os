@@ -53,14 +53,19 @@ def _submit(api_client, **overrides):
 @pytest.mark.parametrize(
     ("raw", "expected"),
     [
+        ("48213", ("reference", "48213")),
+        ("#48213", ("reference", "48213")),
+        ("٤٨٢١٣", ("reference", "48213")),
         ("req-2026-0001", ("reference", "REQ-2026-0001")),
         (" MSG-2026-12 ", ("reference", "MSG-2026-12")),
+        ("مُصعَب أحمد", ("name", "مصعب احمد")),
+        ("Sarah Hassan", ("name", "sarah hassan")),
         ("A@B.com", ("email", "a@b.com")),
         ("0912345678", ("phone", "912345678")),
         ("+249 91 234 5678", ("phone", "912345678")),
         ("٠٩١٢٣٤٥٦٧٨", ("phone", "912345678")),
-        ("مرحبا", None),
         ("123", None),
+        ("abc123", None),
     ],
 )
 def test_keys_are_classified(raw, expected):
@@ -72,14 +77,15 @@ def test_keys_are_classified(raw, expected):
 
 def test_submissions_return_a_tracking_token(api_client):
     request = _submit(api_client)
-    assert request["reference_code"].startswith("REQ-")
+    assert request["reference_code"].isdigit() and len(request["reference_code"]) == 5
     assert len(request["tracking_token"]) >= 20
 
     message = api_client.post(
         CONTACT_URL, {"name": "زائر", "email": "v@example.com", "message": "استفسار عن الخدمات"},
         format="json",
     ).data
-    assert message["reference_code"].startswith("MSG-")
+    assert message["reference_code"].isdigit()
+    assert message["reference_code"] != request["reference_code"]
     assert message["tracking_token"] != request["tracking_token"]
 
 
@@ -98,6 +104,10 @@ def test_confirmation_email_links_to_the_tracking_page(api_client):
         ("client@example.com", "{ref}"),
         ("{ref}", "0912345678"),
         ("CLIENT@example.com", "+249912345678"),
+        ("{ref}", "مصعب"),
+        ("مُصْعَب أحمد", "{ref}"),
+        ("client@example.com", "مصعب احمد"),
+        ("0912345678", "مصعب"),
     ],
 )
 def test_two_matching_keys_find_the_request(api_client, first, second):
@@ -157,7 +167,8 @@ def test_a_wrong_second_key_reveals_nothing(api_client):
     ("first", "second", "code"),
     [
         ("client@example.com", "other@example.com", "same_kind"),
-        ("كلام", "client@example.com", "unrecognized"),
+        ("abc123", "client@example.com", "unrecognized"),
+        ("مصعب", "أحمد", "same_kind"),
     ],
 )
 def test_bad_key_pairs_are_rejected(api_client, first, second, code):
@@ -272,13 +283,31 @@ def test_empty_reply_is_rejected(api_client, crm_manager):
     assert response.status_code == 400
 
 
-def test_messages_get_sequential_references():
-    first = ContactMessage.objects.create(message="أ")
-    second = ContactMessage.objects.create(message="ب")
-    assert first.reference_code.startswith("MSG-")
-    assert int(second.reference_code.rsplit("-", 1)[1]) == int(
-        first.reference_code.rsplit("-", 1)[1]
-    ) + 1
+def test_references_are_unique_across_requests_and_messages():
+    codes = [ContactMessage.objects.create(message="أ").reference_code for _ in range(20)]
+    codes += [
+        ProjectRequest.objects.create(status="new", email=f"c{i}@example.com").reference_code
+        for i in range(20)
+    ]
+    assert len(set(codes)) == 40
+
+
+def test_wrong_name_reveals_nothing(api_client):
+    ref = _submit(api_client)["reference_code"]
+    response = api_client.post(TRACK_URL, {"first": ref, "second": "خالد"}, format="json")
+    assert response.status_code == 404
+
+
+def test_old_reference_still_works(api_client):
+    created = _submit(api_client)
+    ProjectRequest.objects.filter(tracking_token=created["tracking_token"]).update(
+        legacy_reference="REQ-2026-0007"
+    )
+    response = api_client.post(
+        TRACK_URL, {"first": "req-2026-0007", "second": "client@example.com"}, format="json"
+    )
+    assert response.status_code == 200
+    assert response.data[0]["reference_code"] == created["reference_code"]
 
 
 def test_staff_still_cannot_create_records_directly(api_client, crm_manager):

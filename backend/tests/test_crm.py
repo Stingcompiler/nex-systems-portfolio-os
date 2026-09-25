@@ -1,5 +1,7 @@
 """اختبارات إدارة العملاء: الطلبات، إنشاء Lead، التحويل، العزل."""
 
+import re
+
 import pytest
 from django.core import mail
 from django.core.management import call_command
@@ -134,7 +136,7 @@ def test_project_request_submit_creates_lead_and_notifies(api_client):
     response = api_client.post(SUBMIT_URL, VALID_REQUEST, format="json")
 
     assert response.status_code == 201
-    assert response.data["reference_code"].startswith("REQ-")
+    assert re.fullmatch(r"\d{5}", response.data["reference_code"])
 
     request_obj = ProjectRequest.objects.get()
     assert request_obj.status == RequestStatus.NEW
@@ -148,14 +150,16 @@ def test_project_request_submit_creates_lead_and_notifies(api_client):
     assert any("client@example.com" in message.to for message in mail.outbox)
 
 
-def test_reference_codes_are_sequential(api_client):
-    first = api_client.post(SUBMIT_URL, VALID_REQUEST, format="json").data["reference_code"]
-    second = api_client.post(
-        SUBMIT_URL, {**VALID_REQUEST, "email": "other@example.com"}, format="json"
-    ).data["reference_code"]
+def test_reference_codes_are_short_and_unique(api_client):
+    codes = {
+        api_client.post(
+            SUBMIT_URL, {**VALID_REQUEST, "email": f"c{i}@example.com"}, format="json"
+        ).data["reference_code"]
+        for i in range(5)
+    }
 
-    assert first != second
-    assert int(first.rsplit("-", 1)[1]) + 1 == int(second.rsplit("-", 1)[1])
+    assert len(codes) == 5
+    assert all(re.fullmatch(r"\d{5}", code) for code in codes)
 
 
 def test_request_honeypot_blocks_spam(api_client):

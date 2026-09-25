@@ -4,6 +4,7 @@ import { LoaderCircle, LogIn } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState, type FormEvent } from 'react';
 
+import { BRAND_MARK_SRC } from '@/components/layout/site-mark';
 import { useAuth } from '@/contexts/AuthContext';
 import { fieldError, toApiError, type ApiErrorPayload } from '@/lib/api/client';
 
@@ -52,9 +53,14 @@ function LoginForm() {
     <main className="hero-surface grid min-h-dvh place-items-center px-4 py-12">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <span className="mx-auto mb-3 grid size-12 place-items-center rounded-xl bg-brand text-lg font-bold text-white shadow-[0_4px_16px_-4px_rgb(var(--primary)/0.6)]">
-            S
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={BRAND_MARK_SRC}
+            alt="StingSystem"
+            width={48}
+            height={48}
+            className="mx-auto mb-3 size-12 rounded-xl shadow-[0_4px_16px_-4px_rgb(var(--primary)/0.6)]"
+          />
           <h1 className="text-h2 font-semibold">لوحة التحكم</h1>
           <p className="mt-1 text-sm text-muted">سجّل الدخول للمتابعة</p>
         </div>

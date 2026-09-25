@@ -42,6 +42,15 @@ export const metadata: Metadata = {
   },
   // لوحة التحكم لا تُفهرس بأي حال
   robots: { index: false, follow: false },
+  // اللوحة خارج تخطيط الموقع فلا ترث أيقوناته؛ بدونها طلب المتصفح
+  // /favicon.ico وظهر التبويب بأيقونة مفقودة
+  icons: {
+    icon: [
+      { url: '/brand/stingsystem-mark.svg', type: 'image/svg+xml' },
+      { url: '/icons/favicon-48.png', sizes: '48x48', type: 'image/png' },
+    ],
+    apple: '/icons/apple-icon-180.png',
+  },
 };
 
 export default function DashboardRootLayout({ children }: { children: ReactNode }) {

@@ -195,7 +195,7 @@ class MyProjectRequestsView(APIView):
 
 
 class TrackLookupView(APIView):
-    """البحث عن طلب أو رسالة بمفتاحين (رقم مرجعي، بريد، هاتف)."""
+    """البحث عن طلب أو رسالة بمفتاحين مختلفين (رقم الطلب، الاسم، البريد، الهاتف)."""
 
     permission_classes = [AllowAny]
     throttle_classes = [TrackLookupThrottle]
@@ -215,8 +215,8 @@ class TrackLookupView(APIView):
             )
         except ValueError as error:
             messages = {
-                "unrecognized": "اكتب رقم الطلب أو البريد أو رقم الهاتف كما أدخلته",
-                "same_kind": "أدخل مفتاحين مختلفين: الرقم المرجعي مع البريد أو الهاتف مثلًا",
+                "unrecognized": "اكتب رقم الطلب أو اسمك أو بريدك أو هاتفك كما أدخلته",
+                "same_kind": "أدخل مفتاحين مختلفين: رقم الطلب مع اسمك مثلًا",
             }
             code = str(error)
             return Response(
@@ -304,7 +304,7 @@ class ProjectRequestViewSet(ClientReplyMixin, CrmBaseViewSet):
     reply_target_field = "request"
     serializer_class = ProjectRequestAdminSerializer
     filterset_fields = ["status", "project_type", "sector", "assigned_to"]
-    search_fields = ["reference_code", "name", "email", "company"]
+    search_fields = ["reference_code", "legacy_reference", "name", "email", "company"]
     ordering_fields = ["created_at", "status"]
     http_method_names = ["get", "post", "patch", "delete", "head", "options"]
 
@@ -345,7 +345,7 @@ class ContactMessageViewSet(ClientReplyMixin, CrmBaseViewSet):
             target.save(update_fields=["status", "updated_at"])
     serializer_class = ContactMessageAdminSerializer
     filterset_fields = ["status"]
-    search_fields = ["reference_code", "name", "email", "subject"]
+    search_fields = ["reference_code", "legacy_reference", "name", "email", "subject"]
     ordering_fields = ["created_at"]
     http_method_names = ["get", "post", "patch", "delete", "head", "options"]
 

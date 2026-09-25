@@ -121,10 +121,11 @@ export async function ProjectCard({
         </h3>
 
         {/* ثلاثة أسطر: في صف من أربع بطاقات كان الملخص الكامل سبعة أسطر (176px)
-            فتضاعف ارتفاع البطاقة؛ النص كاملًا في صفحة المشروع */}
-        <p className="mb-5 line-clamp-3 flex-1 text-base text-muted">{project.summary}</p>
+            فتضاعف ارتفاع البطاقة؛ النص كاملًا في صفحة المشروع. بلا flex-1: التمدد
+            يرفع ارتفاع الفقرة فتظهر الأسطر المقصوصة، والتذييل يُدفع بـ mt-auto */}
+        <p className="mb-5 line-clamp-3 text-base text-muted">{project.summary}</p>
 
-        <div className="flex flex-wrap items-center justify-between gap-2 text-label text-muted">
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-2 text-label text-muted">
           <span>{project.client_name || t('anonymous')}</span>
           {project.completed_at ? (
             <time dateTime={project.completed_at} className="code-inline inline font-mono">
@@ -195,11 +196,11 @@ export async function TestimonialCard({ testimonial }: { testimonial: Testimonia
       {/* أقوى دليل اجتماعي في الصفحة كان أصغر نص فيها. الاقتباس يُقرأ
           كاقتباس (17px) ويُقتطع عند ثمانية أسطر — رسائل الشكر الكاملة
           تُعرض في صفحة الآراء لا في بطاقة */}
-      <blockquote className="mb-6 flex-1 text-body-lg leading-relaxed [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:8] overflow-hidden">
+      <blockquote className="mb-6 text-body-lg leading-relaxed [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:8] overflow-hidden">
         {testimonial.content}
       </blockquote>
 
-      <div className="flex items-center justify-between gap-3 border-t border-border pt-4">
+      <div className="mt-auto flex items-center justify-between gap-3 border-t border-border pt-4">
         <div>
           <p className="font-heading text-base font-semibold">{testimonial.client_name}</p>
           <p className="text-label text-muted">

@@ -163,3 +163,22 @@ def test_test_push_goes_to_my_devices(api_client, team, sent):
     _login(api_client, team["crm"])
     assert api_client.post(TEST_URL).data == {"sent": 1}
     assert sent[0]["tag"] == "push-test"
+
+
+def test_site_admin_receives_new_request_push(
+    api_client, make_user, sent, django_capture_on_commit_callbacks
+):
+    admin = make_user(email="owner@example.com", role="super_admin", is_superuser=True)
+    PushSubscription.objects.create(user=admin, endpoint="https://push.example/owner-phone",
+                                    p256dh="k", auth="a")
+    PushSubscription.objects.create(user=admin, endpoint="https://push.example/owner-laptop",
+                                    p256dh="k", auth="a")
+
+    with django_capture_on_commit_callbacks(execute=True):
+        api_client.post("/api/v1/project-requests/submit/", REQUEST, format="json")
+
+    # كل أجهزة المدير — الهاتف والحاسوب
+    assert sorted(call["endpoint"] for call in sent) == [
+        "https://push.example/owner-laptop",
+        "https://push.example/owner-phone",
+    ]

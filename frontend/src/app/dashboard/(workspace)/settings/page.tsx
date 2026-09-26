@@ -48,7 +48,8 @@ const FIELDS: (FieldConfig & { tab: string; endpoint?: 'settings' | 'seo' })[] =
   { name: 'default_seo_description', label: 'وصف SEO الافتراضي',
     type: 'bilingual-textarea', tab: 'seo', endpoint: 'seo' },
   { name: 'default_og_image', label: 'صورة المشاركة الافتراضية', type: 'media',
-    tab: 'seo', endpoint: 'seo' },
+    tab: 'seo', endpoint: 'seo',
+    help: 'تظهر عند مشاركة رابط صفحة بلا صورة خاصة. صورة أفقية 1200×630 — الشعار أو الصورة المربعة تُتجاهل. فارغة = بطاقة تلقائية بالشعار والعنوان.' },
   { name: 'twitter_handle', label: 'حساب تويتر', type: 'text', tab: 'seo', endpoint: 'seo' },
 
   { name: 'default_language', label: 'اللغة الافتراضية', type: 'select', tab: 'operation',

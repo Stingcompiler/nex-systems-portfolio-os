@@ -169,7 +169,7 @@ export function MobileNav({
                         'flex min-h-11 items-center rounded-lg px-3 text-sm transition-colors',
                         active
                           ? 'bg-primary-soft font-medium text-primary'
-                          : 'text-muted hover:bg-surface-hover hover:text-foreground',
+                          : 'text-foreground/80 hover:bg-surface-hover hover:text-foreground',
                       )}
                     >
                       {item.label}
@@ -192,7 +192,7 @@ export function MobileNav({
             <ThemeToggle />
             <div className="flex items-center gap-1">
               <LocaleSwitcher />
-              <MemberMenu />
+              <MemberMenu labelled />
             </div>
           </div>
         </div>

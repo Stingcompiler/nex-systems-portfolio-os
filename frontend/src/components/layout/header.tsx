@@ -52,12 +52,13 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
             aria-hidden="true"
             className="mx-2 hidden h-5 w-px bg-border/60 sm:block"
           />
-          <ButtonLink
-            href="/request-quote"
-            size="sm"
-            className="hidden shadow-brand sm:inline-flex"
-          >
+          <ButtonLink href="/request-quote" size="sm" className="hidden shadow-brand sm:inline-flex">
             {t('requestQuote')}
+          </ButtonLink>
+          {/* الجوال: زر «ابدأ» ظاهر دائمًا — الزائر المقتنع في منتصف الصفحة
+              كان لا يجده إلا داخل القائمة */}
+          <ButtonLink href="/request-quote" size="sm" className="shadow-brand sm:hidden">
+            {t('requestQuoteShort')}
           </ButtonLink>
           <MobileNav items={items} secondaryItems={secondaryItems} ctaLabel={t('requestQuote')} />
         </div>

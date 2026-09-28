@@ -8,7 +8,7 @@ import { useId, useState, type FormEvent } from 'react';
 import { buttonClass } from '@/components/ui/button-styles';
 import { fieldClass } from '@/components/ui/field';
 import { api } from '@/lib/api/client';
-import { Link, usePathname, useRouter } from '@/lib/i18n/navigation';
+import { Link, useRouter } from '@/lib/i18n/navigation';
 import { cn } from '@/lib/utils/cn';
 
 interface TrackResult {
@@ -44,7 +44,10 @@ export function TrackBox({
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
-    if (!first.trim() || !second.trim()) return;
+    if (!first.trim() || !second.trim()) {
+      setError(t('needBoth'));
+      return;
+    }
     setPending(true);
     setError(null);
     setResults(null);
@@ -120,7 +123,8 @@ export function TrackBox({
         </div>
         <button
           type="submit"
-          disabled={pending || !first.trim() || !second.trim()}
+          // لا يُعطَّل قبل الكتابة: الزر الباهت بدا معطلًا بتباين ضعيف؛ الرسالة تشرح الناقص
+          disabled={pending}
           className={cn(buttonClass('primary'), 'gap-2')}
         >
           {pending ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : null}
@@ -169,11 +173,4 @@ export function TrackBox({
       {compact ? null : <p className="mt-4 text-xs text-muted">{t('whyTwo')}</p>}
     </div>
   );
-}
-
-/** مربع التذييل: يختفي في صفحات المتابعة نفسها كي لا يتكرر المربع. */
-export function FooterTrackBox({ className }: { className?: string }) {
-  const pathname = usePathname();
-  if (pathname === '/track' || pathname.startsWith('/track/')) return null;
-  return <TrackBox compact className={className} />;
 }

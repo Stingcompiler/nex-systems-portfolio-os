@@ -1,4 +1,4 @@
-import { ArrowRight, Quote, Star } from 'lucide-react';
+import { ArrowRight, Quote } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 
 import { CoverImage } from '@/components/content/media';
@@ -186,9 +186,11 @@ export function StatCard({ stat }: { stat: Stat }) {
   );
 }
 
+/**
+ * بلا نجوم تقييم: لم تأتِ من تقييم فعلي، وأربع نجوم تلفت النظر إلى الخامسة
+ * الناقصة. النص يُعرض كاملًا — آراء العملاء تُختصر في المحتوى لا بقصّها هنا.
+ */
 export async function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
-  const t = await getTranslations('testimonials');
-
   return (
     <Card className="flex h-full flex-col">
       {/* علامة الاقتباس اتجاهية — تنعكس؛ التقييم بالنجوم لا ينعكس */}
@@ -196,7 +198,7 @@ export async function TestimonialCard({ testimonial }: { testimonial: Testimonia
       {/* أقوى دليل اجتماعي في الصفحة كان أصغر نص فيها. الاقتباس يُقرأ
           كاقتباس (17px) ويُقتطع عند ثمانية أسطر — رسائل الشكر الكاملة
           تُعرض في صفحة الآراء لا في بطاقة */}
-      <blockquote className="mb-6 text-body-lg leading-relaxed [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:8] overflow-hidden">
+      <blockquote className="mb-6 text-body-lg leading-relaxed">
         {testimonial.content}
       </blockquote>
 
@@ -206,14 +208,6 @@ export async function TestimonialCard({ testimonial }: { testimonial: Testimonia
           <p className="text-label text-muted">
             {[testimonial.client_title, testimonial.company].filter(Boolean).join(' — ')}
           </p>
-        </div>
-        <div
-          className="flex items-center gap-0.5"
-          aria-label={t('rating', { value: testimonial.rating })}
-        >
-          {Array.from({ length: testimonial.rating }).map((_, index) => (
-            <Star key={index} className="size-3.5 fill-warning text-warning" aria-hidden="true" />
-          ))}
         </div>
       </div>
     </Card>

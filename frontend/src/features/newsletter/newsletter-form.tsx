@@ -102,18 +102,18 @@ export function NewsletterForm({
 
   return (
     <form onSubmit={onSubmit} className={className} noValidate>
-      {/* حقل خادع: مخفي بصريًا وعن قارئات الشاشة — البوتات تملؤه */}
-      <div aria-hidden="true" className="absolute -start-[9999px] top-auto h-px w-px overflow-hidden">
-        <label htmlFor={`website-${source}`}>Website</label>
-        <input
-          id={`website-${source}`}
-          type="text"
-          tabIndex={-1}
-          autoComplete="off"
-          value={website}
-          onChange={(event) => setWebsite(event.target.value)}
-        />
-      </div>
+      {/* حقل خادع للبوتات بلا تسمية ظاهرة: كلمة «Website» كانت تظهر في
+          نص الصفحة لقارئات النص — كبقية النماذج، حقل sr-only مخفي عن القارئات */}
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        value={website}
+        onChange={(event) => setWebsite(event.target.value)}
+        className="sr-only"
+        aria-hidden="true"
+      />
 
       <div className={cn('flex gap-2', compact ? 'flex-col sm:flex-row' : 'flex-col')}>
         <div className="flex-1">

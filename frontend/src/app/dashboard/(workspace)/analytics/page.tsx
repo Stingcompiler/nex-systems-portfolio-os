@@ -32,6 +32,9 @@ function useAnalytics<T>(endpoint: string, range: string) {
       const { data } = await api.get<T>(`/analytics/${endpoint}/`, { params: { range } });
       return data;
     },
+    // تبقى أرقام المدة السابقة حتى تصل الجديدة: العدّاد يتحرك من القيمة
+    // القديمة إليها بدل «—» ثم العدّ من الصفر
+    placeholderData: (previous) => previous,
   });
 }
 

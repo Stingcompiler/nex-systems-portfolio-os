@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 
 /**
  * عدّاد يتحرك من قيمته السابقة إلى الجديدة (Odometer / count-up).
@@ -21,13 +21,16 @@ export function CountUp({
   const [shown, setShown] = useState(value);
   const from = useRef(0);
 
-  useEffect(() => {
+  // قبل الرسم: نقطة البداية تُثبَّت فورًا، فلا تومض القيمة النهائية ثم تهبط إلى
+  // الصفر في أول إطار
+  useLayoutEffect(() => {
     const start = from.current;
     from.current = value;
     if (start === value || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setShown(value);
       return;
     }
+    setShown(start);
     let frame = 0;
     const began = performance.now();
     const tick = (now: number) => {

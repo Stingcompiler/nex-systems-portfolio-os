@@ -127,7 +127,7 @@
     "solutions": "حلول حسب القطاع",
     "projects": "مشاريع مختارة",
     "case_studies": "دراسات حالة",
-    "process": "طريقة العمل",
+    "process": "كيف نعمل",
     "technologies": "التقنيات",
     "testimonials": "آراء العملاء",
     "posts": "أحدث المقالات",
@@ -210,7 +210,7 @@
     }
   },
   "process": {
-    "title": "طريقة العمل",
+    "title": "كيف نعمل",
     "description": "مراحل واضحة من أول جلسة حتى التسليم والدعم.",
     "deliverables": "مخرجات المرحلة",
     "duration": "المدة"
@@ -230,7 +230,7 @@
     "howWeWork": "كيف نعمل",
     "howWeWorkBody": "مراحل مكتوبة ومخرجات محددة لكل مرحلة، ومراجعة معك على بيئة تجريبية قبل النشر.",
     "allServices": "كل الخدمات",
-    "fullProcess": "طريقة العمل كاملة",
+    "fullProcess": "كيف نعمل بالتفصيل",
     "stack": "ما نعمل به",
     "allTechnologies": "كل التقنيات",
     "publishedWork": "أعمال منشورة"

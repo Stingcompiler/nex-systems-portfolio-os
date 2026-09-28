@@ -1,20 +1,36 @@
-import { getTranslations } from 'next-intl/server';
+import { MessageCircle } from 'lucide-react';
+import { getLocale, getTranslations } from 'next-intl/server';
 
 import { LocaleSwitcher } from '@/components/layout/locale-switcher';
 import { MemberMenu } from '@/components/layout/member-menu';
 import { MobileNav } from '@/components/layout/mobile-nav';
 import { NavLinks } from '@/components/layout/nav-links';
+import { SectorsMenu } from '@/components/layout/sectors-menu';
 import { SiteMark } from '@/components/layout/site-mark';
-import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { ButtonLink } from '@/components/ui/button';
 import { Container } from '@/components/ui/container';
+import { getSolutions } from '@/lib/api/queries';
 import type { SiteSettings } from '@/lib/api/types';
+import type { Locale } from '@/lib/i18n/routing';
+import { whatsappLink } from '@/lib/utils/format';
 import { Link } from '@/lib/i18n/navigation';
 import { MAIN_NAV, MOBILE_SECONDARY_NAV } from '@/lib/constants/nav';
 import { SITE_NAME_FALLBACK } from '@/lib/constants/site';
 
 export async function Header({ settings }: { settings: SiteSettings | null }) {
-  const t = await getTranslations('nav');
+  const locale = (await getLocale()) as Locale;
+  const [t, solutions] = await Promise.all([
+    getTranslations('nav'),
+    getSolutions(locale, { page_size: 6 }),
+  ]);
+  const sectors = solutions.results.map((solution) => ({
+    slug: solution.slug,
+    sector: solution.sector,
+    label: solution.title,
+  }));
+  const whatsapp = settings?.whatsapp
+    ? whatsappLink(settings.whatsapp, settings.whatsapp_default_message)
+    : '';
   const items = MAIN_NAV.map((item) => ({ href: item.href, label: t(item.key) }));
   const secondaryItems = MOBILE_SECONDARY_NAV.map((item) => ({
     href: item.href,
@@ -37,21 +53,44 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
           </span>
         </Link>
 
-        {/* أربعة روابط تتسع مع الشعار وزر الطلب من 1024px، والدرج يغطي ما دونها */}
-        <nav aria-label={t('menu')} className="hidden min-w-0 flex-1 justify-center lg:flex">
+        {/* «حلول لقطاعك» أولًا ثم ثلاثة روابط، من 1024px؛ الدرج يغطي ما دونها */}
+        <nav aria-label={t('menu')} className="hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex">
+          {sectors.length ? (
+            <SectorsMenu label={t('sectorsMenu')} sectors={sectors} allLabel={t('allSolutions')} />
+          ) : null}
           <NavLinks items={items} />
         </nav>
 
+        {/* أدوات الزائر فقط: اللغة مختصرة، والحساب لمن سجّل دخوله. المظهر
+            ودخول العملاء في التذييل والدرج — أيقونات بلا معنى للعميل الجديد */}
         <div className="ms-auto flex items-center gap-1">
           <div className="hidden sm:flex sm:items-center sm:gap-1">
-            <ThemeToggle />
-            <LocaleSwitcher />
-            <MemberMenu />
+            <LocaleSwitcher compact />
+            <MemberMenu hideWhenLoggedOut />
           </div>
-          <div
-            aria-hidden="true"
-            className="mx-2 hidden h-5 w-px bg-border/60 sm:block"
-          />
+          {whatsapp ? (
+            <>
+              <a
+                href={whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden min-h-9 items-center gap-1.5 rounded-lg border border-border-strong px-3 text-sm font-medium text-foreground transition-colors hover:border-success/50 hover:text-success md:inline-flex"
+              >
+                <MessageCircle className="size-4 text-success" aria-hidden="true" />
+                {t('whatsapp')}
+              </a>
+              <a
+                href={whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={t('whatsappAria')}
+                title={t('whatsappAria')}
+                className="inline-flex size-10 items-center justify-center rounded-lg text-success transition-colors hover:bg-success-soft md:hidden"
+              >
+                <MessageCircle className="size-5" aria-hidden="true" />
+              </a>
+            </>
+          ) : null}
           <ButtonLink href="/request-quote" size="sm" className="hidden shadow-brand sm:inline-flex">
             {t('requestQuote')}
           </ButtonLink>
@@ -60,7 +99,12 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
           <ButtonLink href="/request-quote" size="sm" className="shadow-brand sm:hidden">
             {t('requestQuoteShort')}
           </ButtonLink>
-          <MobileNav items={items} secondaryItems={secondaryItems} ctaLabel={t('requestQuote')} />
+          <MobileNav
+            items={items}
+            secondaryItems={secondaryItems}
+            sectors={sectors}
+            ctaLabel={t('requestQuote')}
+          />
         </div>
       </Container>
     </header>

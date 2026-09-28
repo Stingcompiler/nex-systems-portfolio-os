@@ -14,6 +14,7 @@ import {
 import { getLocale, getTranslations } from 'next-intl/server';
 
 import { SiteMark } from '@/components/layout/site-mark';
+import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { Container } from '@/components/ui/container';
 import { getCaseStudies } from '@/lib/api/queries';
 import type { SiteSettings } from '@/lib/api/types';
@@ -77,8 +78,7 @@ export async function Footer({ settings }: { settings: SiteSettings | null }) {
   return (
     <footer className="mt-auto border-t border-border bg-surface/60">
       {/* مساحة محجوزة لزر واتساب العائم كي لا يغطي سطر الحقوق والروابط */}
-      {/* مساحة سفلية بارتفاع زر واتساب العائم (~80px) كي لا يغطي الحقوق والشروط */}
-      <Container className={waLink ? 'pb-28 pt-14' : 'py-14'}>
+      <Container className="py-14">
         {/* عمودان على الجوال: كان عمودًا واحدًا بطول شاشة ونصف */}
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.6fr_1fr_1fr_1fr] lg:gap-x-8">
           {/* الهوية */}
@@ -187,9 +187,19 @@ export async function Footer({ settings }: { settings: SiteSettings | null }) {
             © {year} {siteName}. {t('rights')}
           </p>
 
-          <Link href="/terms" className={linkClass}>
-            {tLegal('termsTitle')}
-          </Link>
+          {/* أدوات الزائر العائد: خرجت من الشريط العلوي لأنها لا تخدم العميل الجديد */}
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <Link href="/login" className={linkClass}>
+              {tNav('clientLogin')}
+            </Link>
+            <Link href="/terms" className={linkClass}>
+              {tLegal('termsTitle')}
+            </Link>
+            <span className="inline-flex items-center gap-1">
+              <span className="sr-only">{tNav('theme')}</span>
+              <ThemeToggle />
+            </span>
+          </div>
         </div>
       </Container>
     </footer>

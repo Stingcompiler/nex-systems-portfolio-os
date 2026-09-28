@@ -8,18 +8,22 @@ import { createPortal } from 'react-dom';
 import { LocaleSwitcher } from '@/components/layout/locale-switcher';
 import { MemberMenu } from '@/components/layout/member-menu';
 import { isActivePath, type NavLinkItem } from '@/components/layout/nav-links';
-import { ThemeToggle } from '@/components/layout/theme-toggle';
+import type { SectorLink } from '@/components/layout/sectors-menu';
+import { sectorIcon } from '@/lib/constants/sector-icons';
 import { Link, usePathname } from '@/lib/i18n/navigation';
 import { cn } from '@/lib/utils/cn';
 
 export function MobileNav({
   items,
   secondaryItems = [],
+  sectors = [],
   ctaLabel,
 }: {
   items: NavLinkItem[];
   /** روابط التذييل الأهم — على الهاتف التذييل بعيد جدًا عن القائمة */
   secondaryItems?: NavLinkItem[];
+  /** «لأي قطاع؟» أعلى الدرج: أول سؤال للعميل قبل صفحات الموقع */
+  sectors?: SectorLink[];
   ctaLabel: string;
 }) {
   const t = useTranslations('nav');
@@ -129,6 +133,40 @@ export function MobileNav({
         </div>
 
         <nav aria-label={t('menu')} className="min-h-0 flex-1 overflow-y-auto p-3">
+          {sectors.length ? (
+            <div className="mb-3 border-b border-border pb-3">
+              <p className="mb-2 px-3 text-xs font-semibold text-muted">{t('forWhichSector')}</p>
+              {/* عمود واحد: الدرج ضيق (~300px) فيلتف الاسم في عمودين على ثلاثة أسطر */}
+              <ul className="flex flex-col gap-0.5">
+                {sectors.map((sector) => {
+                  const Icon = sectorIcon(sector.slug, sector.sector);
+                  const href = `/solutions/${sector.slug}`;
+                  const active = isActivePath(pathname, href);
+                  return (
+                    <li key={sector.slug}>
+                      <Link
+                        href={href}
+                        aria-current={active ? 'page' : undefined}
+                        className={cn(
+                          'flex min-h-11 items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium leading-snug',
+                          active ? 'bg-primary-soft text-primary' : 'hover:bg-surface-hover',
+                        )}
+                      >
+                        <Icon className="size-4 shrink-0 text-primary" aria-hidden="true" />
+                        {sector.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+              <Link
+                href="/solutions"
+                className="mt-1 flex min-h-11 items-center px-3 text-sm font-medium text-primary hover:underline"
+              >
+                {t('allSolutions')}
+              </Link>
+            </div>
+          ) : null}
           <ul className="flex flex-col gap-0.5">
             {items.map((item) => {
               const active = isActivePath(pathname, item.href);
@@ -188,12 +226,10 @@ export function MobileNav({
           >
             {ctaLabel}
           </Link>
-          <div className="mt-3 flex items-center justify-between gap-1 sm:hidden">
-            <ThemeToggle />
-            <div className="flex items-center gap-1">
-              <LocaleSwitcher />
-              <MemberMenu labelled />
-            </div>
+          {/* المظهر خرج من الدرج إلى التذييل: لا يساعد العميل على قراره */}
+          <div className="mt-3 flex items-center justify-between gap-1">
+            <MemberMenu labelled />
+            <LocaleSwitcher />
           </div>
         </div>
       </div>

@@ -12,7 +12,7 @@ import type { Locale } from '@/lib/i18n/routing';
  * يبدّل اللغة مع البقاء في نفس الصفحة ونفس المعاملات.
  * التخزين يتولاه next-intl عبر كوكي NEXT_LOCALE.
  */
-export function LocaleSwitcher() {
+export function LocaleSwitcher({ compact = false }: { compact?: boolean }) {
   const t = useTranslations('common');
   const locale = useLocale() as Locale;
   const pathname = usePathname();
@@ -42,10 +42,18 @@ export function LocaleSwitcher() {
       disabled={isPending}
       lang={target}
       aria-label={`${t('language')}: ${targetName}`}
+      title={targetName}
       className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-sm font-medium text-muted transition-colors duration-fast hover:bg-surface-hover hover:text-foreground disabled:opacity-60"
     >
-      <Languages className="size-4" aria-hidden="true" />
-      {targetName}
+      {/* الشريط: رمز اللغة مختصرًا (EN / ع)؛ الدرج: الاسم كاملًا بأيقونته */}
+      {compact ? (
+        target === 'ar' ? 'ع' : 'EN'
+      ) : (
+        <>
+          <Languages className="size-4" aria-hidden="true" />
+          {targetName}
+        </>
+      )}
     </button>
   );
 }

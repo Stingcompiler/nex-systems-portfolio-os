@@ -1,23 +1,4 @@
-import {
-  ArrowRight,
-  Boxes,
-  Building2,
-  Calculator,
-  Check,
-  GraduationCap,
-  HeartHandshake,
-  LayoutGrid,
-  Mail,
-  MessageCircle,
-  MonitorPlay,
-  Pill,
-  ScanBarcode,
-  School,
-  Stethoscope,
-  UtensilsCrossed,
-  Users,
-  type LucideIcon,
-} from 'lucide-react';
+import { ArrowRight, Check, Mail, MessageCircle } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 import {
@@ -49,6 +30,7 @@ import type {
   Technology,
   Testimonial,
 } from '@/lib/api/types';
+import { sectorIcon } from '@/lib/constants/sector-icons';
 import { Link } from '@/lib/i18n/navigation';
 import type { Locale } from '@/lib/i18n/routing';
 import { whatsappLink } from '@/lib/utils/format';
@@ -365,26 +347,6 @@ export async function ProcessSection({ section, index }: SectionProps & { steps?
   );
 }
 
-/** أيقونة كل حل: بالرابط أولًا (المدارس غير الجامعات)، ثم بالقطاع. */
-const SECTOR_ICONS: Record<string, LucideIcon> = {
-  'school-management-system': School,
-  'university-management-platform': GraduationCap,
-  'elearning-platform': MonitorPlay,
-  'pos-system': ScanBarcode,
-  'restaurant-system': UtensilsCrossed,
-  'pharmacy-system': Pill,
-  education: GraduationCap,
-  retail: ScanBarcode,
-  restaurants: UtensilsCrossed,
-  pharmacy: Pill,
-  healthcare: Stethoscope,
-  accounting: Calculator,
-  hr: Users,
-  real_estate: Building2,
-  logistics: Boxes,
-  ngo: HeartHandshake,
-};
-
 /**
  * «اختر قطاعك»: الحلول بطاقات صغيرة (أيقونة + اسم) بعمودين على الجوال.
  * كانت ست بطاقات طويلة بعمود واحد، ثم ست خدمات تقنية مثلها — قرابة
@@ -410,7 +372,7 @@ export async function SectorsSection({
       />
       <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
         {solutions.slice(0, limit).map((solution) => {
-          const Icon = SECTOR_ICONS[solution.slug] ?? SECTOR_ICONS[solution.sector] ?? LayoutGrid;
+          const Icon = sectorIcon(solution.slug, solution.sector);
           return (
             <li key={solution.id}>
               <Link

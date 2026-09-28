@@ -4,7 +4,6 @@ import type { ReactNode } from 'react';
 import { Footer } from '@/components/layout/footer';
 import { Header } from '@/components/layout/header';
 import { SiteProviders } from '@/components/layout/site-providers';
-import { WhatsAppButton } from '@/components/layout/whatsapp-button';
 import { getSiteSettings } from '@/lib/api/queries';
 import { isLocale, type Locale } from '@/lib/i18n/routing';
 
@@ -55,13 +54,8 @@ export default async function SiteLayout({
 
         <Footer settings={settings} />
 
-        {settings?.whatsapp ? (
-          <WhatsAppButton
-            number={settings.whatsapp}
-            message={settings.whatsapp_default_message}
-            label={t('whatsapp')}
-          />
-        ) : null}
+        {/* لا زر واتساب عائم: الشريط العلوي الثابت يحمله في كل صفحة — العائم
+            كان يغطي المحتوى وأزرار أسفل الصفحة */}
       </div>
     </SiteProviders>
   );

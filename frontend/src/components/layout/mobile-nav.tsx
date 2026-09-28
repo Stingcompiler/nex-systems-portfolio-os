@@ -18,14 +18,12 @@ export function MobileNav({
   items,
   secondaryItems = [],
   sectors = [],
-  ctaLabel,
 }: {
   items: NavLinkItem[];
   /** روابط التذييل الأهم — على الهاتف التذييل بعيد جدًا عن القائمة */
   secondaryItems?: NavLinkItem[];
   /** «لأي قطاع؟» أعلى الدرج: أول سؤال للعميل قبل صفحات الموقع */
   sectors?: SectorLink[];
-  ctaLabel: string;
 }) {
   const t = useTranslations('nav');
   const locale = useLocale();
@@ -195,8 +193,9 @@ export function MobileNav({
             })}
           </ul>
 
+          {/* سطر هادئ لعميل قائم: تواصل ومتابعة طلب — لا بوزن صفحات الموقع */}
           {secondaryItems.length ? (
-            <ul className="mt-3 flex flex-col gap-0.5 border-t border-border pt-3">
+            <ul className="mt-3 flex flex-wrap gap-x-1 border-t border-border pt-3">
               {secondaryItems.map((item) => {
                 const active = isActivePath(pathname, item.href);
                 return (
@@ -205,7 +204,7 @@ export function MobileNav({
                       href={item.href}
                       aria-current={active ? 'page' : undefined}
                       className={cn(
-                        'flex min-h-11 items-center rounded-lg px-3 text-sm transition-colors',
+                        'inline-flex min-h-11 items-center rounded-lg px-3 text-sm transition-colors',
                         active
                           ? 'bg-primary-soft font-medium text-primary'
                           : 'text-foreground/80 hover:bg-surface-hover hover:text-foreground',
@@ -220,19 +219,13 @@ export function MobileNav({
           ) : null}
         </nav>
 
-        <div className="shrink-0 border-t border-border p-3">
-          <Link
-            href="/request-quote"
-            className="flex min-h-11 items-center justify-center rounded-lg bg-primary px-5 font-medium text-primary-foreground shadow-brand"
-          >
-            {ctaLabel}
-          </Link>
-          <div className="mt-3 flex items-center justify-between gap-1">
-            <MemberMenu labelled />
-            <div className="flex items-center gap-1">
-              <ThemeToggle />
-              <LocaleSwitcher />
-            </div>
+        {/* أدوات العميل القائم في سطر واحد. لا «ابدأ مشروعك» هنا: زر «ابدأ»
+            ظاهر في الشريط فوق الدرج مباشرة */}
+        <div className="flex shrink-0 items-center justify-between gap-1 border-t border-border p-3">
+          <MemberMenu labelled />
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            <LocaleSwitcher />
           </div>
         </div>
       </div>

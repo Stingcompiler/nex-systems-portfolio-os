@@ -1,4 +1,3 @@
-import { MessageCircle } from 'lucide-react';
 import { getLocale, getTranslations } from 'next-intl/server';
 
 import { LocaleSwitcher } from '@/components/layout/locale-switcher';
@@ -9,6 +8,7 @@ import { SectorsMenu } from '@/components/layout/sectors-menu';
 import { SiteMark } from '@/components/layout/site-mark';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { ButtonLink } from '@/components/ui/button';
+import { WhatsAppIcon } from '@/components/ui/whatsapp-icon';
 import { Container } from '@/components/ui/container';
 import { getSolutions } from '@/lib/api/queries';
 import type { SiteSettings } from '@/lib/api/types';
@@ -78,7 +78,7 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
                 rel="noopener noreferrer"
                 className="hidden min-h-9 items-center gap-1.5 rounded-lg border border-border-strong px-3 text-sm font-medium text-foreground transition-colors hover:border-success/50 hover:text-success md:inline-flex"
               >
-                <MessageCircle className="size-4 text-success" aria-hidden="true" />
+                <WhatsAppIcon className="size-4 text-[#25D366]" />
                 {t('whatsapp')}
               </a>
               <a
@@ -87,9 +87,9 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
                 rel="noopener noreferrer"
                 aria-label={t('whatsappAria')}
                 title={t('whatsappAria')}
-                className="inline-flex size-10 items-center justify-center rounded-lg text-success transition-colors hover:bg-success-soft md:hidden"
+                className="inline-flex size-10 items-center justify-center rounded-lg text-[#25D366] transition-colors hover:bg-success-soft md:hidden"
               >
-                <MessageCircle className="size-5" aria-hidden="true" />
+                <WhatsAppIcon className="size-6" />
               </a>
             </>
           ) : null}
@@ -101,12 +101,7 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
           <ButtonLink href="/request-quote" size="sm" className="shadow-brand sm:hidden">
             {t('requestQuoteShort')}
           </ButtonLink>
-          <MobileNav
-            items={items}
-            secondaryItems={secondaryItems}
-            sectors={sectors}
-            ctaLabel={t('requestQuote')}
-          />
+          <MobileNav items={items} secondaryItems={secondaryItems} sectors={sectors} />
         </div>
       </Container>
     </header>

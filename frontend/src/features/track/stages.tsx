@@ -63,9 +63,11 @@ export function StageBadge({ info }: { info: StageInfo }) {
   const t = useTranslations('track.stage');
   const done = info.index === info.stages.length - 1;
   return (
+    // تظهر بعد امتلاء الشريط حتى المرحلة الحالية — التسمية تختم الحركة
     <span
+      style={{ animationDelay: `${300 + info.index * 140}ms` }}
       className={cn(
-        'rounded-full px-3 py-1 text-xs font-medium',
+        'inline-block rounded-full px-3 py-1 text-xs font-medium motion-safe:animate-pop',
         info.closed
           ? 'bg-surface-hover text-muted'
           : done
@@ -93,13 +95,16 @@ export function StageProgress({ info, className }: { info: StageInfo; className?
       {info.stages.map((name, index) => (
         <li key={name} className="min-w-0" aria-current={index === info.index ? 'step' : undefined}>
           <span className="sr-only sm:hidden">{t(`stage.${name}`)}</span>
-          <span
-            className={cn(
-              'block h-1.5 rounded-full',
-              index <= info.index ? 'bg-primary' : 'bg-surface-hover',
-            )}
-            aria-hidden="true"
-          />
+          {/* الشريط يمتلئ مقطعًا بعد مقطع حتى مرحلة العميل: العين تصل إلى «أنت هنا»
+              بدل قراءة خمس مراحل متساوية. من أوقف الحركة يراه ممتلئًا مباشرة */}
+          <span className="block h-1.5 overflow-hidden rounded-full bg-surface-hover" aria-hidden="true">
+            {index <= info.index ? (
+              <span
+                className="block h-full rounded-full bg-primary motion-safe:animate-fill ltr:origin-left rtl:origin-right"
+                style={{ animationDelay: `${150 + index * 140}ms` }}
+              />
+            ) : null}
+          </span>
           <span
             className={cn(
               // الهاتف: الشريط وحده — شارة الحالة تسمّي المرحلة، والتسميات تُبتر في أعمدة ضيقة

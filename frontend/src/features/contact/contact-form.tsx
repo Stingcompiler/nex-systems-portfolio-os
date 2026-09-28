@@ -1,10 +1,11 @@
 'use client';
 
-import { Check, LoaderCircle, Send } from 'lucide-react';
+import { LoaderCircle, Send } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useId, useState, type FormEvent, type ReactNode } from 'react';
 
 import { buttonClass } from '@/components/ui/button-styles';
+import { revealOnMount, SuccessBurst } from '@/components/ui/success-burst';
 import { fieldClass } from '@/components/ui/field';
 import { api, toApiError, type ApiErrorPayload } from '@/lib/api/client';
 import { Link } from '@/lib/i18n/navigation';
@@ -81,8 +82,8 @@ export function ContactForm() {
 
   if (sent) {
     return (
-      <div className="rounded-lg border border-success/40 bg-success/5 p-6 text-center">
-        <Check className="mx-auto mb-2 size-8 text-success" aria-hidden="true" />
+      <div ref={revealOnMount} className="rounded-lg border border-success/40 bg-success/5 p-6 text-center">
+        <SuccessBurst className="mb-3" />
         <p className="font-medium">{t('sentTitle')}</p>
         <p className="mt-1 text-sm text-muted">{t('sentBody')}</p>
         {sent.reference_code ? (

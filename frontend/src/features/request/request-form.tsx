@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
 import { buttonClass } from '@/components/ui/button-styles';
+import { revealOnMount, SuccessBurst } from '@/components/ui/success-burst';
 import { fieldClass } from '@/components/ui/field';
 import { useMember } from '@/contexts/MemberContext';
 import { api, toApiError } from '@/lib/api/client';
@@ -269,12 +270,11 @@ export function RequestForm({
   if (reference) {
     return (
       <div
+        ref={revealOnMount}
         role="status"
         className="mx-auto max-w-2xl rounded-xl border border-border bg-surface p-8 text-center sm:p-10"
       >
-        <span className="mx-auto mb-4 grid size-14 place-items-center rounded-full bg-success-soft">
-          <Check className="size-7 text-success" aria-hidden="true" />
-        </span>
+        <SuccessBurst className="mb-4" />
         <h2 className="text-h2 font-semibold">{t('successTitle')}</h2>
         <p className="mx-auto mt-3 max-w-prose text-muted">{t('successBody')}</p>
         <p className="mt-5 inline-block rounded-lg bg-surface-hover px-4 py-2 text-sm">

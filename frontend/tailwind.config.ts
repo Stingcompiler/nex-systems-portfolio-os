@@ -119,11 +119,44 @@ const config: Config = {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(8px)' },
         },
+        // الكلمة تصعد من خلف قناع (الأب overflow-hidden) — عنوان الرئيسية
+        rise: {
+          from: { transform: 'translateY(110%)' },
+          to: { transform: 'translateY(0)' },
+        },
+        // رسم خط SVG: stroke-dasharray = طول المسار، يبدأ مخفيًا بالإزاحة نفسها
+        draw: {
+          from: { strokeDashoffset: 'var(--dash, 100)' },
+          to: { strokeDashoffset: '0' },
+        },
+        pop: {
+          '0%': { transform: 'scale(0.6)', opacity: '0' },
+          '60%': { transform: 'scale(1.08)', opacity: '1' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        // قصاصة احتفال: الاتجاه والدوران من متغيرات العنصر نفسه
+        confetti: {
+          '0%': { transform: 'translate(0, 0) rotate(0deg)', opacity: '1' },
+          '100%': {
+            transform: 'translate(var(--x), var(--y)) rotate(var(--r))',
+            opacity: '0',
+          },
+        },
+        // امتلاء شريط من البداية (يمين في العربية) — مراحل الطلب
+        fill: {
+          from: { transform: 'scaleX(0)' },
+          to: { transform: 'scaleX(1)' },
+        },
       },
       animation: {
         'fade-up': 'fade-up var(--duration-normal) ease-out both',
         float: 'float 6s ease-in-out infinite',
         'float-reverse': 'float-reverse 7s ease-in-out infinite',
+        rise: 'rise 650ms cubic-bezier(0.22, 1, 0.36, 1) both',
+        draw: 'draw 500ms ease-out both',
+        pop: 'pop 450ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
+        confetti: 'confetti 1100ms cubic-bezier(0.15, 0.6, 0.35, 1) both',
+        fill: 'fill 450ms cubic-bezier(0.22, 1, 0.36, 1) both',
       },
     },
   },

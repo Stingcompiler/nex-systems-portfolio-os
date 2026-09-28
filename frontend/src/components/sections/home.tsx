@@ -100,7 +100,8 @@ export async function HeroSection({
   return (
     <section className="hero-surface relative overflow-hidden border-b border-border">
       <Container className="relative py-14 sm:py-20">
-        <div className="max-w-3xl animate-fade-up">
+        {/* الشاشة الواسعة: المحتوى في المنتصف — بلا لقطة بجواره كان نصفها الآخر فارغًا */}
+        <div className="max-w-3xl animate-fade-up lg:mx-auto lg:text-center">
           <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3 py-1 text-sm font-medium text-primary backdrop-blur">
             <span className="inline-flex size-2 rounded-full bg-primary" aria-hidden="true" />
             {t('heroBadge')}
@@ -117,10 +118,10 @@ export async function HeroSection({
           </h1>
 
           {subtitle ? (
-            <p className="mt-6 max-w-prose text-body-lg text-muted">{subtitle}</p>
+            <p className="mt-6 max-w-prose text-body-lg text-muted lg:mx-auto">{subtitle}</p>
           ) : null}
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap gap-3 lg:justify-center">
             <ButtonLink href="/request-quote" size="lg">
               {section.cta_label || t('ctaPrimary')}
               <ArrowRight className="size-4 flip-rtl" aria-hidden="true" />
@@ -145,7 +146,7 @@ export async function HeroSection({
           {/* شريط الثقة: ثلاثة التزامات بلا بطاقات — إيقاع مختلف عن بقية الأقسام */}
           <ul
             aria-label={t('trustLabel')}
-            className="mt-10 flex flex-col gap-3 border-t border-border pt-6 text-sm font-medium sm:flex-row sm:flex-wrap sm:gap-x-8"
+            className="mt-10 flex flex-col gap-3 border-t border-border pt-6 text-sm font-medium sm:flex-row sm:flex-wrap sm:gap-x-8 lg:justify-center"
           >
             {trust.map((item) => (
               <li key={item} className="flex items-center gap-2">
@@ -159,7 +160,7 @@ export async function HeroSection({
 
           {/* أرقام من اللوحة فقط — تظهر حين تُفعَّل مؤشرات حقيقية */}
           {heroStats.length ? (
-            <dl className="mt-8 flex flex-wrap gap-x-12 gap-y-5">
+            <dl className="mt-8 flex flex-wrap gap-x-12 gap-y-5 lg:justify-center">
               {heroStats.map((stat) => (
                 <div key={stat.id}>
                   <dt className="font-mono text-h2 font-medium tabular-nums text-foreground">
@@ -414,7 +415,9 @@ export async function SectorsSection({
             <li key={solution.id}>
               <Link
                 href={`/solutions/${solution.slug}`}
-                className="group/sector flex h-full items-center gap-3 rounded-xl border border-border bg-surface p-4 transition-colors duration-fast hover:border-primary/40 sm:p-5"
+                // الجوال: الأيقونة فوق الاسم — بجانبه كان «منصات إدارة الجامعات
+                // والكليات» يلتف على أربعة أسطر في نصف عرض الشاشة
+                className="group/sector flex h-full flex-col items-start gap-3 rounded-xl border border-border bg-surface p-4 transition-colors duration-fast hover:border-primary/40 sm:flex-row sm:items-center sm:p-5"
               >
                 <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary">
                   <Icon className="size-5" aria-hidden="true" />

@@ -14,7 +14,9 @@
     "menu": "Menu",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "breadcrumbs": "Breadcrumb"
+    "breadcrumbs": "Breadcrumb",
+    "track": "Track a request",
+    "requestQuoteShort": "Start"
   },
   "common": {
     "skipToContent": "Skip to content",
@@ -74,7 +76,42 @@
     "heroTitle": "We turn the way you work into a clear, easy-to-use system.",
     "heroSubtitle": "We analyse your needs and build websites, apps and custom systems — from the idea through launch and support.",
     "showcaseLabel": "From our work",
-    "heroServicesTitle": "What we build"
+    "heroServicesTitle": "What we build",
+    "ctaWhatsapp": "Talk to us on WhatsApp",
+    "trust": {
+      "item1": "You own the code and the database",
+      "item2": "A reply within one working day",
+      "item3": "Team training and support after handover"
+    },
+    "trustLabel": "What we commit to",
+    "servicesLink": "Technical services in detail",
+    "sectorsCta": "All solutions",
+    "processSteps": {
+      "step1": {
+        "title": "We understand your work",
+        "body": "Sessions with you and the people who will use the system."
+      },
+      "step2": {
+        "title": "We write the plan",
+        "body": "What gets built, when and for how much — before a single line of code."
+      },
+      "step3": {
+        "title": "We build the foundation",
+        "body": "The server, the data and the permissions."
+      },
+      "step4": {
+        "title": "We build the screens",
+        "body": "In Arabic and English."
+      },
+      "step5": {
+        "title": "You try it",
+        "body": "On a trial copy before launch."
+      },
+      "step6": {
+        "title": "We launch and train your team",
+        "body": "And hand over the code and documentation."
+      }
+    }
   },
   "sections": {
     "intro": "About",
@@ -193,7 +230,7 @@
   },
   "pageCta": {
     "title": "Have a project in mind?",
-    "body": "Send the details in four short steps and we will come back with an initial outline within one working day.",
+    "body": "Send the details in three short steps and we will come back with an initial outline within one working day.",
     "primary": "Start a project",
     "secondary": "Contact us"
   },
@@ -675,7 +712,8 @@
       "messageReceived": "Your message arrived and is logged under its number; it will be read soon.",
       "messageRead": "The team has read your message and is working on a reply.",
       "messageReplied": "We've replied to your message — see the reply below and in your email if you gave one."
-    }
+    },
+    "needBoth": "Enter two details to search, for example the request number and your name."
   },
   "install": {
     "button": "Install the app on your device",

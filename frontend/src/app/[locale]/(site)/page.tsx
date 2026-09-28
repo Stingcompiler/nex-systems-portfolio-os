@@ -8,6 +8,7 @@ import {
   PostsSection,
   ProcessSection,
   ProjectsSection,
+  SectorsSection,
   ServicesSection,
   TechnologiesSection,
   TestimonialsSection,
@@ -97,13 +98,13 @@ export default async function HomePage({
     getTechnologies(locale),
     getTestimonials(locale),
     getLatestPosts(locale),
-    getFaqs(locale, 'global'),
+    getFaqs(locale),
   ]);
 
   const sections = loadedSections.length ? loadedSections : fallbackSections();
   const featuredTechnologies = technologies.results.filter((item) => item.is_featured);
-  // لقطة البطل: أول مشروع مميّز له غلاف فعلي
-  const showcase = projects.find((project) => project.cover_image) ?? null;
+  // الأسئلة العامة كلها (عام، تكلفة، تنفيذ) — أسئلة خدمة بعينها تبقى في صفحتها
+  const homeFaqs = faqs.filter((faq) => !faq.service);
 
   /**
    * كل قسم يقرر بنفسه أن يختفي عندما لا يوجد محتوى، فلا يظهر
@@ -121,14 +122,7 @@ export default async function HomePage({
     switch (section.key) {
       case 'hero':
         return (
-          <HeroSection
-            section={section}
-            settings={settings}
-            stats={stats}
-            showcase={showcase}
-            services={services.results}
-            locale={locale}
-          />
+          <HeroSection section={section} settings={settings} stats={stats} locale={locale} />
         );
       case 'services':
         return (
@@ -141,13 +135,7 @@ export default async function HomePage({
         );
       case 'solutions':
         return (
-          <ServicesSection
-            section={section}
-            services={solutions.results}
-            basePath="/solutions"
-            tone="muted"
-            locale={locale}
-          />
+          <SectorsSection section={section} solutions={solutions.results} locale={locale} />
         );
       case 'projects':
         return (
@@ -184,7 +172,7 @@ export default async function HomePage({
       case 'newsletter':
         return <NewsletterSection section={section} locale={locale} />;
       case 'faq':
-        return <FaqSection section={section} faqs={faqs} locale={locale} />;
+        return <FaqSection section={section} faqs={homeFaqs} locale={locale} />;
       case 'intro':
       case 'stats':
       case 'case_studies':

@@ -14,7 +14,6 @@ import {
 import { getLocale, getTranslations } from 'next-intl/server';
 
 import { SiteMark } from '@/components/layout/site-mark';
-import { FooterTrackBox } from '@/features/track/track-box';
 import { Container } from '@/components/ui/container';
 import { getCaseStudies } from '@/lib/api/queries';
 import type { SiteSettings } from '@/lib/api/types';
@@ -78,10 +77,12 @@ export async function Footer({ settings }: { settings: SiteSettings | null }) {
   return (
     <footer className="mt-auto border-t border-border bg-surface/60">
       {/* مساحة محجوزة لزر واتساب العائم كي لا يغطي سطر الحقوق والروابط */}
-      <Container className={waLink ? 'pb-24 pt-14' : 'py-14'}>
-        <div className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
+      {/* مساحة سفلية بارتفاع زر واتساب العائم (~80px) كي لا يغطي الحقوق والشروط */}
+      <Container className={waLink ? 'pb-28 pt-14' : 'py-14'}>
+        {/* عمودان على الجوال: كان عمودًا واحدًا بطول شاشة ونصف */}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.6fr_1fr_1fr_1fr] lg:gap-x-8">
           {/* الهوية */}
-          <div className="lg:pe-8">
+          <div className="col-span-2 lg:col-span-1 lg:pe-8">
             <div className="flex items-center gap-2">
               <SiteMark settings={settings} size={32} />
               <span className="text-lg font-bold">{siteName}</span>
@@ -155,6 +156,11 @@ export async function Footer({ settings }: { settings: SiteSettings | null }) {
                   {t('messageMe')}
                 </Link>
               </li>
+              <li>
+                <Link href="/track" className={linkClass}>
+                  {tNav('track')}
+                </Link>
+              </li>
               {waLink ? (
                 <li>
                   <a
@@ -175,8 +181,6 @@ export async function Footer({ settings }: { settings: SiteSettings | null }) {
             </ul>
           </nav>
         </div>
-
-        <FooterTrackBox className="mt-12" />
 
         <div className="mt-12 flex flex-col gap-3 border-t border-border pt-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
           <p>

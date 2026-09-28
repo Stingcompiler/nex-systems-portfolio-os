@@ -110,11 +110,12 @@ export function SectionHeader({
   return (
     <div
       className={cn(
-        'mb-12 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between',
-        align === 'center' && 'sm:flex-col sm:items-center sm:text-center',
+        // «عرض الكل» على سطر العنوان حتى على الجوال — كان سطرًا مستقلًا في كل قسم
+        'mb-10 flex flex-row items-start justify-between gap-4 sm:mb-12',
+        align === 'center' && 'flex-col items-center text-center',
       )}
     >
-      <div className={cn('max-w-prose', align === 'center' && 'mx-auto')}>
+      <div className={cn('min-w-0 max-w-prose flex-1', align === 'center' && 'mx-auto')}>
         <Eyebrow
           index={index}
           label={eyebrow}

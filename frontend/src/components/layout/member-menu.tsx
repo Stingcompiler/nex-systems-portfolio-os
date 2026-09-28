@@ -11,7 +11,7 @@ import { Link } from '@/lib/i18n/navigation';
  *
  * لا يعرض شيئًا أثناء التحميل الأولي لتفادي وميض «دخول» ثم «حسابي».
  */
-export function MemberMenu() {
+export function MemberMenu({ labelled = false }: { labelled?: boolean }) {
   const t = useTranslations('auth');
   const { member, loading } = useMember();
 
@@ -32,10 +32,24 @@ export function MemberMenu() {
     );
   }
 
+  // أيقونة بلا نص لا تقول إنها دخول أم خروج: تلميح دائمًا، ونص ظاهر في درج الجوال
+  if (labelled) {
+    return (
+      <Link
+        href="/login"
+        className="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium text-foreground transition-colors duration-fast hover:bg-surface-hover"
+      >
+        <LogIn className="size-[1.1rem] flip-rtl" aria-hidden="true" />
+        {t('loginButton')}
+      </Link>
+    );
+  }
+
   return (
     <Link
       href="/login"
       aria-label={t('loginButton')}
+      title={t('loginButton')}
       className="flex size-9 items-center justify-center rounded-full text-muted transition-colors duration-fast hover:bg-surface-hover hover:text-foreground"
     >
       <LogIn className="size-[1.1rem] flip-rtl" aria-hidden="true" />

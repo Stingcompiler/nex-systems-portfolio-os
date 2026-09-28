@@ -40,16 +40,18 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
 
   return (
     <header className="sticky top-0 z-30 border-b border-border/40 bg-background/75 backdrop-blur-xl">
-      <Container className="flex h-16 items-center gap-6">
+      <Container className="flex h-16 items-center gap-3 sm:gap-6">
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-3"
+          className="flex shrink-0 items-center gap-2 sm:gap-3"
           aria-label={settings?.site_name || SITE_NAME_FALLBACK}
         >
           <SiteMark settings={settings} />
           {/* اسم الموقع بخط العناوين وبحجم يليق بعلامة لا برابط:
               كان بخط الجسم و18px فبدا بندًا في القائمة */}
-          <span className="font-heading text-xl font-bold ltr:tracking-tight sm:text-[1.375rem]">
+          {/* الهاتف: شريط 360px يحمل الشعار وواتساب و«ابدأ» والقائمة — بخط أصغر
+              قليلًا يتسع بلا تجاوز يهزّ الصفحة أفقيًا، ودون 360px تكفي العلامة */}
+          <span className="font-heading text-lg font-bold max-[359px]:sr-only ltr:tracking-tight sm:text-[1.375rem]">
             {settings?.site_name || SITE_NAME_FALLBACK}
           </span>
         </Link>

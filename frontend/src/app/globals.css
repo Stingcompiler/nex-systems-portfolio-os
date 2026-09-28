@@ -126,6 +126,13 @@
     scroll-behavior: smooth;
   }
 
+  /* حارس: عنصر أعرض من الشاشة يجعل الصفحة تنزلق أفقيًا تحت الإصبع على الهاتف.
+     clip لا hidden — hidden تنشئ حاوية تمرير فتعطّل الترويسة اللاصقة */
+  html,
+  body {
+    overflow-x: clip;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-sans), system-ui, sans-serif;

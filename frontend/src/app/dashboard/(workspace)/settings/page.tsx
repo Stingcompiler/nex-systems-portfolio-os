@@ -9,6 +9,7 @@ import { ResourceField, type FormValues } from '@/features/dashboard/resource/fi
 import type { FieldConfig } from '@/features/dashboard/resource/types';
 import { api, toApiError } from '@/lib/api/client';
 import { cn } from '@/lib/utils/cn';
+import { IndicatorTrack } from '@/components/ui/indicator-track';
 
 const TABS = [
   { key: 'identity', label: 'الهوية' },
@@ -147,25 +148,26 @@ export default function SettingsPage() {
         <p className="mt-1 text-sm text-muted">كل ما يظهر للزائر يُدار من هنا.</p>
       </header>
 
-      <div role="tablist" className="mb-6 flex flex-wrap gap-1 border-b border-border">
-        {TABS.map((tab) => (
-          <button
-            key={tab.key}
-            type="button"
-            role="tab"
-            aria-selected={activeTab === tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={cn(
-              'min-h-11 border-b-2 px-4 text-sm font-medium transition-colors',
-              activeTab === tab.key
-                ? 'border-primary text-primary'
-                : 'border-transparent text-muted hover:text-foreground',
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <IndicatorTrack variant="underline" indicatorClassName="bg-primary" className="mb-6">
+        <div role="tablist" className="flex flex-wrap gap-1 border-b border-border">
+          {TABS.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.key}
+              data-active={activeTab === tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={cn(
+                'relative z-10 min-h-11 px-4 text-sm font-medium transition-colors',
+                activeTab === tab.key ? 'text-primary' : 'text-muted hover:text-foreground',
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </IndicatorTrack>
 
       {settings.isLoading ? (
         <div className="grid place-items-center py-16 text-muted" role="status">

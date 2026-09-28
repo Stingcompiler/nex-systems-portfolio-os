@@ -15,6 +15,7 @@ import { PostCard } from '@/features/blog/post-card';
 import { NewsletterForm } from '@/features/newsletter/newsletter-form';
 import { ButtonLink } from '@/components/ui/button';
 import { Container } from '@/components/ui/container';
+import { InView } from '@/components/ui/in-view';
 import { WhatsAppIcon } from '@/components/ui/whatsapp-icon';
 import { Card, Prose } from '@/components/ui/misc';
 import { Section, SectionHeader, type SectionTone } from '@/components/ui/section';
@@ -352,9 +353,17 @@ export async function ProcessSection({ section, index }: SectionProps & { steps?
         index={index}
         action={<ViewAll href="/process" label={t('details')} />}
       />
-      <ol className="grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+      {/* مسار متصل (Flowing paths): خط أعلى كل خطوة يمتلئ بالتتابع حين يصل
+          الزائر إلى القسم — ست خطوات تُقرأ رحلةً واحدة لا قائمة متفرقة */}
+      <InView as="ol" className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
         {steps.map((step, position) => (
-          <li key={step.title} className="flex gap-4">
+          <li key={step.title} className="relative flex gap-4 pt-5">
+            <span aria-hidden="true" className="absolute inset-x-0 top-0 h-0.5 overflow-hidden rounded-full bg-border">
+              <span
+                className="block h-full bg-primary ltr:origin-left rtl:origin-right motion-safe:scale-x-0 motion-safe:group-data-[shown=true]:animate-fill"
+                style={{ animationDelay: `${position * 180}ms` }}
+              />
+            </span>
             <span className="grid size-10 shrink-0 place-items-center rounded-full bg-primary text-base font-semibold text-primary-foreground">
               {position + 1}
             </span>
@@ -364,7 +373,7 @@ export async function ProcessSection({ section, index }: SectionProps & { steps?
             </div>
           </li>
         ))}
-      </ol>
+      </InView>
     </Section>
   );
 }

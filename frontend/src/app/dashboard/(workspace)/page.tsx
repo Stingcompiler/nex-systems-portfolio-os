@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+import { CountUp } from '@/components/ui/count-up';
 import { Badge } from '@/components/ui/misc';
 import { useAuth } from '@/contexts/AuthContext';
 import { api, toApiError } from '@/lib/api/client';
@@ -145,7 +146,9 @@ function ActivityCard({
         </span>
       </div>
       <p className="text-h1 font-bold leading-none">
-        <span className="code-inline inline">{value}</span>
+        <span className="code-inline inline">
+          <CountUp value={value} />
+        </span>
       </p>
       {delta ? (
         <Badge tone={tone ?? 'default'} className="self-start">
@@ -172,7 +175,7 @@ function WeeklyChart({ series }: { series: CrmBlock['weekly_requests'] }) {
             <div key={point.date} className="flex flex-1 flex-col items-center gap-2">
               <div className="flex w-full flex-1 items-end">
                 <div
-                  className="w-full rounded-t-md bg-brand transition-all duration-slow"
+                  className="w-full origin-bottom rounded-t-md bg-brand transition-all duration-slow motion-safe:animate-grow"
                   style={{ height: `${Math.max(height, 4)}%` }}
                   role="img"
                   aria-label={`${day}: ${point.value} طلب`}

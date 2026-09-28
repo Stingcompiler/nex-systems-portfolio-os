@@ -34,6 +34,7 @@ import type {
 import { sectorIcon } from '@/lib/constants/sector-icons';
 import { Link } from '@/lib/i18n/navigation';
 import type { Locale } from '@/lib/i18n/routing';
+import { cn } from '@/lib/utils/cn';
 import { whatsappLink } from '@/lib/utils/format';
 
 interface SectionProps {
@@ -68,9 +69,8 @@ export async function HeroSection({
   const title = section.title || settings?.tagline || t('heroTitle');
   const subtitle = section.subtitle || (section.title ? '' : t('heroSubtitle'));
 
-  const words = title.trim().split(' ');
-  const lead = words.slice(0, -1).join(' ');
-  const highlight = words.length > 1 ? words[words.length - 1] : '';
+  const words = title.trim().split(/\s+/);
+  const highlight = words.length > 1;
   const heroStats = stats.slice(0, 3);
   const trust = Object.values(t.raw('trust') as Record<string, string>);
   const whatsapp = settings?.whatsapp
@@ -84,27 +84,47 @@ export async function HeroSection({
     <section className="hero-surface relative overflow-hidden border-b border-border">
       <Container className="relative py-14 sm:py-20">
         {/* الشاشة الواسعة: المحتوى في المنتصف — بلا لقطة بجواره كان نصفها الآخر فارغًا */}
-        <div className="max-w-3xl animate-fade-up lg:mx-auto lg:text-center">
+        <div className="max-w-3xl lg:mx-auto lg:text-center">
           <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3 py-1 text-sm font-medium text-primary backdrop-blur">
             <span className="inline-flex size-2 rounded-full bg-primary" aria-hidden="true" />
             {t('heroBadge')}
           </p>
 
+          {/* كل كلمة تصعد من خلف قناع بالتتابع (مرة واحدة عند الدخول). الكلمة
+              كاملة داخل قناعها فلا ينكسر وصل الحروف العربية، والهامش فوق/تحت
+              القناع يحفظ الهمزات والنقاط من القص. النص في HTML من الخادم كما هو */}
           <h1 className="text-display font-bold [text-wrap:balance]">
-            {highlight ? (
-              <>
-                {lead} <span className="text-primary">{highlight}</span>
-              </>
-            ) : (
-              title
-            )}
+            {words.map((word, index) => (
+              <span key={index}>
+                <span className="-my-[0.2em] inline-block overflow-hidden py-[0.2em] align-bottom">
+                  <span
+                    className={cn(
+                      'inline-block motion-safe:animate-rise',
+                      highlight && index === words.length - 1 && 'text-primary',
+                    )}
+                    style={{ animationDelay: `${80 + index * 70}ms` }}
+                  >
+                    {word}
+                  </span>
+                </span>
+                {index < words.length - 1 ? ' ' : null}
+              </span>
+            ))}
           </h1>
 
           {subtitle ? (
-            <p className="mt-6 max-w-prose text-body-lg text-muted lg:mx-auto">{subtitle}</p>
+            <p
+              className="mt-6 max-w-prose text-body-lg text-muted motion-safe:animate-fade-up lg:mx-auto"
+              style={{ animationDelay: `${words.length * 70 + 150}ms` }}
+            >
+              {subtitle}
+            </p>
           ) : null}
 
-          <div className="mt-8 flex flex-wrap gap-3 lg:justify-center">
+          <div
+            className="mt-8 flex flex-wrap gap-3 motion-safe:animate-fade-up lg:justify-center"
+            style={{ animationDelay: `${words.length * 70 + 250}ms` }}
+          >
             <ButtonLink href="/request-quote" size="lg">
               {section.cta_label || t('ctaPrimary')}
               <ArrowRight className="size-4 flip-rtl" aria-hidden="true" />
@@ -129,7 +149,8 @@ export async function HeroSection({
           {/* شريط الثقة: ثلاثة التزامات بلا بطاقات — إيقاع مختلف عن بقية الأقسام */}
           <ul
             aria-label={t('trustLabel')}
-            className="mt-10 flex flex-col gap-3 border-t border-border pt-6 text-sm font-medium sm:flex-row sm:flex-wrap sm:gap-x-8 lg:justify-center"
+            style={{ animationDelay: `${words.length * 70 + 350}ms` }}
+            className="motion-safe:animate-fade-up mt-10 flex flex-col gap-3 border-t border-border pt-6 text-sm font-medium sm:flex-row sm:flex-wrap sm:gap-x-8 lg:justify-center"
           >
             {trust.map((item) => (
               <li key={item} className="flex items-center gap-2">

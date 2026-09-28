@@ -7,6 +7,7 @@ import { MobileNav } from '@/components/layout/mobile-nav';
 import { NavLinks } from '@/components/layout/nav-links';
 import { SectorsMenu } from '@/components/layout/sectors-menu';
 import { SiteMark } from '@/components/layout/site-mark';
+import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { ButtonLink } from '@/components/ui/button';
 import { Container } from '@/components/ui/container';
 import { getSolutions } from '@/lib/api/queries';
@@ -61,10 +62,11 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
           <NavLinks items={items} />
         </nav>
 
-        {/* أدوات الزائر فقط: اللغة مختصرة، والحساب لمن سجّل دخوله. المظهر
-            ودخول العملاء في التذييل والدرج — أيقونات بلا معنى للعميل الجديد */}
+        {/* أدوات الزائر: المظهر (بتلميح يسمّيه)، اللغة مختصرة، والحساب لمن سجّل
+            دخوله. دخول العملاء في التذييل والدرج */}
         <div className="ms-auto flex items-center gap-1">
           <div className="hidden sm:flex sm:items-center sm:gap-1">
+            <ThemeToggle />
             <LocaleSwitcher compact />
             <MemberMenu hideWhenLoggedOut />
           </div>

@@ -6,6 +6,8 @@ import { useState } from 'react';
 
 import { api } from '@/lib/api/client';
 import { cn } from '@/lib/utils/cn';
+import { CountUp } from '@/components/ui/count-up';
+import { IndicatorTrack } from '@/components/ui/indicator-track';
 
 interface Overview {
   range_days: number;
@@ -59,22 +61,26 @@ export default function AnalyticsPage() {
             إحصائيات داخلية تحترم الخصوصية — بلا تتبّع أو كوكيز.
           </p>
         </div>
-        <div className="inline-flex rounded border border-border p-0.5">
+        <IndicatorTrack
+          className="inline-flex rounded border border-border p-0.5"
+          indicatorClassName="rounded bg-primary"
+        >
           {RANGES.map((option) => (
             <button
               key={option.value}
               type="button"
               onClick={() => setRange(option.value)}
               aria-pressed={range === option.value}
+              data-active={range === option.value}
               className={cn(
-                'min-h-9 rounded px-3 text-sm',
-                range === option.value ? 'bg-primary text-primary-foreground' : 'text-muted',
+                'relative z-10 min-h-9 rounded px-3 text-sm transition-colors',
+                range === option.value ? 'text-primary-foreground' : 'text-muted',
               )}
             >
               {option.label}
             </button>
           ))}
-        </div>
+        </IndicatorTrack>
       </header>
 
       <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -147,7 +153,7 @@ function Tile({
       <Icon className="mb-2 size-5 text-muted" aria-hidden="true" />
       <p className="text-sm text-muted">{label}</p>
       <p className="mt-1 text-h2 font-bold" dir="ltr">
-        {value ?? '—'}
+        {value === undefined ? '—' : <CountUp value={value} />}
       </p>
     </div>
   );
@@ -175,8 +181,8 @@ function BarList({ rows, empty }: { rows: { label: string; value: number }[]; em
           </div>
           <div className="h-1.5 overflow-hidden rounded-full bg-surface-hover">
             <div
-              className="h-full rounded-full bg-primary"
-              style={{ width: `${(row.value / max) * 100}%` }}
+              className="h-full rounded-full bg-primary transition-[width] duration-slow ease-out motion-safe:animate-fill ltr:origin-left rtl:origin-right"
+              style={{ width: `${(row.value / max) * 100}%`, animationDelay: `${index * 60}ms` }}
             />
           </div>
         </li>
@@ -192,11 +198,15 @@ function TrafficChart({ data }: { data: { date: string; views: number; visitors:
   const max = Math.max(...data.map((d) => d.views), 1);
   return (
     <div className="flex h-40 items-end gap-1" role="img" aria-label="رسم الزيارات اليومية">
-      {data.map((day) => (
-        <div key={day.date} className="group flex flex-1 flex-col items-center justify-end gap-1">
+      {/* الأعمدة تنمو من القاعدة عند التحميل وتبديل المدة (Chart morph مبسّط) */}
+      {data.map((day, index) => (
+        <div key={day.date} className="group flex h-full flex-1 flex-col items-center justify-end gap-1">
           <div
-            className="w-full rounded-t bg-primary/70 transition-colors group-hover:bg-primary"
-            style={{ height: `${(day.views / max) * 100}%` }}
+            className="w-full origin-bottom rounded-t bg-primary/70 transition-[height,background-color] duration-slow ease-out group-hover:bg-primary motion-safe:animate-grow"
+            style={{
+              height: `${(day.views / max) * 100}%`,
+              animationDelay: `${Math.min(index * 20, 400)}ms`,
+            }}
             title={`${day.date}: ${day.views}`}
           />
         </div>

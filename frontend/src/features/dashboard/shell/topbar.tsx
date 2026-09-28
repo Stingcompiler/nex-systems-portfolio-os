@@ -71,8 +71,15 @@ function DashboardSearch() {
           role="listbox"
           className="absolute inset-x-0 top-full z-30 mt-1 overflow-hidden rounded-lg border border-border bg-surface shadow-card"
         >
-          {results.map((item) => (
-            <li key={item.href} role="option" aria-selected={false}>
+          {/* النتائج تظهر متتابعة (Search → results): العين تتبع ترتيبها */}
+          {results.map((item, index) => (
+            <li
+              key={item.href}
+              role="option"
+              aria-selected={false}
+              className="motion-safe:animate-fade-up"
+              style={{ animationDelay: `${Math.min(index, 8) * 35}ms` }}
+            >
               <button
                 type="button"
                 // mousedown يسبق blur فلا يُغلق قبل التنقّل

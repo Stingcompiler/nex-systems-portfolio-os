@@ -6,6 +6,7 @@ import { ProjectCard } from '@/components/content/cards';
 import { PageCta } from '@/components/content/page-cta';
 import { ButtonLink } from '@/components/ui/button';
 import { CardGrid } from '@/components/ui/card-grid';
+import { IndicatorTrack } from '@/components/ui/indicator-track';
 import { Container } from '@/components/ui/container';
 import { Breadcrumbs, JsonLd } from '@/components/ui/misc';
 import { EmptyState } from '@/components/ui/states';
@@ -109,6 +110,8 @@ export default async function ProjectsPage({
 
         {sectors.length > 1 ? (
           <nav aria-label={tNav('projects')} className="mb-8">
+            {/* خلفية المرشح النشط تنزلق إليه عند التبديل — يرى الزائر ما تغيّر */}
+            <IndicatorTrack indicatorClassName="rounded-full bg-primary">
             <ul className="flex flex-wrap gap-2">
               <li>
                 <FilterChip href="/projects" active={!filters.sector}>
@@ -126,6 +129,7 @@ export default async function ProjectsPage({
                 </li>
               ))}
             </ul>
+            </IndicatorTrack>
           </nav>
         ) : null}
 
@@ -174,11 +178,13 @@ function FilterChip({
     <Link
       href={href}
       aria-current={active ? 'page' : undefined}
+      data-active={active}
       className={cn(
-        'inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-medium transition-colors duration-fast',
+        // بلا خلفية للنشط: المؤشر المنزلق خلفه هو الخلفية
+        'relative z-10 inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-medium transition-colors duration-fast',
         active
-          ? 'border-primary bg-primary text-primary-foreground'
-          : 'border-border bg-surface text-muted hover:bg-surface-hover hover:text-foreground',
+          ? 'border-transparent text-primary-foreground'
+          : 'border-border text-muted hover:border-border-strong hover:text-foreground',
       )}
     >
       {children}

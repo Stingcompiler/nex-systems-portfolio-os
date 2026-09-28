@@ -142,6 +142,11 @@ const config: Config = {
             opacity: '0',
           },
         },
+        // عمود رسم بياني ينمو من القاعدة
+        grow: {
+          from: { transform: 'scaleY(0)' },
+          to: { transform: 'scaleY(1)' },
+        },
         // امتلاء شريط من البداية (يمين في العربية) — مراحل الطلب
         fill: {
           from: { transform: 'scaleX(0)' },
@@ -157,6 +162,7 @@ const config: Config = {
         pop: 'pop 450ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
         confetti: 'confetti 1100ms cubic-bezier(0.15, 0.6, 0.35, 1) both',
         fill: 'fill 450ms cubic-bezier(0.22, 1, 0.36, 1) both',
+        grow: 'grow 600ms cubic-bezier(0.22, 1, 0.36, 1) both',
       },
     },
   },

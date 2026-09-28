@@ -25,6 +25,8 @@ export const MOBILE_SECONDARY_NAV: NavItem[] = [
   { href: '/services', key: 'services' },
   { href: '/blog', key: 'blog' },
   { href: '/contact', key: 'contact' },
+  // صاحب طلب سابق يعود من هاتفه ليتابعه — كان الرابط في التذييل وحده
+  { href: '/track', key: 'track' },
 ];
 
 export const LEGAL_NAV: NavItem[] = [

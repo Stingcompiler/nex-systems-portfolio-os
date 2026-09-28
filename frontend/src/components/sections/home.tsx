@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Mail, MessageCircle } from 'lucide-react';
+import { ArrowRight, Check, Mail } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 import {
@@ -15,6 +15,7 @@ import { PostCard } from '@/features/blog/post-card';
 import { NewsletterForm } from '@/features/newsletter/newsletter-form';
 import { ButtonLink } from '@/components/ui/button';
 import { Container } from '@/components/ui/container';
+import { WhatsAppIcon } from '@/components/ui/whatsapp-icon';
 import { Card, Prose } from '@/components/ui/misc';
 import { Section, SectionHeader, type SectionTone } from '@/components/ui/section';
 import type {
@@ -115,7 +116,7 @@ export async function HeroSection({
                 rel="noopener noreferrer"
                 className="inline-flex min-h-12 items-center gap-2 rounded-lg border border-border-strong bg-surface px-6 font-medium text-foreground transition-colors hover:border-primary/50 hover:text-primary"
               >
-                <MessageCircle className="size-5" aria-hidden="true" />
+                <WhatsAppIcon className="size-5 text-[#25D366]" />
                 {t('ctaWhatsapp')}
               </a>
             ) : (

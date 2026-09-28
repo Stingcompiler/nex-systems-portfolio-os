@@ -11,8 +11,16 @@ import { Link } from '@/lib/i18n/navigation';
  *
  * لا يعرض شيئًا أثناء التحميل الأولي لتفادي وميض «دخول» ثم «حسابي».
  */
-export function MemberMenu({ labelled = false }: { labelled?: boolean }) {
+export function MemberMenu({
+  labelled = false,
+  hideWhenLoggedOut = false,
+}: {
+  labelled?: boolean;
+  /** الشريط العلوي: رابط الدخول للأعضاء لا للزائر الجديد — في الدرج والتذييل */
+  hideWhenLoggedOut?: boolean;
+}) {
   const t = useTranslations('auth');
+  const tNav = useTranslations('nav');
   const { member, loading } = useMember();
 
   if (loading) {
@@ -32,6 +40,8 @@ export function MemberMenu({ labelled = false }: { labelled?: boolean }) {
     );
   }
 
+  if (hideWhenLoggedOut) return null;
+
   // أيقونة بلا نص لا تقول إنها دخول أم خروج: تلميح دائمًا، ونص ظاهر في درج الجوال
   if (labelled) {
     return (
@@ -40,7 +50,7 @@ export function MemberMenu({ labelled = false }: { labelled?: boolean }) {
         className="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium text-foreground transition-colors duration-fast hover:bg-surface-hover"
       >
         <LogIn className="size-[1.1rem] flip-rtl" aria-hidden="true" />
-        {t('loginButton')}
+        {tNav('clientLogin')}
       </Link>
     );
   }

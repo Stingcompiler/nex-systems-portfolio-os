@@ -8,7 +8,7 @@
     "caseStudies": "دراسات الحالة",
     "blog": "المدونة",
     "technologies": "التقنيات",
-    "process": "طريقة العمل",
+    "process": "كيف نعمل",
     "contact": "تواصل",
     "requestQuote": "ابدأ مشروعك",
     "menu": "القائمة",
@@ -16,7 +16,14 @@
     "closeMenu": "إغلاق القائمة",
     "breadcrumbs": "مسار التنقل",
     "track": "تابع طلبك",
-    "requestQuoteShort": "ابدأ"
+    "requestQuoteShort": "ابدأ",
+    "sectorsMenu": "حلول لقطاعك",
+    "forWhichSector": "لأي قطاع؟",
+    "allSolutions": "كل الحلول والخدمات التقنية",
+    "whatsapp": "واتساب",
+    "whatsappAria": "راسلنا على واتساب",
+    "clientLogin": "دخول العملاء",
+    "theme": "المظهر"
   },
   "common": {
     "skipToContent": "تخطي إلى المحتوى",

@@ -9,6 +9,7 @@ import { LocaleSwitcher } from '@/components/layout/locale-switcher';
 import { MemberMenu } from '@/components/layout/member-menu';
 import { isActivePath, type NavLinkItem } from '@/components/layout/nav-links';
 import type { SectorLink } from '@/components/layout/sectors-menu';
+import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { sectorIcon } from '@/lib/constants/sector-icons';
 import { Link, usePathname } from '@/lib/i18n/navigation';
 import { cn } from '@/lib/utils/cn';
@@ -226,10 +227,12 @@ export function MobileNav({
           >
             {ctaLabel}
           </Link>
-          {/* المظهر خرج من الدرج إلى التذييل: لا يساعد العميل على قراره */}
           <div className="mt-3 flex items-center justify-between gap-1">
             <MemberMenu labelled />
-            <LocaleSwitcher />
+            <div className="flex items-center gap-1">
+              <ThemeToggle />
+              <LocaleSwitcher />
+            </div>
           </div>
         </div>
       </div>

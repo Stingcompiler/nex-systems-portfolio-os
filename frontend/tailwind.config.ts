@@ -107,6 +107,11 @@ const config: Config = {
         slow: 'var(--duration-slow)',
       },
       keyframes: {
+        // دخول الصفحة عند التنقّل — أقصر وأهدأ من fade-up: يتكرر مع كل نقرة
+        'page-in': {
+          from: { opacity: '0', transform: 'translateY(8px)' },
+          to: { opacity: '1', transform: 'none' },
+        },
         'fade-up': {
           from: { opacity: '0', transform: 'translateY(12px)' },
           to: { opacity: '1', transform: 'translateY(0)' },
@@ -154,6 +159,7 @@ const config: Config = {
         },
       },
       animation: {
+        'page-in': 'page-in 380ms cubic-bezier(0.22, 1, 0.36, 1) backwards',
         'fade-up': 'fade-up var(--duration-normal) ease-out both',
         float: 'float 6s ease-in-out infinite',
         'float-reverse': 'float-reverse 7s ease-in-out infinite',

@@ -44,7 +44,8 @@ export function Section({
         className,
       )}
     >
-      <Container>{children}</Container>
+      {/* يظهر القسم مع التمرير إليه — CSS فقط، انظر .section-reveal في globals.css */}
+      <Container className="section-reveal">{children}</Container>
     </section>
   );
 }

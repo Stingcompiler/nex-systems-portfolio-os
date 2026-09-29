@@ -124,6 +124,8 @@
 
   html {
     scroll-behavior: smooth;
+    /* القفز إلى قسم (#…) يتوقف تحت الترويسة اللاصقة (h-16) لا خلفها */
+    scroll-padding-top: 5rem;
   }
 
   /* حارس: عنصر أعرض من الشاشة يجعل الصفحة تنزلق أفقيًا تحت الإصبع على الهاتف.
@@ -269,6 +271,38 @@
     direction: ltr;
     unicode-bidi: isolate;
     text-align: start;
+  }
+}
+
+/* ظهور الأقسام مع التمرير: الحركة مربوطة بموضع القسم في الشاشة لا بالزمن،
+   فتتقدّم بسرعة إصبع الزائر وترجع إن رجع — بلا JavaScript ولا مراقب.
+   المتصفح الذي لا يدعم animation-timeline يعرض القسم كما هو، ومن طلب
+   تقليل الحركة لا يرى شيئًا منها. القسم الظاهر عند التحميل مكتمل أصلًا.
+   التعبئة both تنتهي بـ transform: none — لا مرجع احتواء يعطّل sticky */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .section-reveal {
+      animation: section-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+
+  /* التنقّل بتحميل كامل (تبديل اللغة، الروابط الخارجية إلى الموقع) يتلاشى
+     بدل وميض أبيض، في المتصفحات الداعمة */
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+@keyframes section-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 

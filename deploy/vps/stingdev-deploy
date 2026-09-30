@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# الأمر الوحيد الذي يسمح به مفتاح النشر (command= في authorized_keys).
+# يُثبَّت في /usr/local/bin بملكية root — نسخة من المستودع لا المستودع نفسه،
+# فلا يغيّر أي دمج لاحق ما يستطيع المفتاح تشغيله على الخادم. لا git pull
+# هنا عمدًا: ملف compose يعمل بـ sudo، وتحديثه يبقى خطوة يدوية مقصودة.
+#
+# المدخل الوحيد: sha الالتزام (40 حرفًا ست عشريًا) عبر SSH_ORIGINAL_COMMAND.
+set -euo pipefail
+
+SHA="${SSH_ORIGINAL_COMMAND:-${1:-}}"
+if ! [[ "$SHA" =~ ^[0-9a-f]{40}$ ]]; then
+  echo "usage: stingdev-deploy <40-char commit sha>" >&2
+  exit 2
+fi
+
+cd /srv/apps/stingdev/deploy/vps
+export IMAGE_TAG="sha-$SHA"
+
+echo "deploying $IMAGE_TAG"
+sudo --preserve-env=IMAGE_TAG docker compose pull -q app worker
+sudo --preserve-env=IMAGE_TAG docker compose up -d --remove-orphans app worker
+
+# النسخة التالية تقلع بالصحة نفسها التي يفحصها compose — ننتظرها ونفشل إن لم تصح
+for _ in $(seq 1 36); do
+  status="$(sudo docker inspect -f '{{.State.Health.Status}}' stingdev-app-1 2>/dev/null || echo missing)"
+  [ "$status" = healthy ] && break
+  sleep 5
+done
+echo "app: $status"
+[ "$status" = healthy ] || { sudo docker compose logs --tail 40 app >&2; exit 1; }
+
+# الوسم ثابت على الخادم: تشغيل يدوي لاحق لـ `docker compose up` يبقى على النسخة نفسها
+sed -i "/^IMAGE_TAG=/d" .env && echo "IMAGE_TAG=$IMAGE_TAG" >> .env
+
+sudo docker image prune -f >/dev/null
+echo "deployed $IMAGE_TAG"

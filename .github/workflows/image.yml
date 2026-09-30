@@ -1,9 +1,11 @@
 # يبني صورة الموقع في GitHub (لا على الخادم ولا بدقائق Render) ويدفعها إلى
 # GHCR، ثم — إن فُعِّل — ينشرها على الخادم الخاص بسحب الصورة فقط.
 #
-# النشر الآلي معطّل حتى تُضبط في إعدادات المستودع:
+# النشر الآلي معطّل حتى تُضبط في إعدادات المستودع (deploy/vps/setup-auto-deploy.sh يضبطها):
 #   Variables: VPS_DEPLOY=true
-#   Secrets:   VPS_SSH_KEY (مفتاح خاص بالنشر فقط)، VPS_KNOWN_HOSTS (ssh-keyscan 57.129.162.57)
+#   Secrets:   VPS_SSH_KEY (مفتاح نشر مقيّد بأمر واحد)، VPS_KNOWN_HOSTS
+# المفتاح على الخادم لا يشغّل إلا /usr/local/bin/stingdev-deploy: نرسل له sha
+# الالتزام فقط، فينشر الصورة المبنية منه بالضبط ويتحقق من صحتها.
 name: image
 
 on:
@@ -51,10 +53,14 @@ jobs:
   deploy:
     needs: build
     if: vars.VPS_DEPLOY == 'true'
+    # البناء يُلغى عند دمج أحدث، أما النشر الجاري فلا يُقطع في منتصفه
+    concurrency:
+      group: deploy-vps
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Pull and restart on the VPS
+      - name: Deploy this commit's image on the VPS
         env:
           SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
           KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
@@ -62,12 +68,13 @@ jobs:
           install -m 700 -d ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
-          ssh -i ~/.ssh/deploy ubuntu@57.129.162.57 '
-            set -e
-            cd /srv/apps/stingdev
-            git pull --ff-only
-            cd deploy/vps
-            sudo docker compose pull app worker
-            sudo docker compose up -d --remove-orphans
-            sudo docker image prune -f
-          '
+          ssh -i ~/.ssh/deploy -o BatchMode=yes ubuntu@57.129.162.57 "${{ github.sha }}"
+
+      - name: Check the live site
+        run: |
+          for i in $(seq 1 12); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' https://stingdev.pro/api/v1/health/) || true
+            [ "$code" = 200 ] && { echo "stingdev.pro healthy"; exit 0; }
+            sleep 5
+          done
+          echo "stingdev.pro health: $code" && exit 1

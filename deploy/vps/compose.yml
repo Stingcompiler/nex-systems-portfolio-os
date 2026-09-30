@@ -1,0 +1,81 @@
+# ستينج سيستم على الخادم الخاص (OVHcloud VPS) — الخطوات في deploy/vps/README.md.
+#
+#   Caddy النظام :443  →  127.0.0.1:3200  →  app (Next.js، يمرّر /api و/media إلى Django داخلها)
+#   app     الصورة نفسها التي يبنيها Render (Dockerfile الجذر) — مبنية في GitHub Actions
+#   worker  عامل المهام الدائم (django-q): البريد وإشعارات PWA فورًا بدل Cron كل 5 دقائق
+#   db      PostgreSQL 18 خاص بالموقع — أحدث من قاعدة Render أيًّا كان إصدارها،
+#           فـ pg_dump داخله ينقل منها مباشرة (لا ينسخ من خادم أحدث منه)
+#
+# لا يُبنى شيء على الخادم: `docker compose pull && docker compose up -d` فقط،
+# فلا يسرق البناء المعالج من المواقع الأخرى على الخادم نفسه.
+# الأسرار في deploy/vps/.env (لا يُلتزم) — انسخه من .env.example.
+
+x-app: &app
+  image: ghcr.io/stingcompiler/nex-systems-portfolio-os:${IMAGE_TAG:-latest}
+  restart: unless-stopped
+  env_file: .env
+  environment: &app-env
+    DJANGO_SETTINGS_MODULE: config.settings.prod
+    DB_ENGINE: postgres
+    DB_HOST: db
+    DB_PORT: "5432"
+    DB_NAME: stingdev
+    DB_USER: stingdev
+    DB_PASSWORD: ${DB_PASSWORD}
+  volumes:
+    # الملفات المرفوعة (صور المشاريع والشعار) — كانت على قرص Render
+    - media:/app/backend/media
+  depends_on:
+    db:
+      condition: service_healthy
+
+services:
+  app:
+    <<: *app
+    environment:
+      <<: *app-env
+      # ذاكرة أوسع من Render: عاملان لـ Django وكومة Node أكبر
+      GUNICORN_WORKERS: "2"
+      GUNICORN_THREADS: "2"
+      NODE_HEAP_MB: "256"
+    ports:
+      - "127.0.0.1:${APP_PORT:-3200}:3000"
+    mem_limit: 900m
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health/')"]
+      interval: 30s
+      timeout: 5s
+      start_period: 90s
+      retries: 3
+
+  worker:
+    <<: *app
+    environment:
+      <<: *app-env
+      Q_WORKERS: "1"
+    command: ["sh", "-c", "cd /app/backend && exec python manage.py qcluster"]
+    mem_limit: 350m
+    depends_on:
+      app:
+        condition: service_healthy
+
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: stingdev
+      POSTGRES_USER: stingdev
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      # صورة 18 تحفظ البيانات في مجلد باسم الإصدار تحت هذا المسار (ترقية أسهل)
+      - db:/var/lib/postgresql
+    mem_limit: 300m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stingdev -d stingdev"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  db:
+  media:

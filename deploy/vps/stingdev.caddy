@@ -1,0 +1,9 @@
+# /etc/caddy/sites/stingdev.caddy — يُستورد من /etc/caddy/Caddyfile (import sites/*.caddy)
+#
+# أثناء التجربة قبل تحويل DNS: عنوان sslip.io يشير إلى الخادم تلقائيًا
+# بشهادة حقيقية. بعد التحويل أضف stingdev.pro, www.stingdev.pro إلى السطر.
+
+stingdev.57-129-162-57.sslip.io {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:3200
+}

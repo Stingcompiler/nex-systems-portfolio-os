@@ -20,12 +20,13 @@ python manage.py seed_content --only-if-empty
 # المعالجة هنا — قبل إقلاع Node — حيث الذاكرة كلها متاحة، ولا تمس إلا الناقص.
 python manage.py process_media || true
 
-# الحاوية بحدّ 512MB يتقاسمها Django وNode.
+# على Render الحاوية بحدّ 512MB يتقاسمها Django وNode: عامل واحد. على الخادم
+# الخاص الذاكرة أوسع فيُرفع العدد من البيئة (deploy/vps/compose.yml).
 # --max-requests يعيد تدوير العامل دوريًا فلا يتراكم تسرّب بطيء.
 gunicorn config.wsgi:application \
   --bind 127.0.0.1:8000 \
-  --workers 1 \
-  --threads 2 \
+  --workers "${GUNICORN_WORKERS:-1}" \
+  --threads "${GUNICORN_THREADS:-2}" \
   --timeout 120 \
   --max-requests 300 \
   --max-requests-jitter 60 \

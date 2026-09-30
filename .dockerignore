@@ -1,0 +1,10 @@
+.git
+**/node_modules
+frontend/.next
+backend/media
+backend/logs
+backend/.venv
+backend/db.sqlite3
+**/__pycache__
+*.zip
+deploy/vps/.env

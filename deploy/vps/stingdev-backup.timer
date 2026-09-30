@@ -1,0 +1,11 @@
+[Unit]
+Description=Run StingSystem backup nightly
+
+[Timer]
+# 02:30 UTC — بعيدًا عن نسخة فيزانو بلص (01:00) كي لا يتزاحم القرص
+OnCalendar=*-*-* 02:30:00 UTC
+RandomizedDelaySec=10m
+Persistent=true
+
+[Install]
+WantedBy=timers.target

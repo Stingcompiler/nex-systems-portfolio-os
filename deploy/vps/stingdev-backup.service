@@ -1,0 +1,8 @@
+[Unit]
+Description=StingSystem nightly backup (database + media)
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/srv/apps/stingdev/deploy/vps/backup.sh

@@ -30,10 +30,14 @@ ssh -i "$ADMIN_KEY" "ubuntu@$HOST" "set -e
   echo 'restrict,command=\"/usr/local/bin/stingdev-deploy\" $(cat "$TMP/deploy.pub")' >> ~/.ssh/authorized_keys"
 
 echo "» checking the key can only run the deploy command"
-if ssh -i "$TMP/deploy" -o IdentitiesOnly=yes -o BatchMode=yes "ubuntu@$HOST" "whoami" 2>&1 | grep -q "usage: stingdev-deploy"; then
+# الأمر المقيّد يرفض المدخل برمز خروج 2 عمدًا — يُلتقط الناتج أولًا، فمع
+# pipefail كان رمز ssh يُفشل الأنبوب كله رغم أن grep وجد رسالة الرفض
+probe="$(ssh -i "$TMP/deploy" -o IdentitiesOnly=yes -o BatchMode=yes "ubuntu@$HOST" "whoami" 2>&1 || true)"
+if grep -q "usage: stingdev-deploy" <<<"$probe" && ! grep -qx "ubuntu" <<<"$probe"; then
   echo "  ok: arbitrary commands are refused"
 else
-  echo "  ✗ the key is not restricted — stopping" >&2; exit 1
+  echo "  ✗ the key is not restricted — stopping. Output was:" >&2
+  echo "$probe" >&2; exit 1
 fi
 
 echo "» saving GitHub secrets and enabling auto deploy"

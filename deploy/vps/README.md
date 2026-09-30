@@ -80,15 +80,30 @@ sudo systemctl start stingdev-backup.service && ls -lh /srv/backups/stingdev
 
 ## التحديثات
 
-آليًا بعد كل دمج إن ضُبط في المستودع `VPS_DEPLOY=true` والسرّان
-`VPS_SSH_KEY` و`VPS_KNOWN_HOSTS`. يدويًا:
+**آليًا:** كل دمج في main → GitHub يبني الصورة `sha-<commit>` → يتصل بالخادم
+بمفتاح نشر لا يشغّل إلا `/usr/local/bin/stingdev-deploy` → يسحب تلك الصورة
+بالضبط ويعيد التشغيل وينتظر فحص الصحة (≈10 ثوانٍ) → يتحقق من stingdev.pro.
+فشل أي خطوة يُفشل المهمة في GitHub Actions، والنسخة السابقة تبقى إن لم تصح الجديدة.
+
+التفعيل مرة واحدة من جهازك (يولّد المفتاح ويقيّده ويضبط أسرار المستودع):
 
 ```bash
-cd /srv/apps/stingdev && git pull && cd deploy/vps
-sudo docker compose pull && sudo docker compose up -d
+bash deploy/vps/setup-auto-deploy.sh ~/.ssh/ovh_vps_ed25519
 ```
 
-الرجوع إلى نسخة سابقة: `IMAGE_TAG=sha-<commit>` في `.env` ثم `up -d`.
+الإيقاف: `gh variable set VPS_DEPLOY --body false`. سحب المفتاح: احذف سطر
+`github-actions-stingdev-deploy` من `~/.ssh/authorized_keys` على الخادم.
+
+**ما لا ينشره الآلي عمدًا:** تغييرات `compose.yml` و`stingdev-deploy` نفسه —
+يعملان بـ sudo، فيبقى تحديثهما خطوة يدوية لا يملكها كل من يدمج في main:
+
+```bash
+cd /srv/apps/stingdev && git pull
+sudo install -m 755 deploy/vps/stingdev-deploy /usr/local/bin/   # إن تغيّر
+cd deploy/vps && sudo docker compose up -d
+```
+
+**الرجوع إلى نسخة سابقة:** `stingdev-deploy <sha الالتزام>` على الخادم.
 
 ## النسخ خارج الخادم
 

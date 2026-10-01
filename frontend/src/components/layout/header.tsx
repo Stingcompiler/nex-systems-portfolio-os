@@ -4,6 +4,7 @@ import { LocaleSwitcher } from '@/components/layout/locale-switcher';
 import { MemberMenu } from '@/components/layout/member-menu';
 import { MobileNav } from '@/components/layout/mobile-nav';
 import { NavLinks } from '@/components/layout/nav-links';
+import { ScrollHeader } from '@/components/layout/scroll-header';
 import { SectorsMenu } from '@/components/layout/sectors-menu';
 import { SiteMark } from '@/components/layout/site-mark';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
@@ -13,6 +14,7 @@ import { Container } from '@/components/ui/container';
 import { getSolutions } from '@/lib/api/queries';
 import type { SiteSettings } from '@/lib/api/types';
 import type { Locale } from '@/lib/i18n/routing';
+import { cn } from '@/lib/utils/cn';
 import { whatsappLink } from '@/lib/utils/format';
 import { Link } from '@/lib/i18n/navigation';
 import { MAIN_NAV, MOBILE_SECONDARY_NAV } from '@/lib/constants/nav';
@@ -39,7 +41,13 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
   }));
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border/40 bg-background/75 backdrop-blur-xl">
+    <ScrollHeader
+      className={cn(
+        'sticky top-0 z-30 border-b border-border/40 bg-background/75 backdrop-blur-xl',
+        'transition-[background-color,border-color,box-shadow] duration-300 ease-out',
+        'data-[scrolled=true]:border-border/70 data-[scrolled=true]:bg-background/90 data-[scrolled=true]:shadow-[0_6px_20px_-12px_rgb(15_23_42/0.25)]',
+      )}
+    >
       <Container className="flex h-16 items-center gap-3 sm:gap-6">
         <Link
           href="/"
@@ -57,7 +65,10 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
         </Link>
 
         {/* «حلول لقطاعك» أولًا ثم ثلاثة روابط، من 1024px؛ الدرج يغطي ما دونها */}
-        <nav aria-label={t('menu')} className="hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex">
+        <nav
+          aria-label={t('menu')}
+          className="hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex"
+        >
           {sectors.length ? (
             <SectorsMenu label={t('sectorsMenu')} sectors={sectors} allLabel={t('allSolutions')} />
           ) : null}
@@ -95,7 +106,11 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
               </a>
             </>
           ) : null}
-          <ButtonLink href="/request-quote" size="sm" className="hidden shadow-brand sm:inline-flex">
+          <ButtonLink
+            href="/request-quote"
+            size="sm"
+            className="hidden shadow-brand sm:inline-flex"
+          >
             {t('requestQuote')}
           </ButtonLink>
           {/* الجوال: زر «ابدأ» ظاهر دائمًا — الزائر المقتنع في منتصف الصفحة
@@ -106,6 +121,6 @@ export async function Header({ settings }: { settings: SiteSettings | null }) {
           <MobileNav items={items} secondaryItems={secondaryItems} sectors={sectors} />
         </div>
       </Container>
-    </header>
+    </ScrollHeader>
   );
 }

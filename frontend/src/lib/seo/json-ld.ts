@@ -25,7 +25,7 @@ export function websiteJsonLd(settings: SiteSettings | null, locale: Locale): Js
 }
 
 /** شعار الهوية للنتائج المنسّقة في محركات البحث. */
-const BRAND_LOGO_PNG = '/icons/icon-512.png';
+const BRAND_LOGO_PNG = '/icons/icon-512.png?v=2';
 
 export function organizationJsonLd(settings: SiteSettings | null, locale: Locale): Json {
   return {

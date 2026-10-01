@@ -28,16 +28,43 @@ export function MobileNav({
   const t = useTranslations('nav');
   const locale = useLocale();
   const [open, setOpen] = useState(false);
+  // الإغلاق على مرحلتين: الدرج ينزلق خارجًا ثم يُزال من الصفحة
+  const [closing, setClosing] = useState(false);
+  // أيقونة الزر تدور عند التبديل فقط، لا عند أول تحميل للصفحة
+  const [toggled, setToggled] = useState(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => setMounted(true), []);
+  useEffect(
+    () => () => {
+      if (closeTimer.current) clearTimeout(closeTimer.current);
+    },
+    [],
+  );
 
-  // إغلاق القائمة عند الانتقال إلى صفحة أخرى
+  const close = () => {
+    if (!open || closing) return;
+    setToggled(true);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setOpen(false);
+      return;
+    }
+    setClosing(true);
+    closeTimer.current = setTimeout(() => {
+      setOpen(false);
+      setClosing(false);
+    }, 200);
+  };
+
+  // إغلاق فوري عند الانتقال إلى صفحة أخرى — الصفحة الجديدة تدخل بحركتها
   useEffect(() => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
     setOpen(false);
+    setClosing(false);
   }, [pathname]);
 
   // Esc للإغلاق، ومنع تمرير الخلفية، وإعادة التركيز إلى الزر
@@ -46,7 +73,7 @@ export function MobileNav({
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
-        setOpen(false);
+        close();
         triggerRef.current?.focus();
         return;
       }
@@ -95,8 +122,11 @@ export function MobileNav({
   const drawer = (
     <>
       <div
-        className="fixed inset-0 z-40 bg-background/70 backdrop-blur-sm lg:hidden"
-        onClick={() => setOpen(false)}
+        className={cn(
+          'fixed inset-0 z-40 bg-background/70 backdrop-blur-sm lg:hidden',
+          closing ? 'motion-safe:animate-fade-out' : 'motion-safe:animate-fade-in',
+        )}
+        onClick={close}
         aria-hidden="true"
       />
 
@@ -114,6 +144,10 @@ export function MobileNav({
         className={cn(
           'fixed inset-y-0 start-0 z-50 flex w-[min(20rem,85vw)] flex-col',
           'border-e border-border bg-surface shadow-card lg:hidden',
+          // ينزلق من جهة البداية ويعود إليها: يسار في الإنجليزية ويمين في العربية
+          closing
+            ? 'motion-safe:ltr:animate-drawer-out-left motion-safe:rtl:animate-drawer-out-right'
+            : 'motion-safe:ltr:animate-drawer-in-left motion-safe:rtl:animate-drawer-in-right',
         )}
       >
         <div className="flex h-16 shrink-0 items-center justify-between border-b border-border px-4">
@@ -121,7 +155,7 @@ export function MobileNav({
           <button
             type="button"
             onClick={() => {
-              setOpen(false);
+              close();
               triggerRef.current?.focus();
             }}
             aria-label={t('closeMenu')}
@@ -137,12 +171,17 @@ export function MobileNav({
               <p className="mb-2 px-3 text-xs font-semibold text-muted">{t('forWhichSector')}</p>
               {/* عمود واحد: الدرج ضيق (~300px) فيلتف الاسم في عمودين على ثلاثة أسطر */}
               <ul className="flex flex-col gap-0.5">
-                {sectors.map((sector) => {
+                {sectors.map((sector, index) => {
                   const Icon = sectorIcon(sector.slug, sector.sector);
                   const href = `/solutions/${sector.slug}`;
                   const active = isActivePath(pathname, href);
                   return (
-                    <li key={sector.slug}>
+                    // البنود تتبع الدرج تباعًا وهو ينزلق — لا كتلة تظهر دفعة واحدة
+                    <li
+                      key={sector.slug}
+                      className="motion-safe:animate-fade-up"
+                      style={{ animationDelay: `${90 + index * 35}ms` }}
+                    >
                       <Link
                         href={href}
                         aria-current={active ? 'page' : undefined}
@@ -167,10 +206,14 @@ export function MobileNav({
             </div>
           ) : null}
           <ul className="flex flex-col gap-0.5">
-            {items.map((item) => {
+            {items.map((item, index) => {
               const active = isActivePath(pathname, item.href);
               return (
-                <li key={item.href}>
+                <li
+                  key={item.href}
+                  className="motion-safe:animate-fade-up"
+                  style={{ animationDelay: `${90 + (sectors.length + index) * 35}ms` }}
+                >
                   <Link
                     href={item.href}
                     aria-current={active ? 'page' : undefined}
@@ -237,16 +280,32 @@ export function MobileNav({
       <button
         ref={triggerRef}
         type="button"
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => {
+          if (open) {
+            close();
+          } else {
+            setToggled(true);
+            setOpen(true);
+          }
+        }}
         aria-expanded={open}
         aria-controls="mobile-nav-panel"
         aria-label={open ? t('closeMenu') : t('openMenu')}
         className="inline-flex size-11 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-surface-hover lg:hidden"
       >
-        {open ? (
-          <X className="size-5" aria-hidden="true" />
+        {/* المفتاح يعيد تركيب الأيقونة عند كل تبديل فتدور ربع لفة إلى شكلها الجديد */}
+        {open && !closing ? (
+          <X
+            key="close"
+            className={cn('size-5', toggled && 'motion-safe:animate-icon-in')}
+            aria-hidden="true"
+          />
         ) : (
-          <Menu className="size-5" aria-hidden="true" />
+          <Menu
+            key="open"
+            className={cn('size-5', toggled && 'motion-safe:animate-icon-in')}
+            aria-hidden="true"
+          />
         )}
       </button>
 

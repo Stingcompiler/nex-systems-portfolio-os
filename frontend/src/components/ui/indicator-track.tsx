@@ -37,6 +37,7 @@ export function IndicatorTrack({
 }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [box, setBox] = useState<Box | null>(null);
+  const [hidden, setHidden] = useState(false);
   const [animated, setAnimated] = useState(false);
 
   useLayoutEffect(() => {
@@ -45,10 +46,10 @@ export function IndicatorTrack({
 
     const measure = () => {
       const active = track.querySelector<HTMLElement>('[data-active="true"]');
-      if (!active) {
-        setBox(null);
-        return;
-      }
+      // بلا عنصر نشط (شريط التنقل في صفحة خارج روابطه): يبقى المؤشر في
+      // مكانه ويتلاشى، فيظهر من هناك منزلقًا حين يعود عنصر نشط
+      setHidden(!active);
+      if (!active) return;
       const next: Box = {
         x: active.offsetLeft,
         y: variant === 'underline' ? active.offsetTop + active.offsetHeight - 2 : active.offsetTop,
@@ -95,9 +96,10 @@ export function IndicatorTrack({
           aria-hidden="true"
           style={style}
           className={cn(
-            'pointer-events-none absolute left-0 top-0 z-0',
+            'pointer-events-none absolute left-0 top-0 z-0 transition-opacity duration-200',
             animated &&
-              'motion-safe:transition-[transform,width,height] motion-safe:duration-300 motion-safe:ease-out',
+              'motion-safe:transition-[transform,width,height,opacity] motion-safe:duration-300 motion-safe:ease-out',
+            hidden && 'opacity-0',
             indicatorClassName,
           )}
         />

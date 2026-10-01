@@ -103,13 +103,20 @@ export function SectorsMenu({
           id={panelId}
           className="absolute start-1/2 top-full z-40 w-[36rem] -translate-x-1/2 pt-2 rtl:translate-x-1/2"
         >
-          <div className="rounded-xl border border-border bg-surface p-3 shadow-elevated">
+          {/* الحركة على الصندوق الداخلي: الغلاف يتوسّط بـ translate، وحركة
+              بالتحويل عليه كانت ستلغي التوسيط */}
+          <div className="origin-top rounded-xl border border-border bg-surface p-3 shadow-elevated motion-safe:animate-menu-in">
             <ul className="grid grid-cols-2 gap-1">
-              {sectors.map((sector) => {
+              {sectors.map((sector, index) => {
                 const Icon = sectorIcon(sector.slug, sector.sector);
                 const href = `/solutions/${sector.slug}`;
                 return (
-                  <li key={sector.slug}>
+                  // القطاعات تظهر تباعًا بعد اللوحة — العين تمسحها بالترتيب
+                  <li
+                    key={sector.slug}
+                    className="motion-safe:animate-fade-up"
+                    style={{ animationDelay: `${60 + index * 35}ms` }}
+                  >
                     <Link
                       href={href}
                       aria-current={isActivePath(pathname, href) ? 'page' : undefined}

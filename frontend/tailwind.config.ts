@@ -107,6 +107,23 @@ const config: Config = {
         slow: 'var(--duration-slow)',
       },
       keyframes: {
+        // قائمة منسدلة: تنزل قليلًا من تحت زرها وتتضح — لا قفزة من العدم
+        'menu-in': {
+          from: { opacity: '0', transform: 'translateY(-6px) scale(0.98)' },
+          to: { opacity: '1', transform: 'none' },
+        },
+        // درج الهاتف من جهة البداية: يسار في الإنجليزية ويمين في العربية
+        'drawer-in-left': { from: { transform: 'translateX(-100%)' }, to: { transform: 'none' } },
+        'drawer-out-left': { from: { transform: 'none' }, to: { transform: 'translateX(-100%)' } },
+        'drawer-in-right': { from: { transform: 'translateX(100%)' }, to: { transform: 'none' } },
+        'drawer-out-right': { from: { transform: 'none' }, to: { transform: 'translateX(100%)' } },
+        'fade-in': { from: { opacity: '0' }, to: { opacity: '1' } },
+        'fade-out': { from: { opacity: '1' }, to: { opacity: '0' } },
+        // أيقونة القائمة ↔ الإغلاق: دوران ربع لفة مع الظهور
+        'icon-in': {
+          from: { opacity: '0', transform: 'rotate(-90deg) scale(0.6)' },
+          to: { opacity: '1', transform: 'none' },
+        },
         // دخول الصفحة عند التنقّل — أقصر وأهدأ من fade-up: يتكرر مع كل نقرة
         'page-in': {
           from: { opacity: '0', transform: 'translateY(8px)' },
@@ -159,6 +176,14 @@ const config: Config = {
         },
       },
       animation: {
+        'menu-in': 'menu-in 180ms cubic-bezier(0.22, 1, 0.36, 1) both',
+        'drawer-in-left': 'drawer-in-left 260ms cubic-bezier(0.22, 1, 0.36, 1) both',
+        'drawer-out-left': 'drawer-out-left 200ms cubic-bezier(0.4, 0, 1, 1) both',
+        'drawer-in-right': 'drawer-in-right 260ms cubic-bezier(0.22, 1, 0.36, 1) both',
+        'drawer-out-right': 'drawer-out-right 200ms cubic-bezier(0.4, 0, 1, 1) both',
+        'fade-in': 'fade-in 200ms ease-out both',
+        'fade-out': 'fade-out 200ms ease-in both',
+        'icon-in': 'icon-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both',
         'page-in': 'page-in 380ms cubic-bezier(0.22, 1, 0.36, 1) backwards',
         'fade-up': 'fade-up var(--duration-normal) ease-out both',
         float: 'float 6s ease-in-out infinite',

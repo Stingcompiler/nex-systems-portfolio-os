@@ -47,10 +47,10 @@ export const metadata: Metadata = {
   // /favicon.ico وظهر التبويب بأيقونة مفقودة
   icons: {
     icon: [
-      { url: '/brand/stingsystem-mark.svg', type: 'image/svg+xml' },
-      { url: '/icons/favicon-48.png', sizes: '48x48', type: 'image/png' },
+      { url: '/brand/stingsystem-mark.svg?v=2', type: 'image/svg+xml' },
+      { url: '/icons/favicon-48.png?v=2', sizes: '48x48', type: 'image/png' },
     ],
-    apple: '/icons/apple-icon-180.png',
+    apple: '/icons/apple-icon-180.png?v=2',
   },
   // تطبيق مستقل يفتح على اللوحة: على iPhone لا تصل إشعارات الويب إلا من
   // تطبيق مثبّت على الشاشة الرئيسية

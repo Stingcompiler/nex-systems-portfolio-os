@@ -83,13 +83,15 @@ export async function generateMetadata({
     applicationName: SITE_NAME_FALLBACK,
     appleWebApp: { capable: true, statusBarStyle: 'default', title: SITE_NAME_FALLBACK },
     icons: {
-      // SVG حاد بأي مقاس؛ PNG للمتصفحات التي لا تقبله
+      // SVG حاد بأي مقاس؛ PNG للمتصفحات التي لا تقبله.
+      // ‎?v=2: شعار «السين البيانية» — Google يحفظ الأيقونة بعنوانها، فالعنوان
+      // الجديد يجعله يجلبها من جديد بدل الشعار الأزرق القديم. يُرفع الرقم مع كل تغيير للشعار
       icon: [
-        { url: '/brand/stingsystem-mark.svg', type: 'image/svg+xml' },
-        { url: '/icons/favicon-48.png', sizes: '48x48', type: 'image/png' },
-        { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+        { url: '/brand/stingsystem-mark.svg?v=2', type: 'image/svg+xml' },
+        { url: '/icons/favicon-48.png?v=2', sizes: '48x48', type: 'image/png' },
+        { url: '/icons/icon-192.png?v=2', sizes: '192x192', type: 'image/png' },
       ],
-      apple: '/icons/apple-icon-180.png',
+      apple: '/icons/apple-icon-180.png?v=2',
     },
   };
 }

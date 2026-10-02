@@ -105,6 +105,7 @@ export async function ProjectCard({
 
       <div className="flex flex-1 flex-col p-6">
         <div className="mb-2 flex flex-wrap items-center gap-2">
+          {project.is_product ? <Badge tone="primary">{t('productBadge')}</Badge> : null}
           {project.sector !== 'general' ? <Badge>{project.sector_display}</Badge> : null}
           <Badge>{project.project_type_display}</Badge>
           {/* بديل قسم «دراسات الحالة» على الرئيسية الذي كان يكرّر المشروع نفسه */}

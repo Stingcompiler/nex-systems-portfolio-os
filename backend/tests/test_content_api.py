@@ -557,3 +557,51 @@ def test_admin_view_is_never_cached(api_client, content_manager):
 def test_anonymous_public_read_is_cacheable(api_client, content):
     response = api_client.get(SERVICES_URL)
     assert response["Cache-Control"].startswith("public, max-age=")
+
+
+# --------------------------------------------------------------- اسم العميل والمنتجات
+
+
+def _project(**fields):
+    defaults = {
+        "title_ar": "مشروع",
+        "summary_ar": "ملخص",
+        "client_name": "عميل",
+        "is_published": True,
+        "published_at": timezone.now(),
+    }
+    return Project.objects.create(**{**defaults, **fields})
+
+
+def test_client_name_stays_hidden_without_permission(db):
+    project = _project(client_permission=False)
+    assert project.is_anonymized is True
+    assert project.public_client_name == ""
+
+
+def test_granting_permission_later_reveals_the_client_name(db):
+    # التجهيل كان أثرًا آليًا لغياب الإذن: منحه لاحقًا يُظهر الاسم دون خطوة أخرى
+    project = _project(client_permission=False)
+    project.client_permission = True
+    project.save()
+    project.refresh_from_db()
+    assert project.is_anonymized is False
+    assert project.public_client_name == "عميل"
+
+
+def test_explicit_anonymity_survives_while_permission_stands(db):
+    project = _project(client_permission=True)
+    project.is_anonymized = True
+    project.save()
+    project.refresh_from_db()
+    assert project.public_client_name == ""
+
+
+def test_products_filter_returns_only_our_products(api_client, db):
+    _project(slug="client-work", title_ar="عمل لعميل")
+    _project(slug="our-product", title_ar="منتجنا", is_product=True)
+    response = api_client.get("/api/v1/projects/?is_product=true", **AR)
+    assert response.status_code == 200
+    results = response.data["results"]
+    assert [item["slug"] for item in results] == ["our-product"]
+    assert results[0]["is_product"] is True

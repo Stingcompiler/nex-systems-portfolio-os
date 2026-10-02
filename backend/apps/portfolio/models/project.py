@@ -79,6 +79,12 @@ class Project(
 
     completed_at = models.DateField("تاريخ الإنجاز", null=True, blank=True)
     is_featured = models.BooleanField("مميز", default=False, db_index=True)
+    # منتج تملكه ستينج سيستم وتشغّله (فيزانو…) لا عمل نُفّذ لعميل: يُميَّز في
+    # «أعمالنا» بمرشح وشارة — يثبت أننا نبني منتجات ونشغّلها لا مواقع فقط
+    is_product = models.BooleanField(
+        "منتج نملكه", default=False, db_index=True,
+        help_text="منتج تملكه ستينج سيستم وتديره، لا مشروع لعميل.",
+    )
 
     class Meta:
         verbose_name = "مشروع"
@@ -95,6 +101,14 @@ class Project(
         # لا يُعرض اسم العميل إطلاقًا بلا إذن صريح
         if not self.client_permission:
             self.is_anonymized = True
+        elif self.pk:
+            # الإذن مُنح الآن بعد أن كان غائبًا: التجهيل كان أثرًا آليًا لغيابه لا
+            # اختيارًا، فيُرفع — وإلا بقي الاسم مخفيًا رغم الإذن
+            granted_now = not type(self).objects.filter(
+                pk=self.pk, client_permission=True
+            ).exists()
+            if granted_now:
+                self.is_anonymized = False
         super().save(*args, **kwargs)
 
     @property

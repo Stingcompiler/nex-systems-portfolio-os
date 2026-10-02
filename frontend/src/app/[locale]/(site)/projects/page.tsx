@@ -44,14 +44,15 @@ export default async function ProjectsPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ sector?: string; project_type?: string }>;
+  searchParams: Promise<{ sector?: string; project_type?: string; product?: string }>;
 }) {
   const { locale: rawLocale } = await params;
   const filters = await searchParams;
   setRequestLocale(rawLocale);
   const locale = rawLocale as Locale;
 
-  const filtered = Boolean(filters.sector || filters.project_type);
+  const productsOnly = filters.product === '1';
+  const filtered = Boolean(filters.sector || filters.project_type || productsOnly);
 
   const [t, tNav, tStates, tCommon, projects, allProjects, caseStudies] = await Promise.all([
     getTranslations('projects'),
@@ -61,6 +62,7 @@ export default async function ProjectsPage({
     getProjects(locale, {
       sector: filters.sector,
       project_type: filters.project_type,
+      is_product: productsOnly || undefined,
       page_size: 50,
     }, { strict: true }),
     // خيارات الفلترة من القائمة الكاملة لا من النتائج المفلترة: وإلا
@@ -69,6 +71,7 @@ export default async function ProjectsPage({
     getCaseStudies(locale, { page_size: 1 }),
   ]);
 
+  const hasProducts = (allProjects ?? projects).results.some((project) => project.is_product);
   const sectors = Array.from(
     new Map(
       (allProjects ?? projects).results.map((project) => [
@@ -108,16 +111,25 @@ export default async function ProjectsPage({
           ) : null}
         </header>
 
-        {sectors.length > 1 ? (
+        {/* المرشحات تظهر إن كان هناك ما يُفرز: أكثر من قطاع، أو منتجات لنا */}
+        {sectors.length > 1 || hasProducts ? (
           <nav aria-label={tNav('projects')} className="mb-8">
             {/* خلفية المرشح النشط تنزلق إليه عند التبديل — يرى الزائر ما تغيّر */}
             <IndicatorTrack indicatorClassName="rounded-full bg-primary">
             <ul className="flex flex-wrap gap-2">
               <li>
-                <FilterChip href="/projects" active={!filters.sector}>
+                <FilterChip href="/projects" active={!filters.sector && !productsOnly}>
                   {tCommon('all')}
                 </FilterChip>
               </li>
+              {/* منتجاتنا قبل القطاعات: ما نملكه ونشغّله أقوى دليل بعد «الكل» */}
+              {hasProducts ? (
+                <li>
+                  <FilterChip href="/projects?product=1" active={productsOnly}>
+                    {t('ourProducts')}
+                  </FilterChip>
+                </li>
+              ) : null}
               {sectors.map(([value, label]) => (
                 <li key={value}>
                   <FilterChip
@@ -142,7 +154,7 @@ export default async function ProjectsPage({
         ) : (
           <EmptyState
             title={
-              filters.sector || filters.project_type
+              filters.sector || filters.project_type || productsOnly
                 ? tStates('emptySearch')
                 : tStates('emptyProjects')
             }

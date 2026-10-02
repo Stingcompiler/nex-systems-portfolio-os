@@ -3,6 +3,7 @@ import {
   Building2,
   Calculator,
   GraduationCap,
+  Hotel,
   HeartHandshake,
   LayoutGrid,
   MonitorPlay,
@@ -38,6 +39,7 @@ const BY_SECTOR: Record<string, LucideIcon> = {
   hr: Users,
   real_estate: Building2,
   logistics: Boxes,
+  hospitality: Hotel,
   ngo: HeartHandshake,
 };
 

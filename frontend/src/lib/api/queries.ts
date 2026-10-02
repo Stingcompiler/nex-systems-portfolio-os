@@ -165,6 +165,7 @@ interface ProjectQuery {
   technology?: string;
   search?: string;
   is_featured?: boolean;
+  is_product?: boolean;
   page?: number;
   page_size?: number;
 }

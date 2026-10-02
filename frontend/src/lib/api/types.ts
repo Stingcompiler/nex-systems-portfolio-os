@@ -215,6 +215,7 @@ export interface ProjectListItem {
   client_name: string;
   completed_at: string | null;
   is_featured: boolean;
+  is_product: boolean;
   has_case_study: boolean;
   live_url: string;
 }

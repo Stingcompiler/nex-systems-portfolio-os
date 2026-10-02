@@ -1,0 +1,49 @@
+# مراقبة توفر المواقع على الخادم الخاص كل 15 دقيقة.
+#
+# فشل أي فحص يُفشل المهمة، وGitHub يرسل بريدًا تلقائيًا بالفشل — بلا خدمة
+# مراقبة ولا شيء يُثبَّت على الخادم (المراقب من خارجه يرى ما يراه الزائر،
+# وإن توقف الخادم كله بقي يعمل وينبّه).
+name: uptime
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Sites respond and certificates are valid
+        run: |
+          fail=0
+          for url in \
+            https://stingdev.pro/api/v1/health/ \
+            https://stingdev.pro/ar \
+            https://pro.vezano.app/ \
+            https://plus.vezano.app/ \
+            https://vezano.app/ ; do
+            # ثلاث محاولات: خطأ شبكة عابر لا يوقظ أحدًا ليلًا
+            code=000
+            for attempt in 1 2 3; do
+              code=$(curl -s -o /dev/null -m 20 -w '%{http_code}' "$url") || true
+              [ "$code" = 200 ] && break
+              sleep 10
+            done
+            echo "$code  $url"
+            [ "$code" = 200 ] || fail=1
+          done
+
+          # الشهادات تتجدد آليًا عبر Caddy؛ إن تعطّل التجديد ننبَّه قبل الانتهاء بأسبوعين
+          for host in stingdev.pro www.stingdev.pro pro.vezano.app plus.vezano.app vezano.app; do
+            end=$(echo | openssl s_client -connect "$host:443" -servername "$host" 2>/dev/null \
+              | openssl x509 -noout -enddate | cut -d= -f2)
+            days=$(( ( $(date -d "$end" +%s) - $(date +%s) ) / 86400 ))
+            echo "cert $host: $days days left"
+            [ "$days" -ge 14 ] || fail=1
+          done
+          exit $fail

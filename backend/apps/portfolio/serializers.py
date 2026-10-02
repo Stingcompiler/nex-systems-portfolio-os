@@ -147,7 +147,7 @@ class ProjectListSerializer(serializers.ModelSerializer):
             "id", "title", "slug", "summary", "cover_image",
             "sector", "sector_display", "project_type", "project_type_display",
             "status", "technologies", "client_name", "completed_at",
-            "is_featured", "has_case_study", "live_url",
+            "is_featured", "is_product", "has_case_study", "live_url",
         ]
 
     def get_has_case_study(self, project: Project) -> bool:

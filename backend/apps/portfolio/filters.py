@@ -19,7 +19,7 @@ class ProjectFilter(filters.FilterSet):
 
     class Meta:
         model = Project
-        fields = ["sector", "project_type", "status", "is_featured"]
+        fields = ["sector", "project_type", "status", "is_featured", "is_product"]
 
 
 class CaseStudyFilter(filters.FilterSet):

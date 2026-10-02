@@ -34,9 +34,12 @@ services:
     <<: *app
     environment:
       <<: *app-env
-      # ذاكرة أوسع من Render: عاملان لـ Django وكومة Node أكبر
-      GUNICORN_WORKERS: "2"
-      GUNICORN_THREADS: "2"
+      # ذاكرة أوسع من Render: ثلاثة عمّال لـ Django وكومة Node أكبر.
+      # عمّال متزامنون (خيط واحد) لا مُخيَّطون: start.sh يدوّر كل عامل بعد 300
+      # طلب، والعامل المخيَّط يُسقط عند خروجه طلبات قبلها فيصل اللوحة 500
+      # (قيس محليًا: 8–11 فاشلًا من 80 بالخيوط، صفر من 80 بالمتزامن)
+      GUNICORN_WORKERS: "3"
+      GUNICORN_THREADS: "1"
       NODE_HEAP_MB: "256"
     ports:
       - "127.0.0.1:${APP_PORT:-3200}:3000"

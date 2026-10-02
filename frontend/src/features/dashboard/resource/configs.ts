@@ -12,6 +12,7 @@ const SECTORS: SelectOption[] = [
   { value: 'healthcare', label: 'الرعاية الصحية' },
   { value: 'ngo', label: 'المنظمات' },
   { value: 'logistics', label: 'المخزون والتوزيع' },
+  { value: 'hospitality', label: 'الفنادق والضيافة' },
   { value: 'general', label: 'عام' },
 ];
 

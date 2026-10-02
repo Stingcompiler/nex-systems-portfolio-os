@@ -14,6 +14,7 @@ class Sector(models.TextChoices):
     HEALTHCARE = "healthcare", "الرعاية الصحية"
     NGO = "ngo", "المنظمات"
     LOGISTICS = "logistics", "المخزون والتوزيع"
+    HOSPITALITY = "hospitality", "الفنادق والضيافة"
     GENERAL = "general", "عام"
 
 
@@ -39,6 +40,7 @@ SECTOR_LABELS_EN: dict[str, str] = {
     Sector.HEALTHCARE: "Healthcare",
     Sector.NGO: "Organisations",
     Sector.LOGISTICS: "Inventory & distribution",
+    Sector.HOSPITALITY: "Hotels & hospitality",
     Sector.GENERAL: "General",
 }
 

@@ -30,6 +30,11 @@ function readCookie(name: string): string {
 }
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  // لغة الصفحة لا لغة المتصفح: رسائل التحقق من الخادم تأتي بالعربية في
+  // اللوحة (lang="ar") وبلغة الزائر في الموقع — كانت تصل «This field may not be null»
+  if (typeof document !== 'undefined' && !config.headers.has('Accept-Language')) {
+    config.headers.set('Accept-Language', document.documentElement.lang || 'ar');
+  }
   const method = (config.method || 'get').toLowerCase();
   if (UNSAFE_METHODS.has(method)) {
     const token = readCookie(CSRF_COOKIE);

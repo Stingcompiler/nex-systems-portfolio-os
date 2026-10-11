@@ -98,8 +98,12 @@ class Project(
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = unique_slug(self, self.title_en or self.title_ar)
+        # المنتج المملوك لا عميل له يُستأذن: «اسم العميل» فيه اسم العلامة أو
+        # المالك، فلا يمر بمنطق الإذن والتجهيل الخاص بمشاريع العملاء (ST-05)
+        if self.is_product:
+            self.is_anonymized = False
         # لا يُعرض اسم العميل إطلاقًا بلا إذن صريح
-        if not self.client_permission:
+        elif not self.client_permission:
             self.is_anonymized = True
         elif self.pk:
             # الإذن مُنح الآن بعد أن كان غائبًا: التجهيل كان أثرًا آليًا لغيابه لا
@@ -113,6 +117,8 @@ class Project(
 
     @property
     def public_client_name(self) -> str:
+        if self.is_product:
+            return self.client_name
         return self.client_name if self.client_permission and not self.is_anonymized else ""
 
 

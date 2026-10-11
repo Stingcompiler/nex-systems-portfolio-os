@@ -45,6 +45,7 @@ interface CrmBlock {
 }
 
 interface MyPostsBlock {
+  site_published?: number;
   drafts: number;
   in_review: number;
   scheduled: number;
@@ -323,7 +324,18 @@ function MyPostsSection({ posts }: { posts: MyPostsBlock }) {
           href="/dashboard/blog/posts"
         />
         <ActivityCard label="مجدولة" value={posts.scheduled} icon={CalendarClock} href="/dashboard/blog/posts" />
-        <ActivityCard label="منشورة" value={posts.published} icon={Check} href="/dashboard/blog/posts" />
+        <ActivityCard
+          label="منشورة"
+          value={posts.published}
+          // مقالاتك أنت؛ مقالات الموقع كله بجانبها كي لا يوحي الصفر بأن الموقع بلا مقالات
+          delta={
+            posts.site_published !== undefined && posts.site_published !== posts.published
+              ? `${posts.site_published} منشورة في الموقع`
+              : undefined
+          }
+          icon={Check}
+          href="/dashboard/blog/posts"
+        />
       </div>
       <div className="rounded-xl border border-border bg-surface p-5 shadow-subtle">
         <h3 className="mb-3 text-sm font-semibold">آخر ما عملت عليه</h3>
@@ -387,9 +399,11 @@ function MarketingSection({
               href="/dashboard/marketing/subscribers"
             />
             <ActivityCard
-              label="حملات جاهزة للإرسال"
-              value={marketing.drafts + marketing.scheduled}
-              delta={marketing.scheduled ? `${marketing.scheduled} مجدولة` : undefined}
+              // المجدولة وحدها «في الطريق للإرسال»؛ المسودة لم تُراجع ولم يُحدد
+              // جمهورها — جمعهما معًا سمّى مسودتين بلا مستلمين «جاهزتين» (ST-03)
+              label="حملات مجدولة للإرسال"
+              value={marketing.scheduled}
+              delta={marketing.drafts ? `${marketing.drafts} مسودة` : undefined}
               icon={Send}
               href="/dashboard/marketing/campaigns"
             />

@@ -12,6 +12,7 @@ from apps.core.models.settings import SEOSettings, SiteSettings, SocialLink
 from apps.core.permissions import PublicReadWriteProtected
 from apps.core.viewsets import PublicContentViewSet
 from apps.core.serializers import (
+    SocialLinkAdminSerializer,
     FAQAdminSerializer,
     FAQSerializer,
     PageSectionAdminSerializer,
@@ -140,7 +141,7 @@ class SettingsContentViewSet(PublicContentViewSet):
 class SocialLinkViewSet(SettingsContentViewSet):
     queryset = SocialLink.objects.all()
     public_serializer_class = SocialLinkSerializer
-    admin_serializer_class = SocialLinkSerializer
+    admin_serializer_class = SocialLinkAdminSerializer
     filterset_fields = ["platform", "is_active"]
 
     def get_queryset(self):

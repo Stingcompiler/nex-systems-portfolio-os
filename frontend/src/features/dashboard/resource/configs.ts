@@ -197,7 +197,7 @@ export const projectsConfig: ResourceConfig = {
     { name: 'is_anonymized', label: 'عرض مجهّل', type: 'switch', tab: 'details',
       help: 'يخفي اسم العميل حتى مع إذنه. يُفعَّل تلقائيًا بلا إذن، ويُرفع تلقائيًا عند منح الإذن.' },
     { name: 'is_product', label: 'منتج نملكه', type: 'switch', tab: 'details',
-      help: 'منتج تملكه ستينج سيستم وتديره (مثل فيزانو) لا مشروع لعميل: يظهر في مرشح «منتجاتنا» بشارة.' },
+      help: 'منتج تملكه ستينج سيستم وتديره (مثل فيزانو) لا مشروع لعميل: يظهر في مرشح «منتجاتنا» بشارة. «اسم العميل» فيه اسم العلامة، ولا يحتاج إذنًا ولا يُجهَّل.' },
     { name: 'completed_at', label: 'تاريخ الإنجاز', type: 'date', tab: 'details' },
     { name: 'technologies', label: 'التقنيات', type: 'relation', multiple: true,
       endpoint: '/technologies/', labelKey: 'name', tab: 'details' },

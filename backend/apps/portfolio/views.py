@@ -25,6 +25,10 @@ from apps.portfolio.models import (
     Testimonial,
 )
 from apps.portfolio.serializers import (
+    CertificationAdminSerializer,
+    EducationAdminSerializer,
+    ExperienceAdminSerializer,
+    ResourceAdminSerializer,
     CaseStudyAdminSerializer,
     CaseStudyDetailSerializer,
     CaseStudyListSerializer,
@@ -195,7 +199,7 @@ class TestimonialViewSet(PublicContentViewSet):
 class ExperienceViewSet(PublicContentViewSet):
     queryset = Experience.objects.all()
     public_serializer_class = ExperienceSerializer
-    admin_serializer_class = ExperienceSerializer
+    admin_serializer_class = ExperienceAdminSerializer
     publishable = False
 
     def get_queryset(self):
@@ -209,20 +213,20 @@ class ExperienceViewSet(PublicContentViewSet):
 class EducationViewSet(ExperienceViewSet):
     queryset = Education.objects.all()
     public_serializer_class = EducationSerializer
-    admin_serializer_class = EducationSerializer
+    admin_serializer_class = EducationAdminSerializer
 
 
 @extend_schema_view(list=extend_schema(summary="الشهادات"))
 class CertificationViewSet(ExperienceViewSet):
     queryset = Certification.objects.select_related("image").all()
     public_serializer_class = CertificationSerializer
-    admin_serializer_class = CertificationSerializer
+    admin_serializer_class = CertificationAdminSerializer
 
 
 @extend_schema_view(list=extend_schema(summary="الموارد القابلة للتحميل"))
 class ResourceViewSet(PublicContentViewSet):
     queryset = Resource.objects.select_related("file", "cover_image").all()
     public_serializer_class = ResourceSerializer
-    admin_serializer_class = ResourceSerializer
+    admin_serializer_class = ResourceAdminSerializer
     filterset_fields = ["kind", "requires_membership"]
     lookup_field = "slug"

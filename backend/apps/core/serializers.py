@@ -14,6 +14,16 @@ class SocialLinkSerializer(serializers.ModelSerializer):
         fields = ["id", "platform", "platform_display", "label", "url", "display_order"]
 
 
+class SocialLinkAdminSerializer(serializers.ModelSerializer):
+    """الكتابة من اللوحة: العام لا يحمل is_active، فكان التفعيل يُتجاهل بصمت."""
+
+    platform_display = serializers.CharField(source="get_platform_display", read_only=True)
+
+    class Meta:
+        model = SocialLink
+        fields = "__all__"
+
+
 class SiteSettingsPublicSerializer(serializers.ModelSerializer):
     """ما يراه الزائر — بلا أي إعداد داخلي أو بيانات إرسال بريد."""
 

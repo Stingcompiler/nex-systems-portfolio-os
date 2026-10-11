@@ -605,3 +605,60 @@ def test_products_filter_returns_only_our_products(api_client, db):
     results = response.data["results"]
     assert [item["slug"] for item in results] == ["our-product"]
     assert results[0]["is_product"] is True
+
+
+# --------------------------------------------------------------- الحفظ من اللوحة يعود كما حُفظ (ST-01)
+
+
+def test_resource_saved_from_dashboard_reads_back_in_full(api_client, content, make_user):
+    from apps.media_library.models import MediaFile
+
+    admin = make_user(email="admin@example.com", role="super_admin", is_superuser=True, is_staff=True)
+    _login(api_client, admin)
+    pdf = MediaFile.objects.create(file="library/docs/guide.pdf", file_type="document", original_name="guide.pdf")
+    payload = {
+        "title_ar": "دليل اختيار النظام", "title_en": "System buying guide",
+        "description_ar": "وصف عربي", "description_en": "English description",
+        "kind": "pdf", "file": pdf.pk, "display_order": 3, "is_published": True,
+    }
+    created = api_client.post("/api/v1/resources/?full=true", payload, format="json")
+    assert created.status_code == 201, created.data
+    slug = created.data["slug"]
+
+    read = api_client.get(f"/api/v1/resources/{slug}/?full=true")
+    for key in ("title_ar", "title_en", "description_ar", "description_en", "display_order", "is_published"):
+        assert read.data[key] == payload[key], key
+    assert read.data["file"] == pdf.pk
+
+    updated = api_client.patch(f"/api/v1/resources/{slug}/?full=true", {"title_ar": "دليل محدّث"}, format="json")
+    assert updated.status_code == 200
+    assert api_client.get(f"/api/v1/resources/{slug}/?full=true").data["title_ar"] == "دليل محدّث"
+
+
+def test_experience_saved_from_dashboard_keeps_its_texts(api_client, content, make_user):
+    admin = make_user(email="admin2@example.com", role="super_admin", is_superuser=True, is_staff=True)
+    _login(api_client, admin)
+    response = api_client.post("/api/v1/experiences/?full=true", {
+        "title_ar": "مطوّر", "title_en": "Developer",
+        "organization_ar": "ستينج سيستم", "organization_en": "StingSystem",
+        "start_date": "2024-01-01", "is_current": True,
+    }, format="json")
+    assert response.status_code == 201, response.data
+    assert response.data["title_ar"] == "مطوّر"
+    assert response.data["organization_en"] == "StingSystem"
+
+
+# --------------------------------------------------------------- المنتج المملوك (ST-05)
+
+
+def test_owned_product_shows_its_brand_without_client_permission(db):
+    product = _project(slug="own", is_product=True, client_name="فيزانو", client_permission=False)
+    product.refresh_from_db()
+    assert product.is_anonymized is False
+    assert product.public_client_name == "فيزانو"
+
+
+def test_client_project_without_permission_stays_hidden_next_to_products(db):
+    _project(slug="own2", is_product=True, client_name="فيزانو")
+    client_work = _project(slug="client", client_name="عميل خاص", client_permission=False)
+    assert client_work.public_client_name == ""

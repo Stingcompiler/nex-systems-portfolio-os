@@ -127,7 +127,9 @@ export async function ProjectCard({
         <p className="mb-5 line-clamp-3 text-base text-muted">{project.summary}</p>
 
         <div className="mt-auto flex flex-wrap items-center justify-between gap-2 text-label text-muted">
-          <span>{project.client_name || t('anonymous')}</span>
+          <span>
+            {project.client_name || (project.is_product ? t('ownProduct') : t('anonymous'))}
+          </span>
           {project.completed_at ? (
             <time dateTime={project.completed_at} className="code-inline inline font-mono">
               {formatMonthYear(project.completed_at, locale)}

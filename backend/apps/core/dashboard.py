@@ -121,9 +121,11 @@ def build_checklist() -> list[dict]:
              "راجع الإجابات المزروعة أولًا فهي التزامات تجارية"),
         item("seo", "إعدادات SEO الافتراضية",
              seo.default_seo_title_ar and seo.default_seo_description_ar),
-        item("drafts", "استكمال المسودات",
+        # يقيس صفحات الخدمات والحلول وحدها؛ كان اسمه «استكمال المسودات» فبدا
+        # مكتملًا مع وجود دراسات حالة ومقالات مسودة لا يحسبها (ST-04)
+        item("drafts", "نشر صفحات الخدمات والحلول",
              not Service.objects.filter(is_published=False).exists(),
-             f"{Service.objects.filter(is_published=False).count()} صفحة بانتظار محتواها"),
+             f"{Service.objects.filter(is_published=False).count()} صفحة خدمة أو حل غير منشورة"),
     ]
 
 
@@ -228,6 +230,9 @@ def build_my_posts(user) -> dict:
         for post in mine.exclude(status=Post.Status.ARCHIVED).order_by("-updated_at")[:5]
     ]
     return {
+        # مقالات الموقع كله بجانب مقالات الحساب: «0 منشورة» لمدير لم يكتب
+        # بنفسه كانت توحي بأن مقالات الموقع غير موجودة
+        "site_published": Post.objects.filter(status=Post.Status.PUBLISHED).count(),
         "drafts": counts.get(Post.Status.DRAFT, 0),
         "in_review": counts.get(Post.Status.IN_REVIEW, 0),
         "scheduled": counts.get(Post.Status.SCHEDULED, 0),

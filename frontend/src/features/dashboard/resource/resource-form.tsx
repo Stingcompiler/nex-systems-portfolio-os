@@ -113,6 +113,10 @@ export function ResourceForm({
           : [field.name];
       for (const key of keys) {
         const value = values[key];
+        // الرقم الفارغ لا يُرسل: أعمدة الأرقام هنا (الترتيب وأمثاله) NOT NULL بقيمة
+        // افتراضية، فيأخذها الإنشاء ويُبقي التعديل القيمة السابقة. إرسال null
+        // كان يرفض حفظ مشروع جديد بلا ترتيب (ST-02)
+        if (field.type === 'number' && (value === '' || value === null || value === undefined)) continue;
         payload[key] = value === '' && EMPTY_TO_NULL.has(field.type) ? null : value;
       }
     }

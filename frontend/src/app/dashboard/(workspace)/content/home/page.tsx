@@ -39,6 +39,30 @@ const SECTION_LABELS: Record<string, string> = {
   cta: 'دعوة للتواصل',
 };
 
+/**
+ * أقسام لا تُرسم في الرئيسية قسمًا مستقلًا مهما كان ترتيبها أو نصها (قرار
+ * تصميم في الموقع). كانت تظهر هنا قابلة للترتيب والتحرير فيُحفظ «معرضنا
+ * بالأرقام» بعد المشاريع ولا يظهر في الموقع (ST-06) — صارت تُعرض منفصلة
+ * بمكان ظهورها الفعلي ورابط لإدارة محتواها.
+ */
+const NOT_RENDERED: Record<string, { where: string; href: string; action: string }> = {
+  stats: {
+    where: 'الأرقام تظهر داخل الواجهة الافتتاحية، لا قسمًا مستقلًا بعنوان.',
+    href: '/dashboard/content/stats',
+    action: 'إدارة الأرقام',
+  },
+  intro: {
+    where: 'النبذة تظهر في صفحة «نبذة» لا في الرئيسية.',
+    href: '/dashboard/content/about',
+    action: 'إدارة صفحة نبذة',
+  },
+  case_studies: {
+    where: 'دراسة الحالة تظهر شارةً على بطاقة مشروعها في قسم المشاريع.',
+    href: '/dashboard/content/case-studies',
+    action: 'إدارة دراسات الحالة',
+  },
+};
+
 /** إعداد مصغّر لإعادة استخدام نموذج المحرك في تحرير نص القسم. */
 const sectionFormConfig: ResourceConfig = {
   key: 'sections',
@@ -79,7 +103,7 @@ export default function HomeSectionsPage() {
 
   useEffect(() => {
     if (data) {
-      setOrder(data);
+      setOrder(data.filter((section) => !(section.key in NOT_RENDERED)));
       setDirty(false);
     }
   }, [data]);
@@ -221,6 +245,41 @@ export default function HomeSectionsPage() {
           ))}
         </ol>
       )}
+
+      {data?.some((section) => section.key in NOT_RENDERED) ? (
+        <section aria-labelledby="not-rendered-title" className="mt-8">
+          <h2 id="not-rendered-title" className="mb-1 text-sm font-semibold">
+            لا تُعرض قسمًا مستقلًا في الرئيسية
+          </h2>
+          <p className="mb-3 text-xs text-muted">
+            ترتيبها ونصها لا يؤثران في الموقع؛ محتواها يظهر في مكان آخر.
+          </p>
+          <ul className="flex flex-col gap-2">
+            {data
+              .filter((section) => section.key in NOT_RENDERED)
+              .map((section) => {
+                const info = NOT_RENDERED[section.key];
+                return (
+                  <li
+                    key={section.id}
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed border-border p-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium">{SECTION_LABELS[section.key] ?? section.key}</p>
+                      <p className="text-xs text-muted">{info.where}</p>
+                    </div>
+                    <a
+                      href={info.href}
+                      className="rounded border border-border px-3 py-2 text-xs hover:bg-surface-hover"
+                    >
+                      {info.action}
+                    </a>
+                  </li>
+                );
+              })}
+          </ul>
+        </section>
+      ) : null}
 
       <ResourceForm
         config={sectionFormConfig}

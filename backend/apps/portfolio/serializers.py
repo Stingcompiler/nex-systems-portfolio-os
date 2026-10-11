@@ -385,6 +385,39 @@ class ResourceSerializer(serializers.ModelSerializer):
         ]
 
 
+class _AdminAllFields(serializers.ModelSerializer):
+    """مسلسل الكتابة في اللوحة: كل الحقول بلغتيها.
+
+    المسلسلات العامة تعرض حقلًا مترجمًا واحدًا (TranslatedField) للقراءة فقط،
+    والملفات مرجعًا للقراءة فقط. استعمالها للكتابة كان يُسقط العنوان والوصف
+    والملف بصمت ويرد «نجاح» — فلا يُحفظ من المورد إلا نوعه (ST-01).
+    """
+
+    class Meta:
+        fields = "__all__"
+
+
+class ExperienceAdminSerializer(_AdminAllFields):
+    class Meta(_AdminAllFields.Meta):
+        model = Experience
+
+
+class EducationAdminSerializer(_AdminAllFields):
+    class Meta(_AdminAllFields.Meta):
+        model = Education
+
+
+class CertificationAdminSerializer(_AdminAllFields):
+    class Meta(_AdminAllFields.Meta):
+        model = Certification
+
+
+class ResourceAdminSerializer(_AdminAllFields):
+    class Meta(_AdminAllFields.Meta):
+        model = Resource
+        read_only_fields = ["download_count"]
+
+
 # --------------------------------------------------------------- أدوات مشتركة
 
 

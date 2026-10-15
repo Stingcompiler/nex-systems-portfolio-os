@@ -119,33 +119,29 @@ function useSummary() {
 
 type Tone = 'success' | 'warning' | 'danger' | 'default';
 
+// خلية في شريط مؤشرات: رقم تحت عنوانه، بلا بطاقة ولا أيقونة مصبوغة لكل رقم.
+// الفصل بين الخلايا خط واحد (gap-px فوق خلفية الحد) فيلتف الشريط على الشاشات الضيقة
 const CARD =
-  'flex flex-col gap-3 rounded-xl border border-border bg-surface p-5 shadow-subtle ' +
-  'transition-all duration-normal hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-card';
+  'flex flex-col gap-2 bg-surface p-5 transition-colors duration-fast hover:bg-surface-hover';
 
 function ActivityCard({
   label,
   value,
   delta,
   tone,
-  icon: Icon,
   href,
 }: {
   label: string;
   value: number;
   delta?: string;
   tone?: Tone;
-  icon: typeof FileText;
+  /** يُقبل للتوافق مع المواضع القديمة ولا يُرسم: الأيقونة لا تضيف معنى لرقم معنون */
+  icon?: unknown;
   href: string;
 }) {
   return (
     <Link href={href} className={CARD}>
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-sm text-muted">{label}</span>
-        <span className="grid size-9 place-items-center rounded-lg bg-primary-soft text-primary">
-          <Icon className="size-4" aria-hidden="true" />
-        </span>
-      </div>
+      <span className="text-sm text-muted">{label}</span>
       <p className="text-h1 font-bold leading-none">
         <span className="code-inline inline">
           <CountUp value={value} />
@@ -210,18 +206,14 @@ function FollowUpsToday({ items }: { items: CrmBlock['follow_ups_today'] }) {
 
       {items.length === 0 ? (
         <div className="flex flex-col items-center gap-2 py-8 text-center">
-          <span className="grid size-11 place-items-center rounded-2xl bg-success-soft text-success">
-            <Check className="size-5" aria-hidden="true" />
-          </span>
+          <Check className="size-6 shrink-0 text-success" aria-hidden="true" />
           <p className="text-sm text-muted">لا متابعات مستحقّة اليوم.</p>
         </div>
       ) : (
         <ul className="flex flex-col divide-y divide-border">
           {items.map((item) => (
             <li key={item.id} className="flex items-center gap-3 py-3">
-              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-warning-soft text-warning">
-                <Clock3 className="size-4" aria-hidden="true" />
-              </span>
+              <Clock3 className="size-6 shrink-0 text-warning" aria-hidden="true" />
               <div className="min-w-0 flex-1">
                 <p className="truncate-line text-sm font-medium">{item.title || 'متابعة'}</p>
                 {item.target ? (
@@ -241,7 +233,8 @@ function FollowUpsToday({ items }: { items: CrmBlock['follow_ups_today'] }) {
   );
 }
 
-const GRID = 'grid gap-4 sm:grid-cols-2 lg:grid-cols-4';
+const GRID =
+  'grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4';
 
 function SectionTitle({ children, action }: { children: string; action?: React.ReactNode }) {
   return (
@@ -481,7 +474,7 @@ function SiteSection({ site }: { site: NonNullable<Summary['site']> }) {
         <div className="h-full rounded-full bg-brand transition-all" style={{ width: `${site.completion}%` }} />
       </div>
 
-      <ul className="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2">
+      <ul className="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 sm:[&>li:last-child:nth-child(odd)]:col-span-2">
         {site.checklist.map((entry) => (
           <li key={entry.key} className="flex items-start gap-3 bg-surface p-3">
             {entry.done ? (

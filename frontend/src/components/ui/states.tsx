@@ -29,9 +29,7 @@ export function EmptyState({
         className,
       )}
     >
-      <span className="grid size-14 place-items-center rounded-2xl bg-primary-soft text-primary">
-        <FileQuestion className="size-7" aria-hidden="true" />
-      </span>
+      <FileQuestion className="size-6 shrink-0 text-primary" aria-hidden="true" />
       <p className="mt-1 text-base font-semibold">{title}</p>
       {body ? <p className="max-w-prose text-sm text-muted">{body}</p> : null}
       {action ? <div className="mt-3">{action}</div> : null}
@@ -61,9 +59,7 @@ export function ErrorState({
         className,
       )}
     >
-      <span className="grid size-14 place-items-center rounded-2xl bg-danger-soft text-danger">
-        <TriangleAlert className="size-7" aria-hidden="true" />
-      </span>
+      <TriangleAlert className="size-6 shrink-0 text-danger" aria-hidden="true" />
       <p className="mt-1 text-base font-semibold">{title}</p>
       {body ? <p className="max-w-prose text-sm text-muted">{body}</p> : null}
       {action ? <div className="mt-2">{action}</div> : null}

@@ -140,8 +140,6 @@ export async function ServiceDetailView({
           {/* لوحة الطلب البارزة — السعر أولًا ثم التفاصيل ثم دعوتان */}
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <Card className="glow-ring relative overflow-hidden">
-              <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-brand" />
-
               {price ? (
                 <div className="mb-5">
                   <p className="text-sm text-muted">{t('priceFrom')}</p>

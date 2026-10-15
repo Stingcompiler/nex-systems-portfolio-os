@@ -28,9 +28,7 @@ export async function PostCard({
           priority={priority}
           className="rounded-b-none"
         />
-      ) : (
-        <span aria-hidden="true" className="h-1 rounded-t-xl bg-brand" />
-      )}
+      ) : null}
       <div className="flex flex-1 flex-col p-6">
         {post.category ? (
           <Badge tone="primary" className="mb-2 self-start">

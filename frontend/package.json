@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint:ui": "bash scripts/lint-ui.sh",
+    "shots": "node scripts/shots.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.4",

@@ -122,9 +122,7 @@ export function SectorsMenu({
                       aria-current={isActivePath(pathname, href) ? 'page' : undefined}
                       className="flex min-h-12 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-surface-hover focus-visible:bg-surface-hover"
                     >
-                      <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary-soft text-primary">
-                        <Icon className="size-[1.1rem]" aria-hidden="true" />
-                      </span>
+                      <Icon className="size-6 shrink-0 text-primary" aria-hidden="true" />
                       {sector.label}
                     </Link>
                   </li>

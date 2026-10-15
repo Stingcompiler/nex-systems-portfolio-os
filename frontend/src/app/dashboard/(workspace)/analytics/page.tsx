@@ -86,7 +86,8 @@ export default function AnalyticsPage() {
         </IndicatorTrack>
       </header>
 
-      <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {/* مؤشرات في شريط واحد بخط فاصل (docs/ui-profile.md) لا بطاقة وأيقونة لكل رقم */}
+      <div className="mb-8 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
         <Tile icon={Eye} label="المشاهدات" value={o?.page_views} />
         <Tile icon={Users} label="زوّار فريدون" value={o?.unique_visitors} />
         <Tile icon={TrendingUp} label="طلبات المشاريع" value={o?.requests} />
@@ -143,17 +144,16 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 function Tile({
-  icon: Icon,
   label,
   value,
 }: {
-  icon: typeof Eye;
+  /** يُقبل للتوافق ولا يُرسم: العنوان يكفي لتعريف الرقم */
+  icon?: unknown;
   label: string;
   value?: number;
 }) {
   return (
-    <div className="rounded-lg border border-border bg-surface p-4">
-      <Icon className="mb-2 size-5 text-muted" aria-hidden="true" />
+    <div className="bg-surface p-5">
       <p className="text-sm text-muted">{label}</p>
       <p className="mt-1 text-h2 font-bold" dir="ltr">
         {value === undefined ? '—' : <CountUp value={value} />}

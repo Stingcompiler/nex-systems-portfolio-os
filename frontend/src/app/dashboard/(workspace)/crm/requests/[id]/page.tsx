@@ -248,9 +248,7 @@ export default function RequestDetailPage() {
               <ul className="flex flex-col divide-y divide-border">
                 {data.attachments.map((file) => (
                   <li key={file.id} className="flex items-center gap-3 py-3">
-                    <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary-soft text-primary">
-                      <Download className="size-4" aria-hidden="true" />
-                    </span>
+                    <Download className="size-6 shrink-0 text-primary" aria-hidden="true" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate-line text-sm font-medium">{file.original_name}</p>
                       <p className="code-inline text-xs text-muted">{formatBytes(file.size)}</p>

@@ -114,7 +114,9 @@ if (EMAIL && PASSWORD) {
   console.log('login:', loggedIn ? 'ok' : `failed (${response.status})`);
 }
 
+const ONLY = process.env.SHOTS_ONLY?.split(',');
 for (const [name, path, auth, vps, schemes] of SCREENS) {
+  if (ONLY && !ONLY.includes(name)) continue;
   if (auth && !loggedIn) { skipped.push(`${name} (يحتاج دخولًا)`); continue; }
   for (const vp of VIEWPORTS.filter((v) => vps.includes(v.name))) {
     for (const scheme of schemes) {

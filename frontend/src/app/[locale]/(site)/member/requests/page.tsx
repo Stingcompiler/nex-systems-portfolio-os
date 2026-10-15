@@ -145,9 +145,7 @@ export default function MyRequestsPage() {
         </ul>
       ) : (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border bg-surface px-6 py-12 text-center">
-          <span className="grid size-12 place-items-center rounded-2xl bg-primary-soft text-primary">
-            <FileText className="size-6" aria-hidden="true" />
-          </span>
+          <FileText className="size-6 shrink-0 text-primary" aria-hidden="true" />
           <p className="font-medium">{t('empty')}</p>
           <p className="max-w-prose text-sm text-muted">{t('emptyHint')}</p>
           <Link href="/request-quote" className={cn(buttonClass('primary'), 'mt-2')}>

@@ -155,9 +155,7 @@ export async function HeroSection({
           >
             {trust.map((item) => (
               <li key={item} className="flex items-center gap-2">
-                <span className="grid size-5 shrink-0 place-items-center rounded-full bg-primary-soft text-primary">
-                  <Check className="size-3.5" aria-hidden="true" />
-                </span>
+                <Check className="size-6 shrink-0 text-primary" aria-hidden="true" />
                 {item}
               </li>
             ))}
@@ -412,9 +410,8 @@ export async function SectorsSection({
                 // والكليات» يلتف على أربعة أسطر في نصف عرض الشاشة
                 className="group/sector flex h-full flex-col items-start gap-3 rounded-xl border border-border bg-surface p-4 transition-colors duration-fast hover:border-primary/40 sm:flex-row sm:items-center sm:p-5"
               >
-                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary">
-                  <Icon className="size-5" aria-hidden="true" />
-                </span>
+                {/* أيقونة القطاع بلا مربع مصبوغ: اسم القطاع يكفي، والأيقونة علامة مسح سريعة */}
+                <Icon className="size-6 shrink-0 text-primary" aria-hidden="true" />
                 <span className="min-w-0 font-heading text-sm font-semibold leading-snug group-hover/sector:text-primary sm:text-base">
                   {solution.title}
                 </span>
@@ -598,9 +595,7 @@ export async function NewsletterSection({ section }: SectionProps) {
     <Section id="newsletter">
       <div className="grid gap-8 rounded-2xl border border-border bg-surface p-8 sm:p-12 lg:grid-cols-[1fr_1.2fr] lg:items-center">
         <div className="max-w-prose">
-          <span className="mb-4 grid size-11 place-items-center rounded-lg bg-primary-soft text-primary">
-            <Mail className="size-5" aria-hidden="true" />
-          </span>
+          <Mail className="mb-3 size-6 shrink-0 text-primary" aria-hidden="true" />
           <h2 className="text-h2 font-semibold">{title || t('title')}</h2>
           <p className="mt-3 text-muted">{section.subtitle || t('subtitle')}</p>
         </div>

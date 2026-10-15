@@ -99,9 +99,7 @@ export async function ProjectCard({
             className="rounded-b-none rounded-t-xl transition-transform duration-slow group-hover/card:scale-[1.04]"
           />
         </div>
-      ) : (
-        <span aria-hidden="true" className="h-1 bg-brand" />
-      )}
+      ) : null}
 
       <div className="flex flex-1 flex-col p-6">
         <div className="mb-2 flex flex-wrap items-center gap-2">

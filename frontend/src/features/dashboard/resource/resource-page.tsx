@@ -446,9 +446,7 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
           aria-label={t('confirmDelete.title')}
         >
           <div className="w-full max-w-sm rounded-xl border border-border bg-surface p-6 shadow-card">
-            <span className="mb-3 grid size-12 place-items-center rounded-2xl bg-danger-soft text-danger">
-              <TriangleAlert className="size-6" aria-hidden="true" />
-            </span>
+            <TriangleAlert className="mb-3 size-6 shrink-0 text-danger" aria-hidden="true" />
             <h2 className="text-h3 font-semibold">{t('confirmDelete.title')}</h2>
             <p className="mt-2 text-sm text-muted">{t('confirmDelete.body')}</p>
             <div className="mt-6 flex justify-end gap-2">

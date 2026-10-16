@@ -11,7 +11,6 @@ import {
 import { FaqList } from '@/components/content/faq-list';
 import { TechLogo } from '@/components/content/media';
 import { CardGrid } from '@/components/ui/card-grid';
-import { PostCard } from '@/features/blog/post-card';
 import { NewsletterForm } from '@/features/newsletter/newsletter-form';
 import { ButtonLink } from '@/components/ui/button';
 import { Container } from '@/components/ui/container';
@@ -36,7 +35,7 @@ import { sectorIcon } from '@/lib/constants/sector-icons';
 import { Link } from '@/lib/i18n/navigation';
 import type { Locale } from '@/lib/i18n/routing';
 import { cn } from '@/lib/utils/cn';
-import { whatsappLink } from '@/lib/utils/format';
+import { formatDate, whatsappLink } from '@/lib/utils/format';
 
 interface SectionProps {
   section: PageSection;
@@ -503,11 +502,24 @@ export async function PostsSection({
   section,
   posts,
   index,
+  locale,
 }: SectionProps & { posts: PostListItem[] }) {
   if (!posts.length) return null;
 
-  const t = await getTranslations('common');
+  const tBlog = await getTranslations('blog');
   const limit = section.config?.limit ?? 3;
+  const [lead, ...rest] = posts.slice(0, limit);
+
+  // «تحرير» لا شبكة بطاقات: مقال رئيسي بعنوان كبير وبجانبه الباقي كصفوف
+  // بخط فاصل. الفصل بالتسلسل والحجم لا بصندوق لكل مقال، والتاريخ ومدة القراءة
+  // نصًا في سطر واحد بلا أيقونات (docs/ui-profile.md)
+  const meta = (post: PostListItem) =>
+    [
+      post.published_at ? formatDate(post.published_at, locale) : null,
+      post.reading_time ? tBlog('readingTime', { minutes: post.reading_time }) : null,
+    ]
+      .filter(Boolean)
+      .join(' · ');
 
   return (
     <Section>
@@ -517,11 +529,46 @@ export async function PostsSection({
         index={index}
         action={<ViewAll href="/blog" />}
       />
-      <CardGrid count={Math.min(posts.length, limit)}>
-        {posts.slice(0, limit).map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
-      </CardGrid>
+      <div className={cn('grid gap-x-12 gap-y-8', rest.length && 'lg:grid-cols-[1.35fr_1fr]')}>
+        <article className="group/lead relative flex flex-col justify-center py-2">
+          {lead.category ? (
+            <p className="mb-3 text-sm font-medium text-primary">{lead.category.name}</p>
+          ) : null}
+          <h3 className="mb-4 text-h2 font-semibold leading-snug">
+            <Link
+              href={`/blog/${lead.slug}`}
+              className="after:absolute after:inset-0 hover:text-primary focus-visible:outline-none"
+            >
+              {lead.title}
+            </Link>
+          </h3>
+          {lead.excerpt ? (
+            <p className="mb-5 max-w-prose text-lg leading-relaxed text-muted">{lead.excerpt}</p>
+          ) : null}
+          <p className="text-sm text-muted">{meta(lead)}</p>
+        </article>
+
+        {rest.length ? (
+          <ul className="flex flex-col border-t border-border">
+            {rest.map((post) => (
+              <li key={post.id} className="relative border-b border-border py-5">
+                {post.category ? (
+                  <p className="mb-1.5 text-xs font-medium text-primary">{post.category.name}</p>
+                ) : null}
+                <h3 className="mb-1.5 text-lg font-semibold leading-snug">
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className="after:absolute after:inset-0 hover:text-primary focus-visible:outline-none"
+                  >
+                    {post.title}
+                  </Link>
+                </h3>
+                <p className="text-sm text-muted">{meta(post)}</p>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
     </Section>
   );
 }

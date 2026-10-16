@@ -6,7 +6,6 @@ import {
   ProjectCard,
   ServiceCard,
   StatCard,
-  TestimonialCard,
 } from '@/components/content/cards';
 import { FaqList } from '@/components/content/faq-list';
 import { TechLogo } from '@/components/content/media';
@@ -481,6 +480,7 @@ export async function TestimonialsSection({
   index,
 }: SectionProps & { testimonials: Testimonial[] }) {
   if (!testimonials.length) return null;
+  const [lead, ...rest] = testimonials;
 
   return (
     <Section tone="dark">
@@ -489,12 +489,37 @@ export async function TestimonialsSection({
         subtitle={section.subtitle}
         index={index}
       />
-      <CardGrid count={testimonials.length}>
-        {testimonials.map((testimonial) => (
-          <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-        ))}
-      </CardGrid>
+      {/* اقتباسات مكتوبة لا بطاقات: الأول كبير والباقي أصغر بخط جانبي رفيع
+          (خط الاقتباس استثناء وظيفي). رأي واحد يُعرض كبيرًا ولا يُترك في ثلث شبكة */}
+      <div className={cn('grid gap-x-14 gap-y-10', rest.length && 'lg:grid-cols-[1.3fr_1fr]')}>
+        <figure className="flex flex-col justify-center">
+          <blockquote className="mb-6 text-h3 font-medium leading-relaxed">{lead.content}</blockquote>
+          <Attribution testimonial={lead} />
+        </figure>
+        {rest.length ? (
+          <div className="flex flex-col gap-8">
+            {rest.map((testimonial) => (
+              <figure key={testimonial.id} className="border-s border-border ps-6">
+                <blockquote className="mb-4 text-body-lg leading-relaxed text-muted">
+                  {testimonial.content}
+                </blockquote>
+                <Attribution testimonial={testimonial} />
+              </figure>
+            ))}
+          </div>
+        ) : null}
+      </div>
     </Section>
+  );
+}
+
+function Attribution({ testimonial }: { testimonial: Testimonial }) {
+  const role = [testimonial.client_title, testimonial.company].filter(Boolean).join(' — ');
+  return (
+    <figcaption>
+      <p className="font-heading text-base font-semibold">{testimonial.client_name}</p>
+      {role ? <p className="text-label text-muted">{role}</p> : null}
+    </figcaption>
   );
 }
 

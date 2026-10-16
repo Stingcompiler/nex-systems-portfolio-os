@@ -134,6 +134,19 @@ for (const [name, path, auth, vps, schemes] of SCREENS) {
         expression: 'Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)', returnByValue: true,
       });
       const height = Math.min(result.value, vp.mobile ? 5000 : 3600);
+      // SHOTS_FOCUS=<css>: لقطة العنصر وحده (قسم بعينه) بدل الصفحة كاملة
+      if (process.env.SHOTS_FOCUS) {
+        const { result: box } = await s('Runtime.evaluate', { expression: `(() => { const e = document.querySelector(${JSON.stringify(process.env.SHOTS_FOCUS)}); if (!e) return null; const r = e.getBoundingClientRect(); return { x: 0, y: r.top + scrollY, width: innerWidth, height: r.height }; })()`, returnByValue: true });
+        if (box.value) {
+          await s('Emulation.setDeviceMetricsOverride', { width: vp.width, height: Math.ceil(box.value.y + box.value.height + 40), deviceScaleFactor: vp.scale, mobile: vp.mobile });
+          await sleep(900);
+          const clip = { ...box.value, scale: 1 };
+          const shot = await s('Page.captureScreenshot', { format: 'png', clip });
+          writeFileSync(join(outDir, `${name}--focus--${vp.name}--${scheme}--ar.png`), Buffer.from(shot.data, 'base64'));
+          done.push(`${name}--focus`);
+          continue;
+        }
+      }
       await s('Emulation.setDeviceMetricsOverride', { width: vp.width, height, deviceScaleFactor: vp.scale, mobile: vp.mobile });
       await sleep(900);
       const shot = await s('Page.captureScreenshot', { format: 'png' });

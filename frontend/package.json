@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "lint:ui": "bash scripts/lint-ui.sh",
     "shots": "node scripts/shots.mjs",
-    "check:contrast": "python3 scripts/check_contrast.py"
+    "check:contrast": "python3 scripts/check_contrast.py",
+    "check:copy": "node scripts/check-copy.mjs https://stingdev.pro/ar"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.4",

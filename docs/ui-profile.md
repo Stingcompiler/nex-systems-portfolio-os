@@ -1,6 +1,6 @@
 # ملحق واجهة المشروع (ui-profile)
 
-> **المرجع الحاكم منذ 2026-10-23:** `docs/design/DESIGN.md` (Design Reference v2.2) مع `PROJECT_PROFILE.yaml` و`DECISIONS.md` في المجلد نفسه. ما هنا تفاصيل تنفيذ لا تخالفه. فحص التباين: `npm run check:contrast`.
+> **المرجع الحاكم منذ 2026-10-23:** `docs/design/DESIGN.md` (Design Reference v2.2) مع `PROJECT_PROFILE.yaml` و`DECISIONS.md` في المجلد نفسه. ما هنا تفاصيل تنفيذ لا تخالفه. فحص التباين: `npm run check:contrast`. مستوى القراءة في الرئيسية (LANDING §2): `npm run check:copy`. التحميل بهيكل `ListSkeleton` لا مؤشر دوران (§4).
 
 مبني على «وثيقة مراجعة وتطوير الكروت والواجهات». ما حُسم هنا لا يُعاد فتحه.
 

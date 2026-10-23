@@ -5,12 +5,12 @@ import axios from 'axios';
 import {
   ArrowRight,
   Download,
-  LoaderCircle,
   TriangleAlert,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { Badge } from '@/components/ui/misc';
 import { useToast } from '@/contexts/ToastContext';
 import { ClientReplies, type ClientReply } from '@/features/dashboard/crm/client-replies';
@@ -121,10 +121,7 @@ export default function RequestDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="grid place-items-center py-24 text-muted" role="status">
-        <LoaderCircle className="size-6 animate-spin" aria-hidden="true" />
-        <span className="sr-only">جارٍ التحميل…</span>
-      </div>
+      <ListSkeleton />
     );
   }
 

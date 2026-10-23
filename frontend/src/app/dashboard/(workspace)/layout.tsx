@@ -7,6 +7,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardSidebar } from '@/features/dashboard/shell/sidebar';
+import { OfflineBar } from '@/features/dashboard/shell/offline-bar';
 import { DashboardTopbar } from '@/features/dashboard/shell/topbar';
 
 export default function WorkspaceLayout({ children }: { children: ReactNode }) {
@@ -78,6 +79,7 @@ export default function WorkspaceLayout({ children }: { children: ReactNode }) {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <DashboardTopbar onOpenMenu={() => setMenuOpen(true)} />
+        <OfflineBar />
         <main className="flex-1 p-4 sm:p-6">{children}</main>
       </div>
     </div>

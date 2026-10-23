@@ -1,9 +1,10 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { LoaderCircle, Search, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { useState } from 'react';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { useToast } from '@/contexts/ToastContext';
 import { crmDateTime, REQUEST_STATUSES } from '@/features/dashboard/crm/shared';
 import { api, toApiError } from '@/lib/api/client';
@@ -99,9 +100,7 @@ export default function RequestsPage() {
       </div>
 
       {isLoading ? (
-        <div className="grid place-items-center py-16 text-muted" role="status">
-          <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
-        </div>
+        <ListSkeleton />
       ) : (
         <div className="overflow-x-auto rounded-lg border border-border bg-surface">
           <table className="w-full min-w-[44rem] text-sm">

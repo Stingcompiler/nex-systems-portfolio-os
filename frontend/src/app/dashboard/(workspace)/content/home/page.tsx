@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Eye, EyeOff, GripVertical, LoaderCircle, Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { useToast } from '@/contexts/ToastContext';
 import { ResourceForm } from '@/features/dashboard/resource/resource-form';
 import type { ResourceConfig } from '@/features/dashboard/resource/types';
@@ -164,9 +165,7 @@ export default function HomeSectionsPage() {
       </header>
 
       {isLoading ? (
-        <div className="grid place-items-center py-16 text-muted" role="status">
-          <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
-        </div>
+        <ListSkeleton />
       ) : (
         <ol className="flex flex-col gap-2">
           {order.map((section, index) => (

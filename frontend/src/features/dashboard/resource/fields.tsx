@@ -1,8 +1,8 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { GripVertical, ImageOff, Plus, Trash2, X } from 'lucide-react';
-import { useState, type ReactNode } from 'react';
+import { CircleAlert, GripVertical, ImageOff, Plus, Trash2, X } from 'lucide-react';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 
 import { MediaPickerDialog, MediaThumb, type MediaItem } from '@/features/dashboard/media/media-picker';
 import { useRelationOptions } from '@/features/dashboard/resource/use-resource';
@@ -24,6 +24,12 @@ const INPUT =
   'min-h-11 w-full rounded border border-border-strong bg-background px-3 text-sm ' +
   'focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60';
 
+/**
+ * نمط الوسم الواحد في النموذج (§15.2): إن كان أغلب الحقول إلزاميًا تُوسم
+ * الاختيارية «(اختياري)»، وإلا تُوسم الإلزامية «(إلزامي)». النجمة وحدها لا تكفي.
+ */
+export const FieldMarkContext = createContext<'required' | 'optional'>('required');
+
 function Wrapper({
   id,
   label,
@@ -39,16 +45,23 @@ function Wrapper({
   error?: string;
   children: ReactNode;
 }) {
+  const mark = useContext(FieldMarkContext);
   return (
-    <div>
+    <div data-field-error={error ? 'true' : undefined}>
       <label htmlFor={id} className="mb-1.5 block text-sm font-medium">
         {label}
-        {required ? <span className="text-danger"> *</span> : null}
+        {mark === 'required' && required ? (
+          <span className="font-normal text-text-secondary"> (إلزامي)</span>
+        ) : null}
+        {mark === 'optional' && !required ? (
+          <span className="font-normal text-text-secondary"> (اختياري)</span>
+        ) : null}
       </label>
       {children}
       {help ? <p className="mt-1 text-xs text-muted">{help}</p> : null}
       {error ? (
-        <p id={`${id}-error`} className="mt-1 text-sm text-danger">
+        <p id={`${id}-error`} className="mt-1 flex items-start gap-1 text-sm text-danger">
+          <CircleAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
           {error}
         </p>
       ) : null}

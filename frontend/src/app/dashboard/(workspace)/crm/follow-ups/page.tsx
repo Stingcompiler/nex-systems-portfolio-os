@@ -1,9 +1,10 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CalendarClock, Check, LoaderCircle } from 'lucide-react';
+import { CalendarClock, Check } from 'lucide-react';
 import { useState } from 'react';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { useToast } from '@/contexts/ToastContext';
 import { crmDateTime } from '@/features/dashboard/crm/shared';
 import { api, toApiError } from '@/lib/api/client';
@@ -82,9 +83,7 @@ export default function FollowUpsPage() {
       </div>
 
       {isLoading ? (
-        <div className="grid place-items-center py-16 text-muted" role="status">
-          <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
-        </div>
+        <ListSkeleton />
       ) : data?.results.length ? (
         <ul className="space-y-2">
           {data.results.map((followUp) => (

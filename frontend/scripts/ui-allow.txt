@@ -11,3 +11,4 @@ shell/sidebar.tsx | animate-pulse | هيكل تحميل: عملية جارية �
 resource/resource-page.tsx | animate-pulse | هيكل تحميل: عملية جارية فعلًا
 ui/states.tsx | animate-pulse | هيكل تحميل: عملية جارية فعلًا
 notifications/page.tsx | border-b-2 | خط تبويب الفلتر النشط، لا حافة بطاقة
+dashboard/list-skeleton.tsx | animate-pulse | هيكل تحميل: عملية جارية فعلًا

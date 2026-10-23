@@ -1,10 +1,11 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { LoaderCircle, Mail, TriangleAlert } from 'lucide-react';
+import { Mail, TriangleAlert } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { useToast } from '@/contexts/ToastContext';
 import { ClientReplies, type ClientReply } from '@/features/dashboard/crm/client-replies';
 import { CONTACT_STATUSES, crmDateTime } from '@/features/dashboard/crm/shared';
@@ -77,9 +78,7 @@ export default function MessagesPage() {
       </header>
 
       {isLoading ? (
-        <div className="grid place-items-center py-16 text-muted" role="status">
-          <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
-        </div>
+        <ListSkeleton />
       ) : isError ? (
         <div
           role="alert"

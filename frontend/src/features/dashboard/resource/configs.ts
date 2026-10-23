@@ -73,6 +73,7 @@ function serviceConfig(kind: 'service' | 'solution'): ResourceConfig {
     endpoint: isService ? '/services/' : '/solutions/',
     identifier: 'slug',
     title: isService ? 'الخدمات' : 'الحلول القطاعية',
+    itemLabel: isService ? 'الخدمة' : 'الحل',
     description: isService
       ? 'خدمات التطوير التي تقدّمها. يُنصح بوصف عربي من 120 كلمة فأكثر — الصفحات القصيرة أضعف في محركات البحث.'
       : 'أنظمة جاهزة للتخصيص حسب القطاع.',
@@ -161,6 +162,7 @@ export const projectsConfig: ResourceConfig = {
   endpoint: '/projects/',
   identifier: 'slug',
   title: 'المشاريع',
+  itemLabel: 'المشروع',
   description: 'أعمالك المنفَّذة. لا تعرض اسم عميل بلا إذن صريح منه.',
   permission: 'portfolio.change_project',
   columns: [
@@ -219,6 +221,7 @@ export const caseStudiesConfig: ResourceConfig = {
   endpoint: '/case-studies/',
   identifier: 'slug',
   title: 'دراسات الحالة',
+  itemLabel: 'دراسة الحالة',
   description: 'أقوى دليل على قدرتك — اربط كل دراسة بمشروع منفَّذ.',
   permission: 'portfolio.change_casestudy',
   columns: [
@@ -276,6 +279,7 @@ export const technologiesConfig: ResourceConfig = {
   endpoint: '/technologies/',
   identifier: 'slug',
   title: 'التقنيات',
+  itemLabel: 'التقنية',
   permission: 'portfolio.change_technology',
   columns: [
     { name: 'name', label: 'الاسم' },
@@ -309,6 +313,7 @@ export const testimonialsConfig: ResourceConfig = {
   key: 'testimonials',
   endpoint: '/testimonials/',
   title: 'شهادات العملاء',
+  itemLabel: 'الشهادة',
   description: 'لا تُضف شهادة غير حقيقية. أضف رابطًا يثبتها كلما أمكن.',
   permission: 'portfolio.change_testimonial',
   columns: [
@@ -340,6 +345,7 @@ export const processStepsConfig: ResourceConfig = {
   key: 'process-steps',
   endpoint: '/process-steps/',
   title: 'مراحل العمل',
+  itemLabel: 'المرحلة',
   description: 'تظهر في صفحة «طريقة العمل» وفي الرئيسية.',
   permission: 'core.change_processstep',
   paginated: false,
@@ -364,6 +370,7 @@ export const faqsConfig: ResourceConfig = {
   key: 'faqs',
   endpoint: '/faqs/',
   title: 'الأسئلة الشائعة',
+  itemLabel: 'السؤال',
   description: 'الإجابات التزامات تجارية — راجعها قبل التفعيل.',
   permission: 'core.change_faq',
   paginated: false,
@@ -395,6 +402,7 @@ export const statsConfig: ResourceConfig = {
   key: 'stats',
   endpoint: '/stats/',
   title: 'الإحصائيات',
+  itemLabel: 'الإحصائية',
   description: 'أرقام حقيقية فقط. القسم مخفي من الرئيسية حتى تُضاف أول إحصائية.',
   permission: 'core.change_stat',
   paginated: false,
@@ -420,6 +428,7 @@ export const resourcesConfig: ResourceConfig = {
   endpoint: '/resources/',
   identifier: 'slug',
   title: 'الموارد',
+  itemLabel: 'المورد',
   permission: 'portfolio.change_resource',
   columns: [
     { name: 'title_ar', label: 'العنوان' },
@@ -452,6 +461,7 @@ export const experiencesConfig: ResourceConfig = {
   key: 'experiences',
   endpoint: '/experiences/',
   title: 'الخبرات',
+  itemLabel: 'الخبرة',
   permission: 'portfolio.change_experience',
   paginated: false,
   searchable: false,
@@ -478,6 +488,7 @@ export const educationConfig: ResourceConfig = {
   key: 'education',
   endpoint: '/education/',
   title: 'المؤهلات العلمية',
+  itemLabel: 'المؤهل',
   permission: 'portfolio.change_education',
   paginated: false,
   searchable: false,
@@ -502,6 +513,7 @@ export const certificationsConfig: ResourceConfig = {
   key: 'certifications',
   endpoint: '/certifications/',
   title: 'الشهادات',
+  itemLabel: 'الشهادة',
   permission: 'portfolio.change_certification',
   paginated: false,
   searchable: false,
@@ -529,6 +541,7 @@ export const socialLinksConfig: ResourceConfig = {
   key: 'social-links',
   endpoint: '/social-links/',
   title: 'روابط التواصل الاجتماعي',
+  itemLabel: 'الرابط',
   permission: 'core.change_sociallink',
   paginated: false,
   searchable: false,
@@ -585,6 +598,7 @@ export const postsConfig: ResourceConfig = {
   endpoint: '/posts/',
   identifier: 'slug',
   title: 'المقالات',
+  itemLabel: 'المقال',
   description: 'لا يُنشر مقال دون 100 كلمة عربية على الأقل. المجدول يُنشر آليًا في موعده.',
   permission: 'blog.change_post',
   columns: [
@@ -633,6 +647,7 @@ export const categoriesConfig: ResourceConfig = {
   endpoint: '/categories/',
   identifier: 'slug',
   title: 'تصنيفات المدونة',
+  itemLabel: 'التصنيف',
   permission: 'blog.change_category',
   paginated: false,
   searchable: false,
@@ -655,6 +670,7 @@ export const tagsConfig: ResourceConfig = {
   endpoint: '/tags/',
   identifier: 'slug',
   title: 'الوسوم',
+  itemLabel: 'الوسم',
   permission: 'blog.change_tag',
   paginated: false,
   columns: [
@@ -672,6 +688,7 @@ export const blockedEmailsConfig: ResourceConfig = {
   key: 'blocked-emails',
   endpoint: '/blocked-emails/',
   title: 'البريد المحظور',
+  itemLabel: 'العنوان المحظور',
   description: 'بريد أو نطاق محظور من التعليق. النطاق يبدأ بـ @ مثل @spam.com',
   permission: 'comments.change_comment',
   columns: [
@@ -692,6 +709,7 @@ export const usersConfig: ResourceConfig = {
   key: 'users',
   endpoint: '/users/',
   title: 'المستخدمون',
+  itemLabel: 'المستخدم',
   description: 'الأدوار تحدد الصلاحيات — تغيير الدور يزامن المجموعة تلقائيًا.',
   permission: 'core.manage_users',
   columns: [
@@ -747,6 +765,7 @@ export const emailTemplatesConfig: ResourceConfig = {
   key: 'email-templates',
   endpoint: '/email-templates/',
   title: 'قوالب البريد',
+  itemLabel: 'القالب',
   description:
     'قالب HTML اختياري للحملات. يجب أن يحوي {{ content }} لإدراج المحتوى و{{ unsubscribe_url }} لرابط الإلغاء. ' +
     'المتغيرات المتاحة: subject · subscriber_name · content · image_url · cta_label · cta_url · preferences_url · site_name.',
@@ -773,6 +792,7 @@ export const interestsConfig: ResourceConfig = {
   key: 'interests',
   endpoint: '/interests/manage/',
   title: 'اهتمامات النشرة',
+  itemLabel: 'الاهتمام',
   description: 'ما يختاره المشترك ليستقبل ما يخصه فقط. المفاتيح الخمسة الافتراضية مرتبطة بإنشاء الحملات من المحتوى.',
   permission: 'newsletter.change_interest',
   paginated: false,

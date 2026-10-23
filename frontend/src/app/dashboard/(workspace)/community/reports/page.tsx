@@ -1,9 +1,10 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Flag, LoaderCircle } from 'lucide-react';
+import { Flag } from 'lucide-react';
 import { useState } from 'react';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { useToast } from '@/contexts/ToastContext';
 import { crmDateTime } from '@/features/dashboard/crm/shared';
 import { api, toApiError } from '@/lib/api/client';
@@ -74,9 +75,7 @@ export default function ReportsPage() {
       </div>
 
       {isLoading ? (
-        <div className="grid place-items-center py-16 text-muted" role="status">
-          <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
-        </div>
+        <ListSkeleton />
       ) : data && data.results.length ? (
         <ul className="space-y-3">
           {data.results.map((report) => (

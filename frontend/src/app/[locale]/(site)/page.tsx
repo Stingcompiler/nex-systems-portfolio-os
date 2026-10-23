@@ -105,6 +105,9 @@ export default async function HomePage({
   const featuredTechnologies = technologies.results.filter((item) => item.is_featured);
   // الأسئلة العامة كلها (عام، تكلفة، تنفيذ) — أسئلة خدمة بعينها تبقى في صفحتها
   const homeFaqs = faqs.filter((faq) => !faq.service);
+  // معاينة البطل: منتجنا أولًا (لا إذن عميل يقيّد عرضه)، وإلا أول مشروع بغلاف
+  const withCover = projects.filter((project) => project.cover_image);
+  const heroPreview = withCover.find((project) => project.is_product) ?? withCover[0] ?? null;
 
   /**
    * كل قسم يقرر بنفسه أن يختفي عندما لا يوجد محتوى، فلا يظهر
@@ -122,7 +125,13 @@ export default async function HomePage({
     switch (section.key) {
       case 'hero':
         return (
-          <HeroSection section={section} settings={settings} stats={stats} locale={locale} />
+          <HeroSection
+            section={section}
+            settings={settings}
+            stats={stats}
+            preview={heroPreview}
+            locale={locale}
+          />
         );
       case 'services':
         return (

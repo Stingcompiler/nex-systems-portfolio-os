@@ -35,6 +35,7 @@ const SCREENS = [
   ['dash-analytics', '/dashboard/analytics', true, ['desktop-1440'], ['light']],
   ['dash-requests', '/dashboard/crm/requests', true, ['desktop-1440'], ['light']],
   ['dash-sections', '/dashboard/content/home', true, ['desktop-1440'], ['light']],
+  ['dash-notifications', '/dashboard/notifications', true, ['desktop-1440', 'mobile-390'], ['light']],
   ['dash-settings', '/dashboard/settings', true, ['desktop-1440'], ['light']],
 ];
 

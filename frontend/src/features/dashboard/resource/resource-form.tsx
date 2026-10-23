@@ -1,7 +1,7 @@
 'use client';
 
 import { LoaderCircle, Save, X } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FocusEvent, type FormEvent } from 'react';
 
 import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { useToast } from '@/contexts/ToastContext';
@@ -185,6 +185,17 @@ export function ResourceForm({
     return missing;
   }
 
+  /**
+   * §15.3: الحقل الإلزامي يُفحص عند مغادرته لا عند كل ضغطة — المعرّف على
+   * العنصر `field-<key>` فيُعرف الحقل من الهدف نفسه.
+   */
+  function onFieldBlur(event: FocusEvent<HTMLDivElement>) {
+    const key = event.target.id?.replace(/^field-/, '');
+    if (!key) return;
+    const missing = missingRequired();
+    if (missing[key]) setErrors((current) => ({ ...current, [key]: missing[key] }));
+  }
+
   function focusTabOf(keys: string[]) {
     const failedField = fields.find((field) =>
       keys.some((key) => key === field.name || key.startsWith(`${field.name}_`)),
@@ -295,7 +306,7 @@ export function ResourceForm({
           </div>
         ) : null}
 
-        <div ref={bodyRef} className="flex-1 overflow-y-auto p-4">
+        <div ref={bodyRef} onBlur={onFieldBlur} className="flex-1 overflow-y-auto p-4">
           {isLoading ? (
             <ListSkeleton />
           ) : (

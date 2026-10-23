@@ -85,7 +85,7 @@ function serviceConfig(kind: 'service' | 'solution'): ResourceConfig {
       { name: 'sector', label: 'القطاع', type: 'choice', map: SECTOR_MAP },
       { name: 'is_published', label: 'منشور', type: 'boolean' },
       { name: 'is_featured', label: 'مميز', type: 'boolean' },
-      { name: 'display_order', label: 'الترتيب', type: 'number' },
+      { name: 'display_order', label: 'الترتيب', type: 'number', sortable: true },
     ],
     filters: [
       { name: 'sector', label: 'القطاع', options: SECTORS },
@@ -282,10 +282,10 @@ export const technologiesConfig: ResourceConfig = {
   itemLabel: 'التقنية',
   permission: 'portfolio.change_technology',
   columns: [
-    { name: 'name', label: 'الاسم' },
+    { name: 'name', label: 'الاسم', sortable: true },
     { name: 'category', label: 'التصنيف', type: 'choice',
       map: Object.fromEntries(TECH_CATEGORIES.map((entry) => [entry.value, entry.label])) },
-    { name: 'proficiency', label: 'الإتقان', type: 'number' },
+    { name: 'proficiency', label: 'الإتقان', type: 'number', sortable: true },
     { name: 'is_featured', label: 'مميزة', type: 'boolean' },
     { name: 'is_active', label: 'مفعّلة', type: 'boolean' },
   ],
@@ -604,9 +604,9 @@ export const postsConfig: ResourceConfig = {
   columns: [
     { name: 'title_ar', label: 'العنوان' },
     { name: 'status', label: 'الحالة', type: 'status', map: POST_STATUS_MAP, tones: POST_STATUS_TONES },
-    { name: 'view_count', label: 'المشاهدات', type: 'number' },
+    { name: 'view_count', label: 'المشاهدات', type: 'number', sortable: true },
     { name: 'is_featured', label: 'مميز', type: 'boolean' },
-    { name: 'published_at', label: 'النشر', type: 'date' },
+    { name: 'published_at', label: 'النشر', type: 'date', sortable: true },
   ],
   filters: [{ name: 'is_featured', label: 'مميز',
     options: [{ value: 'true', label: 'نعم' }, { value: 'false', label: 'لا' }] }],

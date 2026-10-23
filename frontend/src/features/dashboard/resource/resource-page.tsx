@@ -1,6 +1,8 @@
 'use client';
 
 import {
+  ArrowDown,
+  ArrowUp,
   ChevronLeft,
   Eye,
   EyeOff,
@@ -135,6 +137,7 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
         page: number;
         search: string;
         filters: Record<string, string>;
+        ordering?: string;
       } | null;
     } catch {
       return null;
@@ -143,6 +146,8 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
   const [page, setPage] = useState(saved?.page ?? 1);
   const [searchInput, setSearchInput] = useState(saved?.search ?? '');
   const [filters, setFilters] = useState<Record<string, string>>(saved?.filters ?? {});
+  // §7: فرز بثلاث حالات — تصاعدي ← تنازلي ← ترتيب الخادم الافتراضي
+  const [ordering, setOrdering] = useState(saved?.ordering ?? '');
   const [formOpen, setFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<ResourceRow | null>(null);
@@ -153,9 +158,10 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
       page,
       page_size: 25,
       ...(search ? { search } : {}),
+      ...(ordering ? { ordering } : {}),
       ...Object.fromEntries(Object.entries(filters).filter(([, value]) => value)),
     }),
-    [page, search, filters],
+    [page, search, filters, ordering],
   );
 
   const { data, isLoading, isError, error, refetch, isFetching } = useResourceList(config, params);
@@ -175,13 +181,17 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
       return;
     }
     setPage(1);
-  }, [search, filters]);
+  }, [search, filters, ordering]);
 
   useEffect(() => {
     try {
-      sessionStorage.setItem(stateKey, JSON.stringify({ page, search: searchInput, filters }));
+      sessionStorage.setItem(stateKey, JSON.stringify({ page, search: searchInput, filters, ordering }));
     } catch {}
-  }, [stateKey, page, searchInput, filters]);
+  }, [stateKey, page, searchInput, filters, ordering]);
+
+  function toggleSort(name: string) {
+    setOrdering((current) => (current === name ? `-${name}` : current === `-${name}` ? '' : name));
+  }
 
   function openCreate() {
     setEditingId(null);
@@ -293,8 +303,35 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
           <thead>
             <tr className="border-b border-border bg-surface-hover text-xs text-muted">
               {config.columns.map((column) => (
-                <th key={column.name} scope="col" className="px-4 py-3 text-start font-medium">
-                  {column.label}
+                <th
+                  key={column.name}
+                  scope="col"
+                  className="px-4 py-3 text-start font-medium"
+                  aria-sort={
+                    ordering === column.name
+                      ? 'ascending'
+                      : ordering === `-${column.name}`
+                        ? 'descending'
+                        : undefined
+                  }
+                >
+                  {column.sortable ? (
+                    <button
+                      type="button"
+                      onClick={() => toggleSort(column.name)}
+                      className="-mx-1 inline-flex items-center gap-1 rounded px-1 hover:text-foreground"
+                    >
+                      {column.label}
+                      {/* الأيقونة على العمود المفروز فقط (§7) */}
+                      {ordering === column.name ? (
+                        <ArrowUp className="size-3.5" aria-hidden="true" />
+                      ) : ordering === `-${column.name}` ? (
+                        <ArrowDown className="size-3.5" aria-hidden="true" />
+                      ) : null}
+                    </button>
+                  ) : (
+                    column.label
+                  )}
                 </th>
               ))}
               {/* [بند 7] عمود الإجراءات بمحاذاة النهاية المنطقية */}

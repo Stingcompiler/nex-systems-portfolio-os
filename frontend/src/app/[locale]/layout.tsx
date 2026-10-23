@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { IBM_Plex_Mono, Inter, Tajawal } from 'next/font/google';
+import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Sans_Arabic } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
@@ -20,22 +20,21 @@ import { SITE_NAME_FALLBACK } from '@/lib/constants/site';
 // فلا يوجد أي طلب خارجي وقت التشغيل. `font-display: swap` وارتداد
 // next/font المضبوط المقاسات يمنعان قفز التخطيط.
 //
-// نظام Vezano حرفيًا: Tajawal للجسم والعناوين معًا (المرجع لا يفصلهما،
-// فيرث `--font-heading` خط الجسم)، وInter للإنجليزية، وIBM Plex Mono
-// للأرقام والمعرّفات — قرار مقصود بخلاف المرجع الذي يرقّم بـ Inter:
-// هوية الموقع الهندسية تقوم على المونو.
+// Design Reference §2: عائلة واحدة — IBM Plex Sans Arabic للعربية وIBM Plex
+// Sans للاتينية، بالمقاييس والأوزان نفسها (400–700)، والعناوين ترث الجسم.
+// IBM Plex Mono للشيفرة والمعرّفات فقط؛ الأرقام في النص جدولية بخط الجسم (.num).
 //
 // بلا preload: الـCSS مضمّن في الصفحة (inlineCss)، فالمتصفح يكتشف
 // @font-face فورًا ويجلب الأوجه المستخدمة فقط.
-const arabic = Tajawal({
+const arabic = IBM_Plex_Sans_Arabic({
   subsets: ['arabic', 'latin'],
-  weight: ['400', '500', '700', '800'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-arabic',
   display: 'swap',
   preload: false,
 });
 
-const latin = Inter({
+const latin = IBM_Plex_Sans({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-latin',
@@ -122,8 +121,8 @@ export default async function LocaleLayout({
     getSiteSettings(locale as Locale),
   ]);
 
-  // الخط يتبدّل حسب اللغة كما في المرجع: Tajawal للعربية وInter للإنجليزية.
-  // العناوين ترث الجسم (--font-heading = --font-sans) لأن Vezano لا يفصلهما.
+  // الخط يتبدّل حسب اللغة: Plex Sans Arabic للعربية وPlex Sans للإنجليزية،
+  // والعناوين ترث الجسم (--font-heading = --font-sans).
   const fontVariable =
     locale === 'ar' ? 'var(--font-arabic)' : 'var(--font-latin)';
 

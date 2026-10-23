@@ -56,6 +56,26 @@
     --shadow-brand: 0 7px 14px rgb(var(--primary) / 0.2);
     --shadow-brand-lg: 0 10px 22px rgb(var(--primary) / 0.28);
 
+    /* ── Design Reference v2.2 §1: الأدوار الناقصة ──
+       العلامة تبقى التركوازي (D-0007). التركيز أزرق مستقل عن العلامة وعن
+       التحديد والحالة. pending محايد: «بانتظار» ليس تحذيرًا (D-0002 في المرجع) */
+    --surface-subtle: 241 245 249; /* #F1F5F9 رؤوس الجداول والخلفيات الثانوية */
+    --text-secondary: 71 85 105; /* #475569 التسميات والنص المساعد */
+    --text-disabled: 148 163 184; /* #94A3B8 */
+    --focus: 37 99 235; /* #2563EB */
+    --info: 29 78 216; /* #1D4ED8 معلومة أو عملية جارية */
+    --info-soft: 239 246 255; /* #EFF6FF */
+    --pending: 63 63 70; /* #3F3F46 */
+    --pending-soft: 244 244 245; /* #F4F4F5 */
+    --pending-border: 212 212 216; /* #D4D4D8 — يُستخدم متقطعًا */
+    /* الرسوم: الأولى بلون العلامة، ولا كهرماني ولا أحمر حتى لا تُقرأ حالة */
+    --chart-1: 14 124 134; /* #0E7C86 العلامة */
+    --chart-2: 79 70 229; /* #4F46E5 */
+    --chart-3: 124 58 237; /* #7C3AED */
+    --chart-4: 190 24 93; /* #BE185D */
+    --chart-5: 37 99 235; /* #2563EB */
+    color-scheme: light;
+
     --duration-fast: 150ms;
     --duration-normal: 300ms;
     --duration-slow: 400ms;
@@ -108,6 +128,22 @@
     --shadow-lg: 0 0 0 1px rgb(255 255 255 / 0.1), 0 24px 64px -12px rgb(0 0 0 / 0.6);
     --shadow-brand: 0 7px 14px rgb(var(--primary) / 0.25);
     --shadow-brand-lg: 0 10px 22px rgb(var(--primary) / 0.32);
+
+    --surface-subtle: 23 34 56; /* #172238 */
+    --text-secondary: 167 177 194; /* #A7B1C2 */
+    --text-disabled: 85 97 122; /* #55617A */
+    --focus: 96 165 250; /* #60A5FA */
+    --info: 147 197 253; /* #93C5FD */
+    --info-soft: 15 35 64; /* #0F2340 */
+    --pending: 201 205 214; /* #C9CDD6 */
+    --pending-soft: 28 35 51; /* #1C2333 */
+    --pending-border: 54 66 88; /* #364258 */
+    --chart-1: 55 176 184; /* #37B0B8 */
+    --chart-2: 129 140 248; /* #818CF8 */
+    --chart-3: 192 132 252; /* #C084FC */
+    --chart-4: 244 114 182; /* #F472B6 */
+    --chart-5: 96 165 250; /* #60A5FA */
+    color-scheme: dark;
   }
 
   /* العربية تحتاج مساحة رأسية أكبر — لكن ليس في العناوين الكبيرة:
@@ -178,7 +214,8 @@
   }
 
   :focus-visible {
-    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+    /* §1: حلقة التركيز زرقاء مستقلة عن لون العلامة والتحديد — 2px بإزاحة 2px */
+    @apply outline-none ring-2 ring-focus ring-offset-2 ring-offset-background;
   }
 
   ::selection {
@@ -187,6 +224,14 @@
 }
 
 @layer components {
+  /* §2: كل رقم ومعرّف وتاريخ وهاتف ورابط — أرقام جدولية بخط الجسم، ويبقى
+     LTR معزولًا داخل النص العربي */
+  .num {
+    font-variant-numeric: tabular-nums;
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+
   /* الأيقونات الاتجاهية فقط — لا الشعارات ولا لقطات الشاشة */
   .flip-rtl {
     @apply rtl:-scale-x-100;

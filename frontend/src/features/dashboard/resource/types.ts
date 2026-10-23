@@ -61,6 +61,8 @@ export interface ColumnConfig {
   map?: Record<string, string>;
   /** لأعمدة status: خريطة القيمة إلى نبرة لونية للشارة */
   tones?: Record<string, BadgeTone>;
+  /** العمود قابل للفرز — فقط حين يقبله الخادم في ordering_fields */
+  sortable?: boolean;
 }
 
 export interface FilterConfig {

@@ -42,6 +42,26 @@ const config: Config = {
           soft: 'rgb(var(--danger-soft) / <alpha-value>)',
         },
         ring: 'rgb(var(--ring) / <alpha-value>)',
+        focus: 'rgb(var(--focus) / <alpha-value>)',
+        'surface-subtle': 'rgb(var(--surface-subtle) / <alpha-value>)',
+        'text-secondary': 'rgb(var(--text-secondary) / <alpha-value>)',
+        'text-disabled': 'rgb(var(--text-disabled) / <alpha-value>)',
+        info: {
+          DEFAULT: 'rgb(var(--info) / <alpha-value>)',
+          soft: 'rgb(var(--info-soft) / <alpha-value>)',
+        },
+        pending: {
+          DEFAULT: 'rgb(var(--pending) / <alpha-value>)',
+          soft: 'rgb(var(--pending-soft) / <alpha-value>)',
+          border: 'rgb(var(--pending-border) / <alpha-value>)',
+        },
+        chart: {
+          1: 'rgb(var(--chart-1) / <alpha-value>)',
+          2: 'rgb(var(--chart-2) / <alpha-value>)',
+          3: 'rgb(var(--chart-3) / <alpha-value>)',
+          4: 'rgb(var(--chart-4) / <alpha-value>)',
+          5: 'rgb(var(--chart-5) / <alpha-value>)',
+        },
         'brand-ink': 'rgb(var(--brand-ink) / <alpha-value>)',
       },
       fontFamily: {

@@ -1,0 +1,82 @@
+# ملف تخصيص المشروع — Design Reference v2.2 (docs/design/DESIGN.md).
+# يُقرأ بعد DESIGN.md. الاستثناءات في DECISIONS.md لا هنا.
+
+project:
+  name: "ستينج سيستم"
+  domain: other                 # موقع تعريفي لشركة برمجيات + لوحة إدارة محتوى وعملاء
+  summary: "موقع يعرض أعمال الشركة ويستقبل طلبات المشاريع، ولوحة يدير منها المالك المحتوى والعملاء"
+
+users:
+  roles: [owner, editor]
+  top_tasks: [الرد على طلبات المشاريع والرسائل, نشر المشاريع والمقالات, متابعة العملاء]
+  expertise: mixed
+
+platform:
+  targets: [web]
+  min_viewport: 1024x768
+  touch_primary: false
+  print: false
+
+locale:
+  languages: [ar, en]
+  direction: rtl
+  numerals: western
+  date_format: "D MMMM YYYY"
+  time_format: "HH:mm"
+  currency: USD
+  currency_display: code
+
+brand:
+  primary: "#0E7C86"            # التركوازي — D-0007
+  logo: "frontend/public/brand"
+  display_font: ""
+
+appearance:
+  default_theme: system
+  themes_available: [light, dark]
+  default_density: default
+  density_user_switchable: false  # D-0008
+
+navigation:
+  pattern: sidebar              # اللوحة؛ الموقع تنقل علوي
+  sections: [نظرة عامة, المحتوى, المدونة, العملاء, المجتمع, التسويق, الإعدادات]
+
+connectivity:
+  offline_first: false          # D-0008: شريط انقطاع فقط، بلا طابور مزامنة
+  queue_visible_in_header: false
+  conflict_policy: server-wins
+
+permissions:
+  destructive_actions_confirm: true
+  roles_matrix: "docs/04-roles-and-use-cases.md"
+
+pos:
+  enabled: false
+
+accessibility:
+  wcag_level: AA
+  reduced_motion: respect
+  min_touch_target: 44
+
+market:
+  primary_contact_channel: whatsapp
+  contact_value: "من إعدادات الموقع (settings.whatsapp)"
+  prefilled_message: "من إعدادات الموقع (whatsapp_default_message)"
+  trust_signals: []             # لا يُعرض إلا ما يُوثَّق فعلًا
+  trust_values: {}
+  payment_methods: []
+  network_budget: low           # السودان: شبكات بطيئة — صورة البطل ≤ 120KB
+  price_display: on-request
+
+landing:
+  - page: home
+    type: service
+    goal: consultation
+    traffic_source: organic
+    headline: ""                # من اللوحة (قسم hero)
+    subhead: ""
+    cta_label: "ابدأ مشروعك"
+    evidence:
+      - {kind: case_study, value: "مشاريع حقيقية بلقطاتها", source: "/projects", consent: true}
+    sections: [hero, projects, solutions, process, testimonials, faq, cta]
+    form_first_field: "الاسم"

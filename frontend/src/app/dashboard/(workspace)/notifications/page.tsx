@@ -1,10 +1,11 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Bell, Check, CheckCheck, ChevronRight, LoaderCircle, Trash2 } from 'lucide-react';
+import { Bell, Check, CheckCheck, ChevronRight, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { useToast } from '@/contexts/ToastContext';
 import { PushToggle } from '@/features/dashboard/push-toggle';
 import { api, toApiError } from '@/lib/api/client';
@@ -201,9 +202,7 @@ export default function NotificationsPage() {
       </div>
 
       {isLoading ? (
-        <div className="grid place-items-center py-16 text-muted" role="status">
-          <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
-        </div>
+        <ListSkeleton />
       ) : items.length ? (
         <div className="flex flex-col gap-5">
           {groups.map((group) => (

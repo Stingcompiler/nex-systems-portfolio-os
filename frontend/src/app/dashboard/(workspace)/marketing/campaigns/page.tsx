@@ -1,10 +1,11 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { LoaderCircle, Plus, Search } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   CAMPAIGN_STATUSES,
@@ -76,9 +77,7 @@ export default function CampaignsPage() {
       </div>
 
       {list.isLoading ? (
-        <div className="grid place-items-center py-16 text-muted" role="status">
-          <LoaderCircle className="size-6 animate-spin" aria-hidden="true" />
-        </div>
+        <ListSkeleton />
       ) : (
         <div className="overflow-x-auto rounded-lg border border-border bg-surface">
           <table className="w-full min-w-[52rem] text-sm">

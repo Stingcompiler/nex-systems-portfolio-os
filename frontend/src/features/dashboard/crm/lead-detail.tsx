@@ -1,9 +1,10 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { LoaderCircle, MessageSquarePlus, Phone, UserCheck, X } from 'lucide-react';
+import { MessageSquarePlus, Phone, UserCheck, X } from 'lucide-react';
 import { useState } from 'react';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { useToast } from '@/contexts/ToastContext';
 import {
   crmDateTime,
@@ -155,9 +156,7 @@ export function LeadDetailDrawer({
         </div>
 
         {isLoading || !lead ? (
-          <div className="grid flex-1 place-items-center text-muted" role="status">
-            <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
-          </div>
+          <div className="flex-1 p-4"><ListSkeleton rows={4} /></div>
         ) : (
           <div className="flex-1 space-y-6 overflow-y-auto p-4">
             {/* الحالة والأولوية والتحويل */}

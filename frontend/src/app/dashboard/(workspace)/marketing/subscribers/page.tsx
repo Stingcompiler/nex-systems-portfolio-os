@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Download, LoaderCircle, Plus, Search, Trash2 } from 'lucide-react';
 import { useEffect, useState, type FormEvent } from 'react';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import {
@@ -204,9 +205,7 @@ export default function SubscribersPage() {
       </div>
 
       {list.isLoading ? (
-        <div className="grid place-items-center py-16 text-muted" role="status">
-          <LoaderCircle className="size-6 animate-spin" aria-hidden="true" />
-        </div>
+        <ListSkeleton />
       ) : (
         <div className="overflow-x-auto rounded-lg border border-border bg-surface">
           <table className="w-full min-w-[48rem] text-sm">

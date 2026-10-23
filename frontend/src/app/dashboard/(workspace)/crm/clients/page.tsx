@@ -1,9 +1,10 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { LoaderCircle, Search, Users } from 'lucide-react';
+import { Search, Users } from 'lucide-react';
 import { useState } from 'react';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { crmDate } from '@/features/dashboard/crm/shared';
 import { api } from '@/lib/api/client';
 import type { Paginated } from '@/lib/api/types';
@@ -57,9 +58,7 @@ export default function ClientsPage() {
       </div>
 
       {isLoading ? (
-        <div className="grid place-items-center py-16 text-muted" role="status">
-          <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
-        </div>
+        <ListSkeleton />
       ) : data?.results.length ? (
         <div className="overflow-x-auto rounded-lg border border-border bg-surface">
           <table className="w-full min-w-[40rem] text-sm">

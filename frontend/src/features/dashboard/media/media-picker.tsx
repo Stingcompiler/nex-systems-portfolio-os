@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Check, LoaderCircle, Search, Upload, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { useToast } from '@/contexts/ToastContext';
 import { api, toApiError } from '@/lib/api/client';
 import type { Paginated } from '@/lib/api/types';
@@ -169,9 +170,7 @@ export function MediaPickerDialog({
 
         <div className="min-h-48 flex-1 overflow-y-auto p-4">
           {isLoading ? (
-            <div className="grid place-items-center py-12 text-muted">
-              <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
-            </div>
+            <ListSkeleton />
           ) : data?.results.length ? (
             <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {data.results.map((item) => (

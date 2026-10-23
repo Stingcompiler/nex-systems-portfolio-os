@@ -12,7 +12,7 @@ import {
   TriangleAlert,
 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useEffect, useId, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
@@ -126,9 +126,23 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
   const t = useTranslations('dashboard');
   const locale = useLocale();
 
-  const [page, setPage] = useState(1);
-  const [searchInput, setSearchInput] = useState('');
-  const [filters, setFilters] = useState<Record<string, string>>({});
+  // §7: الرجوع إلى القائمة يحفظ البحث والفلاتر والصفحة — محفوظة لهذه الجلسة
+  // في المتصفح لكل مورد، فالعودة من صفحة أخرى لا تعيد المستخدم إلى البداية
+  const stateKey = `resource-list:${config.key}`;
+  const saved = useMemo(() => {
+    try {
+      return JSON.parse(sessionStorage.getItem(stateKey) ?? 'null') as {
+        page: number;
+        search: string;
+        filters: Record<string, string>;
+      } | null;
+    } catch {
+      return null;
+    }
+  }, [stateKey]);
+  const [page, setPage] = useState(saved?.page ?? 1);
+  const [searchInput, setSearchInput] = useState(saved?.search ?? '');
+  const [filters, setFilters] = useState<Record<string, string>>(saved?.filters ?? {});
   const [formOpen, setFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<ResourceRow | null>(null);
@@ -153,9 +167,21 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
   const totalPages = data?.total_pages ?? 1;
   const searchId = useId();
 
+  // البحث أو الفلتر الجديد يبدأ من الصفحة الأولى — لا عند الاستعادة الأولى
+  const restored = useRef(true);
   useEffect(() => {
+    if (restored.current) {
+      restored.current = false;
+      return;
+    }
     setPage(1);
   }, [search, filters]);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(stateKey, JSON.stringify({ page, search: searchInput, filters }));
+    } catch {}
+  }, [stateKey, page, searchInput, filters]);
 
   function openCreate() {
     setEditingId(null);

@@ -3,6 +3,7 @@
 import { LoaderCircle, Save, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { useToast } from '@/contexts/ToastContext';
 import { FieldMarkContext, ResourceField, type FormValues } from '@/features/dashboard/resource/fields';
 import type { ResourceConfig } from '@/features/dashboard/resource/types';
@@ -296,9 +297,7 @@ export function ResourceForm({
 
         <div ref={bodyRef} className="flex-1 overflow-y-auto p-4">
           {isLoading ? (
-            <div className="grid place-items-center py-16 text-muted">
-              <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
-            </div>
+            <ListSkeleton />
           ) : (
             <FieldMarkContext.Provider value={markMode}>
             <div className="grid gap-4 sm:grid-cols-2">

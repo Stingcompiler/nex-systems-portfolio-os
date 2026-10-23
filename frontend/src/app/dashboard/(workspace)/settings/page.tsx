@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { LoaderCircle, Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { useToast } from '@/contexts/ToastContext';
 import { ResourceField, type FormValues } from '@/features/dashboard/resource/fields';
 import type { FieldConfig } from '@/features/dashboard/resource/types';
@@ -170,9 +171,7 @@ export default function SettingsPage() {
       </IndicatorTrack>
 
       {settings.isLoading ? (
-        <div className="grid place-items-center py-16 text-muted" role="status">
-          <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
-        </div>
+        <ListSkeleton />
       ) : (
         <form
           onSubmit={(event) => {

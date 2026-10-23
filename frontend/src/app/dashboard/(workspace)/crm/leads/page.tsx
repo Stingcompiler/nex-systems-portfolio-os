@@ -1,9 +1,10 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Download, KanbanSquare, List, LoaderCircle, Search } from 'lucide-react';
+import { Download, KanbanSquare, List, Search } from 'lucide-react';
 import { useState } from 'react';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { LeadDetailDrawer } from '@/features/dashboard/crm/lead-detail';
@@ -292,8 +293,6 @@ export default function LeadsPage() {
 
 function Loading() {
   return (
-    <div className="grid place-items-center py-16 text-muted" role="status">
-      <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
-    </div>
+    <ListSkeleton />
   );
 }

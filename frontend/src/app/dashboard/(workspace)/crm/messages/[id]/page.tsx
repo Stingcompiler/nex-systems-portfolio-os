@@ -2,11 +2,12 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { ArrowRight, LoaderCircle, TriangleAlert } from 'lucide-react';
+import { ArrowRight, TriangleAlert } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { useToast } from '@/contexts/ToastContext';
 import { ClientReplies, type ClientReply } from '@/features/dashboard/crm/client-replies';
 import { CONTACT_STATUSES, crmDateTime } from '@/features/dashboard/crm/shared';
@@ -75,10 +76,7 @@ export default function MessageDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="grid place-items-center py-24 text-muted" role="status">
-        <LoaderCircle className="size-6 animate-spin" aria-hidden="true" />
-        <span className="sr-only">جارٍ التحميل…</span>
-      </div>
+      <ListSkeleton />
     );
   }
 

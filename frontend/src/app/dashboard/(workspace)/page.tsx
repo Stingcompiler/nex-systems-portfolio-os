@@ -8,7 +8,6 @@ import {
   CircleDashed,
   Clock3,
   FileText,
-  LoaderCircle,
   Mail,
   MessageSquare,
   PenLine,
@@ -19,6 +18,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { CountUp } from '@/components/ui/count-up';
 import { Badge } from '@/components/ui/misc';
 import { useAuth } from '@/contexts/AuthContext';
@@ -540,10 +540,7 @@ export default function DashboardHomePage() {
 
   if (isLoading) {
     return (
-      <div className="grid place-items-center py-24 text-muted" role="status">
-        <LoaderCircle className="size-6 animate-spin" aria-hidden="true" />
-        <span className="sr-only">جارٍ التحميل…</span>
-      </div>
+      <ListSkeleton />
     );
   }
 

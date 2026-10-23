@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ListSkeleton } from '@/features/dashboard/list-skeleton';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import {
@@ -194,9 +195,7 @@ export function CampaignEditor({ id }: { id?: number }) {
 
   if (id && campaignQuery.isLoading) {
     return (
-      <div className="grid place-items-center py-16 text-muted" role="status">
-        <LoaderCircle className="size-6 animate-spin" aria-hidden="true" />
-      </div>
+      <ListSkeleton />
     );
   }
   if (id && campaignQuery.isError) {

@@ -447,7 +447,13 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
         >
           <div className="w-full max-w-sm rounded-xl border border-border bg-surface p-6 shadow-card">
             <TriangleAlert className="mb-3 size-6 shrink-0 text-danger" aria-hidden="true" />
-            <h2 className="text-h3 font-semibold">{t('confirmDelete.title')}</h2>
+            {/* §15.4: الحوار يسمّي العنصر لا «العنصر» */}
+            <h2 className="text-h3 font-semibold">
+              {(() => {
+                const name = String(confirmDelete[config.columns[0]?.name ?? ''] ?? '').trim();
+                return name ? `حذف «${name}»؟` : t('confirmDelete.title');
+              })()}
+            </h2>
             <p className="mt-2 text-sm text-muted">{t('confirmDelete.body')}</p>
             <div className="mt-6 flex justify-end gap-2">
               <Button variant="secondary" onClick={() => setConfirmDelete(null)}>
@@ -459,7 +465,7 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
                 onClick={() => onDelete(confirmDelete)}
               >
                 <Trash2 className="size-4" aria-hidden="true" />
-                {t('actions.delete')}
+                {config.itemLabel ? `حذف ${config.itemLabel}` : t('actions.delete')}
               </Button>
             </div>
           </div>

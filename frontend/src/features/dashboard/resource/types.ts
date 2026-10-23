@@ -75,6 +75,8 @@ export interface ResourceConfig {
   /** المسار تحت /api/v1/ — مع شرطة في النهاية */
   endpoint: string;
   title: string;
+  /** اسم العنصر المفرد معرّفًا — لتسمية الأزرار بالمهمة: «حفظ المشروع» (§15.4) */
+  itemLabel?: string;
   description?: string;
   /** الصلاحية اللازمة للكتابة */
   permission?: string;

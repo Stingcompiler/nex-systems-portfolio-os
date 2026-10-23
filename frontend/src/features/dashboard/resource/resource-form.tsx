@@ -1,10 +1,10 @@
 'use client';
 
 import { LoaderCircle, Save, X } from 'lucide-react';
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 
 import { useToast } from '@/contexts/ToastContext';
-import { ResourceField, type FormValues } from '@/features/dashboard/resource/fields';
+import { FieldMarkContext, ResourceField, type FormValues } from '@/features/dashboard/resource/fields';
 import type { ResourceConfig } from '@/features/dashboard/resource/types';
 import {
   useResourceItem,
@@ -63,30 +63,71 @@ export function ResourceForm({
     () => config.tabs ?? [{ key: 'main', label: 'البيانات' }],
     [config.tabs],
   );
+  // الحقل الذي يعرّف العنصر في القائمة (أول عمود: العنوان أو الاسم) إلزامي
+  // دائمًا — عنصر بلا اسم لا يُعرف في الجدول ولا في حوار الحذف
+  const fields = useMemo(() => {
+    const primary = (config.columns[0]?.name ?? '').replace(/_ar$/, '');
+    return config.fields.map((field) =>
+      field.name === primary && field.type !== 'readonly' ? { ...field, required: true } : field,
+    );
+  }, [config]);
   const [activeTab, setActiveTab] = useState(tabs[0].key);
   const [values, setValues] = useState<FormValues>(() => blankValues(config));
   const [errors, setErrors] = useState<Record<string, string[]>>({});
+  const [dirty, setDirty] = useState(false);
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
+  const bodyRef = useRef<HTMLDivElement>(null);
 
   // إعادة التهيئة عند فتح النموذج أو وصول بيانات العنصر
   useEffect(() => {
     if (!open) return;
     setErrors({});
+    setDirty(false);
+    setConfirmDiscard(false);
     setActiveTab(tabs[0].key);
     setValues(isEditing && item ? { ...blankValues(config), ...item } : blankValues(config));
   }, [open, item, isEditing, config, tabs]);
 
+  // §15.4: الإغلاق بتغييرات غير محفوظة يطلب قرارًا بدل أن يضيّع ما كُتب
+  function requestClose() {
+    if (dirty) setConfirmDiscard(true);
+    else onClose();
+  }
+
   useEffect(() => {
     if (!open) return;
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') onClose();
+      if (event.key === 'Escape') {
+        if (dirty) setConfirmDiscard(true);
+        else onClose();
+      }
     }
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [open, onClose]);
+  }, [open, onClose, dirty]);
+
+  // مغادرة الصفحة نفسها (إعادة تحميل، إغلاق التبويب) بتغييرات معلّقة
+  useEffect(() => {
+    if (!open || !dirty) return;
+    function onBeforeUnload(event: BeforeUnloadEvent) {
+      event.preventDefault();
+    }
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [open, dirty]);
+
+  // أول خطأ ظاهر يُمرَّر إليه بعد الرسم (§15.3)
+  useEffect(() => {
+    if (!Object.keys(errors).length) return;
+    bodyRef.current
+      ?.querySelector('[data-field-error]')
+      ?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }, [errors, activeTab]);
 
   if (!open) return null;
 
   function setValue(key: string, value: unknown) {
+    setDirty(true);
     setValues((current) => ({ ...current, [key]: value }));
     setErrors((current) => {
       if (!current[key]) return current;
@@ -123,8 +164,41 @@ export function ResourceForm({
     return payload;
   }
 
+  /** الحقول الإلزامية الفارغة قبل أي طلب — رسالة تقول ما الناقص (§15.3). */
+  function missingRequired(): Record<string, string[]> {
+    const missing: Record<string, string[]> = {};
+    for (const field of fields) {
+      if (!field.required || field.type === 'readonly' || field.type === 'switch') continue;
+      const key =
+        field.type === 'bilingual-text' || field.type === 'bilingual-textarea'
+          ? `${field.name}_ar`
+          : field.name;
+      const value = values[key];
+      const empty =
+        value === null ||
+        value === undefined ||
+        (typeof value === 'string' && !value.trim()) ||
+        (Array.isArray(value) && !value.length);
+      if (empty) missing[key] = [`اكتب ${field.label} — الحقل إلزامي.`];
+    }
+    return missing;
+  }
+
+  function focusTabOf(keys: string[]) {
+    const failedField = fields.find((field) =>
+      keys.some((key) => key === field.name || key.startsWith(`${field.name}_`)),
+    );
+    if (failedField?.tab) setActiveTab(failedField.tab);
+  }
+
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
+    const missing = missingRequired();
+    if (Object.keys(missing).length) {
+      setErrors(missing);
+      focusTabOf(Object.keys(missing));
+      return;
+    }
     setErrors({});
 
     try {
@@ -133,7 +207,7 @@ export function ResourceForm({
         toast.success('حُفظت التعديلات');
       } else {
         await create.mutateAsync(buildPayload());
-        toast.success('أُضيف العنصر');
+        toast.success(`أُضيف ${config.itemLabel ?? 'العنصر'}`);
       }
       onClose();
     } catch (caught) {
@@ -141,12 +215,8 @@ export function ResourceForm({
       setErrors(payload.errors);
       toast.error(payload.detail);
 
-      // ينقل المستخدم إلى التبويب الذي فيه أول خطأ بدل تركه يبحث
-      const failedKeys = Object.keys(payload.errors);
-      const failedField = config.fields.find((field) =>
-        failedKeys.some((key) => key === field.name || key.startsWith(`${field.name}_`)),
-      );
-      if (failedField?.tab) setActiveTab(failedField.tab);
+      // ينقل المستخدم إلى التبويب الذي فيه أول خطأ بدل تركه يبحث؛ ما كتبه يبقى
+      focusTabOf(Object.keys(payload.errors));
     }
   }
 
@@ -160,7 +230,11 @@ export function ResourceForm({
       : `تعديل — ${config.title}`
     : `إضافة — ${config.title}`;
 
-  const visibleFields = config.fields.filter(
+  const editable = fields.filter((field) => field.type !== 'readonly');
+  const requiredCount = editable.filter((field) => field.required).length;
+  const markMode = requiredCount * 2 > editable.length ? 'optional' : 'required';
+
+  const visibleFields = fields.filter(
     (field) => (field.tab ?? tabs[0].key) === activeTab,
   );
 
@@ -171,7 +245,7 @@ export function ResourceForm({
       aria-modal="true"
       aria-label={heading}
       onClick={(event) => {
-        if (event.target === event.currentTarget) onClose();
+        if (event.target === event.currentTarget) requestClose();
       }}
     >
       <form
@@ -183,7 +257,7 @@ export function ResourceForm({
           <h2 className="min-w-0 flex-1 truncate text-h3 font-semibold">{heading}</h2>
           <button
             type="button"
-            onClick={onClose}
+            onClick={requestClose}
             aria-label="إغلاق"
             className="inline-flex size-9 items-center justify-center rounded text-muted hover:bg-surface-hover"
           >
@@ -213,12 +287,20 @@ export function ResourceForm({
           </div>
         ) : null}
 
-        <div className="flex-1 overflow-y-auto p-4">
+        {dirty ? (
+          <div className="flex items-center gap-2 border-b border-border bg-surface-subtle px-4 py-2 text-sm text-text-secondary" role="status">
+            <span className="size-2 rounded-full bg-warning" aria-hidden="true" />
+            تغييرات غير محفوظة
+          </div>
+        ) : null}
+
+        <div ref={bodyRef} className="flex-1 overflow-y-auto p-4">
           {isLoading ? (
             <div className="grid place-items-center py-16 text-muted">
               <LoaderCircle className="size-5 animate-spin" aria-hidden="true" />
             </div>
           ) : (
+            <FieldMarkContext.Provider value={markMode}>
             <div className="grid gap-4 sm:grid-cols-2">
               {visibleFields.map((field) => (
                 <div
@@ -241,13 +323,34 @@ export function ResourceForm({
                 </div>
               ))}
             </div>
+            </FieldMarkContext.Provider>
           )}
         </div>
+
+        {confirmDiscard ? (
+          <div className="flex flex-wrap items-center gap-2 border-t border-border bg-warning-soft px-4 py-3 text-sm" role="alert">
+            <span className="flex-1 font-medium">ستضيع التغييرات غير المحفوظة. هل تغلق النموذج؟</span>
+            <button
+              type="button"
+              onClick={() => setConfirmDiscard(false)}
+              className="inline-flex min-h-11 items-center rounded border border-border-strong bg-surface px-4"
+            >
+              متابعة التحرير
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex min-h-11 items-center rounded px-4 font-medium text-danger hover:bg-danger-soft"
+            >
+              تجاهل التغييرات
+            </button>
+          </div>
+        ) : null}
 
         <div className="flex items-center justify-end gap-2 border-t border-border p-4">
           <button
             type="button"
-            onClick={onClose}
+            onClick={requestClose}
             className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm hover:bg-surface-hover"
           >
             إلغاء
@@ -262,7 +365,7 @@ export function ResourceForm({
             ) : (
               <Save className="size-4" aria-hidden="true" />
             )}
-            حفظ
+            {isEditing ? 'حفظ التعديلات' : `إضافة ${config.itemLabel ?? 'العنصر'}`}
           </button>
         </div>
       </form>

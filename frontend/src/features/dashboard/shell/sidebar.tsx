@@ -5,6 +5,7 @@ import {
   Bell,
   Boxes,
   CalendarClock,
+  ChevronDown,
   ChartNoAxesColumn,
   CircleHelp,
   Cpu,
@@ -37,6 +38,7 @@ import {
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { BRAND_MARK_SRC } from '@/components/layout/site-mark';
@@ -93,8 +95,18 @@ function useNavBadges(): Record<string, number> {
     },
     staleTime: 60_000,
   });
+  // نفس مفتاح عدّاد الشريط العلوي: طلب واحد يغذّي الاثنين
+  const { data: unread = 0 } = useQuery({
+    queryKey: ['notifications', 'unread-count'],
+    queryFn: async () => {
+      const { data } = await api.get<{ unread: number }>('/notifications/unread-count/');
+      return data.unread;
+    },
+    refetchInterval: 60_000,
+  });
   const { crm, community } = data ?? {};
   return {
+    '/dashboard/notifications': unread,
     ...(crm
       ? {
           '/dashboard/crm/requests': crm.pending_requests,
@@ -222,10 +234,41 @@ function SidebarBrand() {
   );
 }
 
+const COLLAPSED_KEY = 'dashboard-nav-collapsed';
+
+/**
+ * المجموعات المطويّة يختارها المستخدم وتُحفظ في المتصفح. المجموعة التي فيها
+ * الصفحة الحالية تبقى مفتوحة دائمًا، فلا يضيع موضعه في قائمة طويلة.
+ */
+function useCollapsedGroups() {
+  const [collapsed, setCollapsed] = useState<string[]>([]);
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(COLLAPSED_KEY) ?? '[]');
+      if (Array.isArray(saved)) setCollapsed(saved);
+    } catch {}
+  }, []);
+  function toggle(label: string) {
+    setCollapsed((current) => {
+      const next = current.includes(label)
+        ? current.filter((item) => item !== label)
+        : [...current, label];
+      try {
+        localStorage.setItem(COLLAPSED_KEY, JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  }
+  return { collapsed, toggle };
+}
+
 export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const { can } = useAuth();
   const badges = useNavBadges();
+  const { collapsed, toggle } = useCollapsedGroups();
+  const isActive = (href: string) =>
+    href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href);
 
   return (
     <nav aria-label="قائمة لوحة التحكم" className="flex h-full flex-col gap-6 p-4">
@@ -237,26 +280,47 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
         <SidebarBrand />
       </Link>
 
-      <div className="flex flex-1 flex-col gap-6 overflow-y-auto">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto">
         {DASHBOARD_NAV.map((group) => {
           // الصلاحيات تُخفي العناصر غير المتاحة — لا فائدة من رابط يعطي 403
           const items = group.items.filter(
             (item) => !item.permission || can(item.permission),
           );
           if (!items.length) return null;
+          const hasActive = items.some((item) => isActive(item.href));
+          const open = !group.label || hasActive || !collapsed.includes(group.label);
+          const groupBadge = items.reduce((sum, item) => sum + (badges[item.href] ?? 0), 0);
+          const listId = `nav-group-${group.label}`;
 
           return (
             <div key={group.label || 'root'}>
               {group.label ? (
-                <p className="mb-2 px-2 text-xs font-semibold text-muted">{group.label}</p>
+                <button
+                  type="button"
+                  onClick={() => toggle(group.label)}
+                  disabled={hasActive}
+                  aria-expanded={open}
+                  aria-controls={listId}
+                  className="mb-1 flex min-h-8 w-full items-center gap-2 rounded px-2 text-xs font-semibold text-muted hover:text-foreground disabled:cursor-default disabled:hover:text-muted"
+                >
+                  <span className="flex-1 text-start">{group.label}</span>
+                  {!open && groupBadge > 0 ? (
+                    <span className="code-inline rounded-full bg-primary-soft px-1.5 text-primary">
+                      {groupBadge > 99 ? '99+' : groupBadge}
+                    </span>
+                  ) : null}
+                  {hasActive ? null : (
+                    <ChevronDown
+                      className={cn('size-3.5 transition-transform motion-reduce:transition-none', !open && 'rotate-90 rtl:-rotate-90')}
+                      aria-hidden="true"
+                    />
+                  )}
+                </button>
               ) : null}
-              <ul className="flex flex-col gap-0.5">
+              <ul id={listId} hidden={!open} className="flex flex-col gap-0.5">
                 {items.map((item) => {
                   const Icon = ICONS[item.icon] ?? LayoutDashboard;
-                  const active =
-                    item.href === '/dashboard'
-                      ? pathname === '/dashboard'
-                      : pathname.startsWith(item.href);
+                  const active = isActive(item.href);
                   const badge = badges[item.href] ?? 0;
 
                   return (

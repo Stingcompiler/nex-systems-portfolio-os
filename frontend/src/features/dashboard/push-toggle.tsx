@@ -46,7 +46,7 @@ async function registration() {
  * إشعارات الويب إلا من التطبيق المثبّت على الشاشة الرئيسية (iOS 16.4+)،
  * فتُعرض خطوات التثبيت بدل زر لا يعمل.
  */
-export function PushToggle({ className }: { className?: string }) {
+export function PushToggle({ className, compact = false }: { className?: string; compact?: boolean }) {
   const toast = useToast();
   const [state, setState] = useState<State>('loading');
   const [busy, setBusy] = useState(false);
@@ -137,12 +137,22 @@ export function PushToggle({ className }: { className?: string }) {
     on: 'الإشعارات مفعّلة على هذا الجهاز. فعّلها على كل جهاز تريد أن يصلك عليه التنبيه.',
   };
 
-  return (
+  const statusLabel: Record<State, string> = {
+    loading: '…',
+    unsupported: 'غير مدعومة في هذا المتصفح',
+    'ios-install': 'تحتاج تثبيت التطبيق',
+    denied: 'محظورة في المتصفح',
+    off: 'متوقفة',
+    on: 'مفعّلة',
+  };
+
+  const panel = (
     <section
       className={cn(
-        'flex flex-wrap items-center justify-between gap-4 rounded-xl border p-4',
-        on ? 'border-success/40 bg-success-soft/40' : 'border-border bg-surface',
-        className,
+        'flex flex-wrap items-center justify-between gap-4 p-4',
+        compact ? 'border-t border-border' : 'rounded-xl border',
+        !compact && (on ? 'border-success/40 bg-success-soft/40' : 'border-border bg-surface'),
+        !compact && className,
       )}
     >
       <div className="flex min-w-0 flex-1 gap-3">
@@ -190,5 +200,25 @@ export function PushToggle({ className }: { className?: string }) {
         </div>
       ) : null}
     </section>
+  );
+
+  if (!compact) return panel;
+
+  // سطر حالة واحد يفتح التفاصيل عند الحاجة: القائمة هي محتوى الصفحة لا الإعداد
+  return (
+    <details className={cn('group rounded-lg border border-border bg-surface', className)}>
+      <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 px-4 text-sm [&::-webkit-details-marker]:hidden">
+        {on ? (
+          <BellRing className="size-4 text-success" aria-hidden="true" />
+        ) : (
+          <BellOff className="size-4 text-muted" aria-hidden="true" />
+        )}
+        <span className="text-muted">إشعارات هذا الجهاز:</span>
+        <span className={cn('font-medium', on && 'text-success')}>{statusLabel[state]}</span>
+        <span className="ms-auto text-xs text-primary group-open:hidden">الإعدادات</span>
+        <span className="ms-auto hidden text-xs text-muted group-open:inline">إخفاء</span>
+      </summary>
+      {panel}
+    </details>
   );
 }

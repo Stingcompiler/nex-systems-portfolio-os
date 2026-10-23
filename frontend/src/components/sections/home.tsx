@@ -8,7 +8,7 @@ import {
   StatCard,
 } from '@/components/content/cards';
 import { FaqList } from '@/components/content/faq-list';
-import { TechLogo } from '@/components/content/media';
+import { CoverImage, TechLogo } from '@/components/content/media';
 import { CardGrid } from '@/components/ui/card-grid';
 import { NewsletterForm } from '@/features/newsletter/newsletter-form';
 import { ButtonLink } from '@/components/ui/button';
@@ -58,9 +58,12 @@ export async function HeroSection({
   section,
   settings,
   stats,
+  preview,
 }: SectionProps & {
   settings: SiteSettings | null;
   stats: Stat[];
+  /** لقطة حقيقية من نظام سلّمناه — يراه الزائر قبل أن يقرأ أي وعد */
+  preview?: ProjectListItem | null;
 }) {
   const t = await getTranslations('home');
 
@@ -76,9 +79,9 @@ export async function HeroSection({
     ? whatsappLink(settings.whatsapp, settings.whatsapp_default_message)
     : '';
 
-  /* بلا لقطة مشروع بجوار العنوان: كانت لقطة جوال داكنة ممدّدة تبدو فارغة، وتكرّر
-     أول مشروع في «مشاريع مختارة» بعدها مباشرة. العنوان والوعود والزر أولًا،
-     والدليل في قسم المشاريع. الارتفاع أقصر ليظهر بداية القسم التالي */
+  /* اللقطة تحت النص لا بجواره: لقطة جانبية كانت جوالًا داكنًا ممدّدًا يبدو
+     فارغًا. هنا لقطة شاشة عرضية كاملة (منتجنا أولًا) تُقرأ كمعاينة، والنص
+     يبقى في المنتصف */
   return (
     <section className="hero-surface relative overflow-hidden border-b border-border">
       <Container className="relative py-14 sm:py-20">
@@ -159,21 +162,51 @@ export async function HeroSection({
             ))}
           </ul>
 
-          {/* أرقام من اللوحة فقط — تظهر حين تُفعَّل مؤشرات حقيقية */}
+          {/* الأرقام سطر هادئ ثانوي: الدليل هو اللقطة والمشاريع، لا العدّ */}
           {heroStats.length ? (
-            <dl className="mt-8 flex flex-wrap gap-x-12 gap-y-5 lg:justify-center">
+            <dl className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted lg:justify-center">
               {heroStats.map((stat) => (
-                <div key={stat.id}>
-                  <dt className="font-mono text-h2 font-medium tabular-nums text-foreground">
+                <div key={stat.id} className="flex items-baseline gap-1.5">
+                  <dt className="sr-only">{stat.label}</dt>
+                  <dd className="font-semibold tabular-nums text-foreground">
                     <span className="code-inline inline">{stat.value}</span>
-                    {stat.suffix ? <span className="text-h3 text-primary">{stat.suffix}</span> : ''}
-                  </dt>
-                  <dd className="mt-1 text-label text-muted">{stat.label}</dd>
+                    {stat.suffix}
+                  </dd>
+                  <dd>{stat.label}</dd>
                 </div>
               ))}
             </dl>
           ) : null}
         </div>
+
+        {preview?.cover_image ? (
+          <figure
+            className="motion-safe:animate-fade-up mx-auto mt-12 max-w-5xl"
+            style={{ animationDelay: `${words.length * 70 + 450}ms` }}
+          >
+            <Link
+              href={`/projects/${preview.slug}`}
+              className="group/preview block overflow-hidden rounded-xl border border-border bg-surface shadow-lg"
+            >
+              <div className="flex items-center gap-1.5 border-b border-border px-4 py-2.5" aria-hidden="true">
+                <span className="size-2.5 rounded-full bg-border-strong" />
+                <span className="size-2.5 rounded-full bg-border-strong" />
+                <span className="size-2.5 rounded-full bg-border-strong" />
+              </div>
+              <CoverImage
+                media={preview.cover_image}
+                alt={preview.title}
+                priority
+                natural
+                sizes="(max-width: 1024px) 100vw, 1024px"
+                className="rounded-none transition-transform duration-slow group-hover/preview:scale-[1.01]"
+              />
+            </Link>
+            <figcaption className="mt-3 text-center text-sm text-muted">
+              {t('heroPreviewCaption', { title: preview.title })}
+            </figcaption>
+          </figure>
+        ) : null}
       </Container>
     </section>
   );
@@ -330,9 +363,9 @@ export async function CaseStudiesSection({
 }
 
 /**
- * طريقة العمل على الرئيسية: ست خطوات بلغة العميل (ملف الترجمة)، لا مراحل
+ * طريقة العمل على الرئيسية: أربع خطوات بلغة العميل (ملف الترجمة)، لا مراحل
  * صفحة «طريقة العمل» بمصطلحاتها التقنية (ERD وUML) — العميل يشتري النتيجة.
- * كانت تعرض أول أربع مراحل فتنتهي عند «بناء الواجهات» دون تسليم ولا تدريب.
+ * من الفهم إلى الدعم بعد الإطلاق — ما يمر به العميل لا ما نفعله نحن.
  */
 export async function ProcessSection({ section, index }: SectionProps & { steps?: ProcessStep[] }) {
   const t = await getTranslations('common');
@@ -350,8 +383,8 @@ export async function ProcessSection({ section, index }: SectionProps & { steps?
         action={<ViewAll href="/process" label={t('details')} />}
       />
       {/* مسار متصل (Flowing paths): خط أعلى كل خطوة يمتلئ بالتتابع حين يصل
-          الزائر إلى القسم — ست خطوات تُقرأ رحلةً واحدة لا قائمة متفرقة */}
-      <InView as="ol" className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+          الزائر إلى القسم — الخطوات تُقرأ رحلةً واحدة لا قائمة متفرقة */}
+      <InView as="ol" className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map((step, position) => (
           <li key={step.title} className="relative flex gap-4 pt-5">
             <span aria-hidden="true" className="absolute inset-x-0 top-0 h-0.5 overflow-hidden rounded-full bg-border">

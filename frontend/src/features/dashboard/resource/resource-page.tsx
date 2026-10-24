@@ -176,6 +176,51 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
   const canCreate = editable && config.canCreate !== false;
   const rows = data?.results ?? [];
   const totalPages = data?.total_pages ?? 1;
+
+  // §7: تحديد متعدد بمربعات وثالث حالة للرأس، وشريط إجراءات جماعية يظهر
+  // عند التحديد ويعطّل إجراءات الصف. التحديد يخص الصفحة المعروضة فقط
+  const canDeleteRows = editable && config.canDelete !== false;
+  const selectable = canDeleteRows || Boolean(config.publishAction && editable);
+  const [selected, setSelected] = useState<Set<string | number>>(new Set());
+  const [confirmBulk, setConfirmBulk] = useState(false);
+  const [bulkBusy, setBulkBusy] = useState(false);
+  const selectedRows = rows.filter((row) => selected.has(identifierOf(config, row)));
+  const allSelected = rows.length > 0 && selectedRows.length === rows.length;
+  const headerCheckbox = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (headerCheckbox.current) {
+      headerCheckbox.current.indeterminate = selectedRows.length > 0 && !allSelected;
+    }
+  }, [selectedRows.length, allSelected]);
+  useEffect(() => {
+    setSelected(new Set());
+  }, [page, search, filters, ordering]);
+
+  function toggleRow(id: string | number) {
+    setSelected((current) => {
+      const next = new Set(current);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleAll() {
+    setSelected(allSelected ? new Set() : new Set(rows.map((row) => identifierOf(config, row))));
+  }
+
+  /** ينفّذ الإجراء على كل المحدَّد ويُبلغ بالنتيجة: الفشل الجزئي لا يُخفى. */
+  async function runBulk(action: (row: ResourceRow) => Promise<unknown>, done: string) {
+    setBulkBusy(true);
+    const results = await Promise.allSettled(selectedRows.map(action));
+    setBulkBusy(false);
+    setConfirmBulk(false);
+    const failed = results.filter((result) => result.status === 'rejected').length;
+    const ok = results.length - failed;
+    if (ok) toast.success(`${done}: ${ok}`);
+    if (failed) toast.error(`تعذّر تنفيذ ${failed} من ${results.length}`);
+    setSelected(new Set());
+  }
   const searchId = useId();
 
   // البحث أو الفلتر الجديد يبدأ من الصفحة الأولى — لا عند الاستعادة الأولى
@@ -302,11 +347,77 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
         </div>
       ) : null}
 
+      {selectedRows.length ? (
+        <div
+          role="toolbar"
+          aria-label="إجراءات على المحدَّد"
+          className="mb-3 flex min-h-11 flex-wrap items-center gap-2 rounded-xl border border-border bg-surface-subtle px-4 py-2 text-sm"
+        >
+          <span className="font-medium">
+            حُدِّد <span className="num">{selectedRows.length}</span>
+          </span>
+          <button
+            type="button"
+            onClick={() => setSelected(new Set())}
+            className="min-h-9 rounded px-2 text-muted hover:text-foreground"
+          >
+            إلغاء التحديد
+          </button>
+          <span className="ms-auto flex flex-wrap gap-2">
+            {config.publishAction && editable ? (
+              <>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  loading={bulkBusy}
+                  onClick={() =>
+                    runBulk((row) => publish.mutateAsync({ id: identifierOf(config, row), next: true }), 'نُشر')
+                  }
+                >
+                  <Eye className="size-4" aria-hidden="true" />
+                  {t('actions.publish')}
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  loading={bulkBusy}
+                  onClick={() =>
+                    runBulk((row) => publish.mutateAsync({ id: identifierOf(config, row), next: false }), 'أُلغي نشر')
+                  }
+                >
+                  <EyeOff className="size-4" aria-hidden="true" />
+                  {t('actions.unpublish')}
+                </Button>
+              </>
+            ) : null}
+            {canDeleteRows ? (
+              <Button variant="danger" size="sm" onClick={() => setConfirmBulk(true)}>
+                <Trash2 className="size-4" aria-hidden="true" />
+                حذف المحدَّد
+              </Button>
+            ) : null}
+          </span>
+        </div>
+      ) : null}
+
       <div className="overflow-x-auto rounded-xl border border-border bg-surface shadow-subtle">
         <table className="w-full min-w-[40rem] text-sm">
           <caption className="sr-only">{config.title}</caption>
           <thead>
             <tr className="border-b border-border bg-surface-hover text-xs text-muted">
+              {selectable ? (
+                <th scope="col" className="w-10 ps-4">
+                  <input
+                    ref={headerCheckbox}
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={toggleAll}
+                    disabled={!rows.length}
+                    aria-label="تحديد كل عناصر الصفحة"
+                    className="size-4 accent-primary"
+                  />
+                </th>
+              ) : null}
               {config.columns.map((column) => (
                 <th
                   key={column.name}
@@ -350,6 +461,7 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
             {isLoading ? (
               Array.from({ length: 5 }).map((_, index) => (
                 <tr key={index} className="border-b border-border last:border-0">
+                  {selectable ? <td className="ps-4" /> : null}
                   {config.columns.map((column) => (
                     <td key={column.name} className="px-4 py-3.5">
                       <div className="h-4 animate-pulse rounded bg-surface-hover" />
@@ -362,7 +474,7 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
               ))
             ) : isError ? (
               <tr>
-                <td colSpan={config.columns.length + 1} className="p-0">
+                <td colSpan={config.columns.length + (selectable ? 2 : 1)} className="p-0">
                   {/* [بند 10] المكوّن المشترك بدل نسخة خاصة داخل الخلية */}
                   <ErrorState
                     bare
@@ -378,7 +490,7 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
               </tr>
             ) : rows.length === 0 ? (
               <tr>
-                <td colSpan={config.columns.length + 1} className="p-0">
+                <td colSpan={config.columns.length + (selectable ? 2 : 1)} className="p-0">
                   <EmptyState
                     bare
                     title={t('states.emptyTitle')}
@@ -398,8 +510,25 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
               rows.map((row) => (
                 <tr
                   key={row.id}
-                  className="border-b border-border last:border-0 hover:bg-surface-hover"
+                  aria-selected={selectable ? selected.has(identifierOf(config, row)) : undefined}
+                  className={cn(
+                    'border-b border-border last:border-0 hover:bg-surface-hover',
+                    // §1: التحديد خلفية + شريط على البداية، مستقل عن الحالة والتركيز
+                    selected.has(identifierOf(config, row)) &&
+                      'bg-primary-soft/60 shadow-[inset_3px_0_0_rgb(var(--primary))] rtl:shadow-[inset_-3px_0_0_rgb(var(--primary))]',
+                  )}
                 >
+                  {selectable ? (
+                    <td className="ps-4">
+                      <input
+                        type="checkbox"
+                        checked={selected.has(identifierOf(config, row))}
+                        onChange={() => toggleRow(identifierOf(config, row))}
+                        aria-label={`تحديد ${String(row[config.columns[0]?.name ?? ''] ?? row.id)}`}
+                        className="size-4 accent-primary"
+                      />
+                    </td>
+                  ) : null}
                   {config.columns.map((column, columnIndex) => (
                     // [بند 7] حشوة رأسية 14px تناسب ارتفاع السطر العربي
                     <td
@@ -425,7 +554,13 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
                     </td>
                   ))}
                   <td className="px-4 py-3.5">
-                    <div className="-me-2 flex items-center justify-end gap-0.5">
+                    <div
+                      className={cn(
+                        '-me-2 flex items-center justify-end gap-0.5',
+                        selectedRows.length && 'pointer-events-none opacity-40',
+                      )}
+                      aria-hidden={selectedRows.length ? true : undefined}
+                    >
                       <IconButton
                         label={t('actions.edit')}
                         onClick={() => {
@@ -508,6 +643,41 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
         open={formOpen}
         onClose={() => setFormOpen(false)}
       />
+
+      {confirmBulk ? (
+        <div
+          className="fixed inset-0 z-50 grid place-items-center bg-background/80 p-4 backdrop-blur-sm"
+          role="alertdialog"
+          aria-modal="true"
+          aria-label="حذف المحدَّد"
+        >
+          <div className="w-full max-w-sm rounded-xl border border-border bg-surface p-6 shadow-card">
+            <TriangleAlert className="mb-3 size-6 shrink-0 text-danger" aria-hidden="true" />
+            <h2 className="text-h3 font-semibold">
+              حذف <span className="num">{selectedRows.length}</span> من {config.title}؟
+            </h2>
+            <ul className="mt-3 max-h-40 list-disc overflow-y-auto ps-5 text-sm text-muted">
+              {selectedRows.map((row) => (
+                <li key={String(row.id)}>{String(row[config.columns[0]?.name ?? ''] ?? row.id)}</li>
+              ))}
+            </ul>
+            <p className="mt-3 text-sm text-muted">{t('confirmDelete.body')}</p>
+            <div className="mt-6 flex justify-end gap-2">
+              <Button variant="secondary" onClick={() => setConfirmBulk(false)}>
+                {t('actions.cancel')}
+              </Button>
+              <Button
+                variant="danger"
+                loading={bulkBusy}
+                onClick={() => runBulk((row) => remove.mutateAsync(identifierOf(config, row)), 'حُذف')}
+              >
+                <Trash2 className="size-4" aria-hidden="true" />
+                حذف <span className="num">{selectedRows.length}</span>
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {confirmDelete ? (
         <div

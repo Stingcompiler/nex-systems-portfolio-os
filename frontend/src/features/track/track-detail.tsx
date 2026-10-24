@@ -111,7 +111,7 @@ export function TrackDetailView({ token }: { token: string }) {
             <h2 className="text-h3 font-semibold">{title}</h2>
             <p className="mt-1 text-sm text-muted">
               {t('referenceLabel')}:{' '}
-              <span dir="ltr" className="font-mono text-foreground">
+              <span dir="ltr" className="num text-foreground">
                 {data.reference_code}
               </span>
               {' · '}

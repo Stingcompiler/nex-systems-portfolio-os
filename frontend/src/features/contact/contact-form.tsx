@@ -89,7 +89,7 @@ export function ContactForm() {
         {sent.reference_code ? (
           <p className="mt-4 inline-block rounded-lg bg-surface-hover px-4 py-2 text-sm">
             {tTrack('referenceLabel')}:{' '}
-            <strong dir="ltr" className="font-mono">{sent.reference_code}</strong>
+            <strong dir="ltr" className="num">{sent.reference_code}</strong>
           </p>
         ) : null}
         {sent.tracking_token ? (

@@ -143,7 +143,7 @@ function ActivityCard({
     <Link href={href} className={CARD}>
       <span className="text-sm text-muted">{label}</span>
       <p className="text-h1 font-bold leading-none">
-        <span className="code-inline inline">
+        <span className="num inline">
           <CountUp value={value} />
         </span>
       </p>
@@ -221,7 +221,7 @@ function FollowUpsToday({ items }: { items: CrmBlock['follow_ups_today'] }) {
                 ) : null}
               </div>
               {item.due_at ? (
-                <span className="code-inline shrink-0 text-xs text-muted">
+                <span className="num shrink-0 text-xs text-muted">
                   {timeFmt.format(new Date(item.due_at))}
                 </span>
               ) : null}
@@ -341,7 +341,7 @@ function MyPostsSection({ posts }: { posts: MyPostsBlock }) {
                   <Badge tone={post.status === 'published' ? 'success' : post.status === 'in_review' ? 'warning' : 'default'}>
                     {post.status_display}
                   </Badge>
-                  <span className="code-inline text-xs text-muted">
+                  <span className="num text-xs text-muted">
                     {dateFmt.format(new Date(post.updated_at))}
                   </span>
                 </span>
@@ -427,15 +427,15 @@ function MarketingSection({
               <dl className="flex gap-6 text-sm">
                 <div>
                   <dt className="text-xs text-muted">أُرسلت إلى</dt>
-                  <dd className="code-inline font-medium">{last.sent_count}</dd>
+                  <dd className="num font-medium">{last.sent_count}</dd>
                 </div>
                 <div>
                   <dt className="text-xs text-muted">فتح</dt>
-                  <dd className="code-inline font-medium">{rate(last.open_count)}</dd>
+                  <dd className="num font-medium">{rate(last.open_count)}</dd>
                 </div>
                 <div>
                   <dt className="text-xs text-muted">نقر</dt>
-                  <dd className="code-inline font-medium">{rate(last.click_count)}</dd>
+                  <dd className="num font-medium">{rate(last.click_count)}</dd>
                 </div>
               </dl>
             </div>
@@ -460,7 +460,7 @@ function SiteSection({ site }: { site: NonNullable<Summary['site']> }) {
         <h2 id="checklist-heading" className="text-sm font-semibold text-muted">
           اكتمال الموقع
         </h2>
-        <span className="code-inline text-sm font-medium">{site.completion}%</span>
+        <span className="num text-sm font-medium">{site.completion}%</span>
       </div>
 
       <div
@@ -491,10 +491,10 @@ function SiteSection({ site }: { site: NonNullable<Summary['site']> }) {
       </ul>
 
       <p className="mt-3 text-xs text-muted">
-        منشور: <span className="code-inline">{site.services_published}</span> خدمة وحل،{' '}
-        <span className="code-inline">{site.projects_published}</span> مشروع،{' '}
-        <span className="code-inline">{site.case_studies_published}</span> دراسة حالة ·{' '}
-        <span className="code-inline">{site.media_files}</span> ملف في مكتبة الوسائط.
+        منشور: <span className="num">{site.services_published}</span> خدمة وحل،{' '}
+        <span className="num">{site.projects_published}</span> مشروع،{' '}
+        <span className="num">{site.case_studies_published}</span> دراسة حالة ·{' '}
+        <span className="num">{site.media_files}</span> ملف في مكتبة الوسائط.
       </p>
     </section>
   );
@@ -516,7 +516,7 @@ function SystemSection({ system }: { system: NonNullable<Summary['system']> }) {
           <li key={item.label} className="bg-surface">
             <Link href={item.href} className="flex flex-col gap-1 p-4 hover:bg-surface-hover">
               <span className="text-xs text-muted">{item.label}</span>
-              <span className="code-inline text-h3 font-semibold">{item.value}</span>
+              <span className="num text-h3 font-semibold">{item.value}</span>
             </Link>
           </li>
         ))}

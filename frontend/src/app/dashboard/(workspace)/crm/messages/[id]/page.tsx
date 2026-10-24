@@ -116,7 +116,7 @@ export default function MessageDetailPage() {
           <p className="mt-1 text-sm text-muted">
             {data.reference_code ? (
               <>
-                <span dir="ltr" className="font-mono">
+                <span dir="ltr" className="num">
                   {data.reference_code}
                 </span>
                 {' · '}

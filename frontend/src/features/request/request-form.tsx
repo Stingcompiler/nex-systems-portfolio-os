@@ -278,7 +278,7 @@ export function RequestForm({
         <h2 className="text-h2 font-semibold">{t('successTitle')}</h2>
         <p className="mx-auto mt-3 max-w-prose text-muted">{t('successBody')}</p>
         <p className="mt-5 inline-block rounded-lg bg-surface-hover px-4 py-2 text-sm">
-          {t('reference')}: <strong dir="ltr" className="font-mono">{reference}</strong>
+          {t('reference')}: <strong dir="ltr" className="num">{reference}</strong>
         </p>
         <div className="mx-auto mt-6 max-w-prose rounded-lg border border-border p-4 text-start text-sm">
           <p className="font-medium">{t('nextStepTitle')}</p>
@@ -350,7 +350,7 @@ export function RequestForm({
                   {step > index ? (
                     <Check className="size-4" aria-hidden="true" />
                   ) : (
-                    <span className="code-inline">{index}</span>
+                    <span className="num">{index}</span>
                   )}
                 </span>
                 <span

@@ -116,7 +116,7 @@ export async function HeroSection({
 
           {subtitle ? (
             <p
-              className="mt-6 max-w-prose text-body-lg text-muted motion-safe:animate-fade-up lg:mx-auto"
+              className="mt-6 max-w-prose text-lead text-muted motion-safe:animate-fade-up lg:mx-auto"
               style={{ animationDelay: `${words.length * 70 + 150}ms` }}
             >
               {subtitle}
@@ -168,8 +168,8 @@ export async function HeroSection({
               {heroStats.map((stat) => (
                 <div key={stat.id} className="flex items-baseline gap-1.5">
                   <dt className="sr-only">{stat.label}</dt>
-                  <dd className="font-semibold tabular-nums text-foreground">
-                    <span className="code-inline inline">{stat.value}</span>
+                  <dd className="font-semibold num text-foreground">
+                    <span className="num inline">{stat.value}</span>
                     {stat.suffix}
                   </dd>
                   <dd>{stat.label}</dd>
@@ -495,7 +495,7 @@ export async function TechnologiesSection({
                  اتجاهيًا — «C#» كان يُرسم «#C» داخل السياق العربي */
               <Link
                 href="/technologies"
-                className="code-inline inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-4 font-mono text-sm font-medium hover:bg-surface-hover"
+                className="num inline-flex min-h-11 items-center rounded-full border border-border bg-surface px-4 text-sm font-medium hover:bg-surface-hover"
               >
                 {technology.name}
               </Link>

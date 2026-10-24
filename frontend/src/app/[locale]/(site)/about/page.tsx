@@ -220,7 +220,7 @@ export default async function AboutPage({
               {steps.map((step, index) => (
                 <li key={step.id} className="flex gap-4">
                   <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary-soft text-sm font-bold text-primary">
-                    <span className="code-inline inline">{index + 1}</span>
+                    <span className="num inline">{index + 1}</span>
                   </span>
                   <div>
                     <h3 className="font-semibold">{step.title}</h3>

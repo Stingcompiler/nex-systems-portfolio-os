@@ -63,7 +63,7 @@ export async function ServiceCard({
         {price ? (
           <span>
             {tServices('priceFrom')}{' '}
-            <span className="code-inline inline font-mono text-foreground">{price}</span>
+            <span className="num inline text-foreground">{price}</span>
           </span>
         ) : null}
       </div>
@@ -129,7 +129,7 @@ export async function ProjectCard({
             {project.client_name || (project.is_product ? t('ownProduct') : t('anonymous'))}
           </span>
           {project.completed_at ? (
-            <time dateTime={project.completed_at} className="code-inline inline font-mono">
+            <time dateTime={project.completed_at} className="num inline">
               {formatMonthYear(project.completed_at, locale)}
             </time>
           ) : null}
@@ -167,7 +167,7 @@ export async function CaseStudyCard({ caseStudy }: { caseStudy: CaseStudyListIte
 
 export function TechBadge({ technology }: { technology: TechnologyRef }) {
   return (
-    <span className="code-inline inline-flex items-center rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted transition-colors duration-fast hover:border-primary/40 hover:text-primary">
+    <span className="num inline-flex items-center rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted transition-colors duration-fast hover:border-primary/40 hover:text-primary">
       {technology.name}
     </span>
   );
@@ -178,8 +178,8 @@ export function StatCard({ stat }: { stat: Stat }) {
     <div className="rounded-xl border border-border bg-surface p-6 text-center shadow-subtle transition-all duration-normal hover:-translate-y-1 hover:border-primary/30 hover:shadow-card">
       {/* الرقم بخط المونو وبلون صلب: التدرّج على الأرقام كان آخر أثر «قالب»،
           والمونو يجعل الأرقام تُقرأ كبيانات مقاسة لا كزخرفة */}
-      <p className="font-mono text-h1 font-medium tabular-nums text-primary">
-        <span className="code-inline inline">{stat.value}</span>
+      <p className="num text-h1 font-medium text-primary">
+        <span className="num inline">{stat.value}</span>
         {stat.suffix ? <span className="text-h3">{stat.suffix}</span> : null}
       </p>
       <p className="mt-2 text-label uppercase tracking-wide text-muted">{stat.label}</p>

@@ -87,11 +87,16 @@ function Cell({
 
     // [بند 6 من دليل RTL] الأرقام والتواريخ معزولة اتجاهيًا
     case 'number':
-      return <span className="code-inline">{String(value ?? 0)}</span>;
+      // القيمة المفقودة ليست صفرًا (§6)
+      return value === null || value === undefined || value === '' ? (
+        <span className="text-muted">—</span>
+      ) : (
+        <span className="num">{String(value)}</span>
+      );
 
     case 'date':
       return value ? (
-        <time className="code-inline text-muted" dateTime={String(value)}>
+        <time className="num text-muted" dateTime={String(value)}>
           {new Intl.DateTimeFormat(locale, {
             dateStyle: 'medium',
             numberingSystem: 'latn',
@@ -306,7 +311,7 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
                 <th
                   key={column.name}
                   scope="col"
-                  className="px-4 py-3 text-start font-medium"
+                  className={cn('px-4 py-3 text-start font-medium', column.type === 'number' && 'num')}
                   aria-sort={
                     ordering === column.name
                       ? 'ascending'
@@ -397,7 +402,10 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
                 >
                   {config.columns.map((column, columnIndex) => (
                     // [بند 7] حشوة رأسية 14px تناسب ارتفاع السطر العربي
-                    <td key={column.name} className="max-w-64 px-4 py-3.5">
+                    <td
+                      key={column.name}
+                      className={cn('max-w-64 px-4 py-3.5', column.type === 'number' && 'num')}
+                    >
                       {/* العمود الأول يفتح التعديل: زر القلم وحده هدف صغير
                           في طرف الصف، والمتوقع أن يُنقر اسم العنصر نفسه */}
                       {columnIndex === 0 ? (
@@ -469,7 +477,7 @@ export function ResourcePage({ config }: { config: ResourceConfig }) {
               page: data?.current_page ?? page,
               total: totalPages,
               count: data?.count ?? 0,
-              ltr: (chunks) => <span className="code-inline inline">{chunks}</span>,
+              ltr: (chunks) => <span className="num inline">{chunks}</span>,
             })}
           </p>
           <div className="flex gap-1">

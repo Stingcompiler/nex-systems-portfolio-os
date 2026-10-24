@@ -26,7 +26,8 @@ export default function GlobalError({
           padding: '24px',
           background: '#f6f8fb',
           color: '#12253b',
-          fontFamily: "'Tajawal', Tahoma, Arial, sans-serif",
+          // خارج التخطيطات فلا تصلها خطوط next/font: خط النظام احتياطًا (D-0011)
+          fontFamily: "'IBM Plex Sans Arabic', system-ui, sans-serif",
           textAlign: 'center',
         }}
       >

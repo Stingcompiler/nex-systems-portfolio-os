@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Sans_Arabic } from 'next/font/google';
+import { IBM_Plex_Sans, IBM_Plex_Sans_Arabic } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
@@ -20,9 +20,9 @@ import { SITE_NAME_FALLBACK } from '@/lib/constants/site';
 // فلا يوجد أي طلب خارجي وقت التشغيل. `font-display: swap` وارتداد
 // next/font المضبوط المقاسات يمنعان قفز التخطيط.
 //
-// Design Reference §2: عائلة واحدة — IBM Plex Sans Arabic للعربية وIBM Plex
-// Sans للاتينية، بالمقاييس والأوزان نفسها (400–700)، والعناوين ترث الجسم.
-// IBM Plex Mono للشيفرة والمعرّفات فقط؛ الأرقام في النص جدولية بخط الجسم (.num).
+// Design Reference §2 والقرار D-0011 (الخيار أ): عائلة واحدة للنص والأرقام —
+// IBM Plex Sans Arabic للعربية وIBM Plex Sans للاتينية، 400–700. لا خط ثانٍ:
+// الأرقام والمعرّفات جدولية بالعائلة نفسها (.num)، والعناوين ترث النص.
 //
 // بلا preload: الـCSS مضمّن في الصفحة (inlineCss)، فالمتصفح يكتشف
 // @font-face فورًا ويجلب الأوجه المستخدمة فقط.
@@ -42,14 +42,6 @@ const latin = IBM_Plex_Sans({
   preload: false,
 });
 
-// الخط البرمجي يخدم الأرقام والمعرّفات ومقاطع الشيفرة داخل النص.
-const mono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-mono',
-  display: 'swap',
-  preload: false,
-});
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -122,7 +114,7 @@ export default async function LocaleLayout({
   ]);
 
   // الخط يتبدّل حسب اللغة: Plex Sans Arabic للعربية وPlex Sans للإنجليزية،
-  // والعناوين ترث الجسم (--font-heading = --font-sans).
+  // والعناوين ترث النص (--font-display = --font-ui).
   const fontVariable =
     locale === 'ar' ? 'var(--font-arabic)' : 'var(--font-latin)';
 
@@ -131,9 +123,9 @@ export default async function LocaleLayout({
       lang={locale}
       dir={getDirection(locale)}
       suppressHydrationWarning
-      className={`${arabic.variable} ${latin.variable} ${mono.variable}`}
+      className={`${arabic.variable} ${latin.variable}`}
       style={
-        { '--font-sans': fontVariable, '--font-heading': fontVariable } as CSSProperties
+        { '--font-ui': fontVariable, '--font-display': fontVariable } as CSSProperties
       }
     >
       <head>

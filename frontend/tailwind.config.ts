@@ -65,9 +65,10 @@ const config: Config = {
         'brand-ink': 'rgb(var(--brand-ink) / <alpha-value>)',
       },
       fontFamily: {
-        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
-        heading: ['var(--font-heading)', 'var(--font-sans)', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-mono)', 'monospace'],
+        // D-0011: ثلاثة متغيرات فقط — --font-ui و--font-display و--font-mono
+        // (الأخيران يرثان النص ما لم يُعتمد خط آخر)
+        sans: ['var(--font-ui)', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-display, var(--font-ui))', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         // مقياس Vezano (styles.css في المرجع) — h1 = 28px (25 على الهاتف)،
@@ -78,10 +79,18 @@ const config: Config = {
         // على `:lang(ar) { letter-spacing: 0 }` الموروثة وتكسر اتصال الحروف
         // العربية (قِيس: -0.64px على عنوان عربي). تباعد المرجع السالب
         // (-0.02em) يُطبَّق في globals.css على :lang(en) فقط.
+        // أحجام صفحة الهبوط (LANDING.md §7) — للموقع العام فقط، لا للوحة:
+        // عنوان البطل 30 على الجوال حتى 48 (المدى 36–56)، عنوان القسم 24→32،
+        // وفقرة البطل/القسم 15→18
         display: [
-          'clamp(1.75rem, 1.2vw + 1.25rem, 2.25rem)',
+          'clamp(1.875rem, 2vw + 1.25rem, 3rem)',
           { lineHeight: 'var(--line-height-display)' },
         ],
+        'section-title': [
+          'clamp(1.5rem, 1vw + 1.2rem, 2rem)',
+          { lineHeight: 'var(--line-height-heading)' },
+        ],
+        lead: ['clamp(0.9375rem, 0.3vw + 0.875rem, 1.125rem)', { lineHeight: '1.7' }],
         // بلا lineHeight — القاعدة في globals.css تقرأ var(--line-height-heading)
         h1: 'clamp(1.5625rem, 0.6vw + 1.35rem, 1.75rem)',
         // h2 و h3 مرفوعان عن المرجع: مقياسه للوحة تحكم مضغوطة، وعلى الموقع
@@ -92,9 +101,9 @@ const config: Config = {
         // مقدمات الأقسام
         'body-lg': ['1rem', { lineHeight: 'var(--line-height-body)' }],
         // نص البطاقات والجداول في المرجع
-        card: ['0.8125rem', { lineHeight: '1.55' }],
+        card: ['0.8125rem', { lineHeight: '1.6' }],
         // التسميات الصغيرة (شارات، تواريخ، عناوين أعمدة)
-        label: ['0.75rem', { lineHeight: '1.5' }],
+        label: ['0.75rem', { lineHeight: '1.6' }],
         // سطر الجذب فوق عناوين الأقسام — بلا تباعد أحرف: يفصل الحروف العربية المتصلة
         eyebrow: ['0.875rem', { lineHeight: '1.25' }],
       },

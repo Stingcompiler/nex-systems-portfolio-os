@@ -149,7 +149,7 @@ export function TrackBox({
                 >
                   <span className="min-w-0">
                     <span className="font-medium">{t(`kind.${row.kind}`)}</span>{' '}
-                    <span dir="ltr" className="font-mono text-muted">
+                    <span dir="ltr" className="num text-muted">
                       {row.reference_code}
                     </span>
                     <span className="text-muted">

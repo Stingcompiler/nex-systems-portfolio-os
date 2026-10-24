@@ -195,7 +195,7 @@ export default function NotificationsPage() {
           >
             {value === 'all' ? 'الكل' : 'غير المقروءة'}
             {value === 'unread' && unread > 0 ? (
-              <span className="code-inline rounded-full bg-primary-soft px-1.5 text-xs text-primary">{unread}</span>
+              <span className="num rounded-full bg-primary-soft px-1.5 text-xs text-primary">{unread}</span>
             ) : null}
           </button>
         ))}

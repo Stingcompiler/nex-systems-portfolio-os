@@ -102,7 +102,7 @@ export default async function TechnologiesPage({
                             className="text-xs text-muted"
                             aria-label={`${technology.proficiency}/5`}
                           >
-                            <span dir="ltr">{technology.proficiency}/5</span>
+                            <span className="num">{technology.proficiency}/5</span>
                           </span>
                         </div>
                         {technology.description ? (

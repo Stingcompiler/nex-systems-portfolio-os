@@ -121,7 +121,7 @@ export default function RequestsPage() {
                   onClick={() => setSelected(request)}
                   className="cursor-pointer border-b border-border last:border-0 hover:bg-surface-hover/50"
                 >
-                  <td className="px-4 py-3 font-medium" dir="ltr">
+                  <td className="num px-4 py-3 font-medium">
                     {request.reference_code}
                   </td>
                   <td className="px-4 py-3">{request.project_type_display}</td>
@@ -158,7 +158,7 @@ export default function RequestsPage() {
         >
           <div className="flex h-dvh w-full max-w-lg flex-col border-s border-border bg-surface">
             <div className="flex items-center gap-3 border-b border-border p-4">
-              <h2 className="flex-1 text-h3 font-semibold" dir="ltr">
+              <h2 className="num flex-1 text-h3 font-semibold">
                 {selected.reference_code}
               </h2>
               <button

@@ -133,8 +133,8 @@ export default async function CaseStudyDetailPage({
             {caseStudy.metrics.map((metric, index) => (
               <li key={index}>
                 <Card className="h-full text-center">
-                  <p className="font-mono text-h2 font-medium tabular-nums text-primary">
-                    <span className="code-inline inline">{metric.value}</span>
+                  <p className="num text-h2 font-medium text-primary">
+                    <span className="num inline">{metric.value}</span>
                     {metric.suffix ? <span className="text-h3">{metric.suffix}</span> : null}
                   </p>
                   <p className="mt-1 text-sm font-medium">{metric.label}</p>
@@ -187,7 +187,7 @@ export default async function CaseStudyDetailPage({
                 <li key={index}>
                   <Card className="h-full">
                     <span className="mb-2 inline-flex size-7 items-center justify-center rounded-full bg-primary-soft text-xs font-bold text-primary">
-                      <span dir="ltr">{index + 1}</span>
+                      <span className="num">{index + 1}</span>
                     </span>
                     <h3 className="mb-1 font-semibold">{phase.title}</h3>
                     {phase.description ? (

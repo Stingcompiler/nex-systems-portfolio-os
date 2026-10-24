@@ -125,7 +125,7 @@ export function InstallAppButton({ className }: { className?: string }) {
           <ol className="space-y-3">
             {steps.map(({ icon: Icon, text }, index) => (
               <li key={text} className="flex items-start gap-3 text-sm">
-                <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+                <span className="num grid size-6 shrink-0 place-items-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
                   {index + 1}
                 </span>
                 <span className="flex-1 leading-relaxed">{text}</span>

@@ -305,7 +305,7 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
                 >
                   <span className="flex-1 text-start">{group.label}</span>
                   {!open && groupBadge > 0 ? (
-                    <span className="code-inline rounded-full bg-primary-soft px-1.5 text-primary">
+                    <span className="num rounded-full bg-primary-soft px-1.5 text-primary">
                       {groupBadge > 99 ? '99+' : groupBadge}
                     </span>
                   ) : null}
@@ -350,7 +350,7 @@ export function DashboardSidebar({ onNavigate }: { onNavigate?: () => void }) {
                             )}
                             aria-label={`${badge} بحاجة انتباه`}
                           >
-                            <span className="code-inline">{badge > 99 ? '99+' : badge}</span>
+                            <span className="num">{badge > 99 ? '99+' : badge}</span>
                           </span>
                         ) : null}
                       </Link>

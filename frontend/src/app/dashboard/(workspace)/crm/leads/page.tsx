@@ -197,7 +197,7 @@ export default function LeadsPage() {
                 <div className="flex items-center justify-between border-b border-border p-3">
                   <span className="text-sm font-medium">{column.status_display}</span>
                   <span className="rounded-full bg-surface-hover px-2 text-xs text-muted">
-                    <span dir="ltr">{column.count}</span>
+                    <span className="num">{column.count}</span>
                   </span>
                 </div>
                 <div className="flex flex-col gap-2 p-2">

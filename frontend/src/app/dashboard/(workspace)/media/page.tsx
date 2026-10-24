@@ -203,7 +203,7 @@ export default function MediaLibraryPage() {
               </div>
               <div className="flex justify-between gap-3">
                 <dt className="text-muted">الحجم</dt>
-                <dd dir="ltr">{formatBytes(selected.size)}</dd>
+                <dd className="num">{formatBytes(selected.size)}</dd>
               </div>
               {selected.width ? (
                 <div className="flex justify-between gap-3">
@@ -215,7 +215,7 @@ export default function MediaLibraryPage() {
               ) : null}
               <div className="flex justify-between gap-3">
                 <dt className="text-muted">مرات الاستخدام</dt>
-                <dd dir="ltr">{selected.usage_count}</dd>
+                <dd className="num">{selected.usage_count}</dd>
               </div>
             </dl>
 

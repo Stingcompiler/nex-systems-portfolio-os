@@ -85,9 +85,9 @@ export default function CampaignsPage() {
               <tr className="border-b border-border text-xs text-muted">
                 <th scope="col" className="px-4 py-3 text-start font-medium">الحملة</th>
                 <th scope="col" className="px-4 py-3 text-start font-medium">الحالة</th>
-                <th scope="col" className="px-4 py-3 text-start font-medium">المستلمون</th>
-                <th scope="col" className="px-4 py-3 text-start font-medium">فتح</th>
-                <th scope="col" className="px-4 py-3 text-start font-medium">نقر</th>
+                <th scope="col" className="num px-4 py-3 font-medium">المستلمون</th>
+                <th scope="col" className="num px-4 py-3 font-medium">فتح</th>
+                <th scope="col" className="num px-4 py-3 font-medium">نقر</th>
                 <th scope="col" className="px-4 py-3 text-start font-medium">التاريخ</th>
               </tr>
             </thead>
@@ -107,12 +107,12 @@ export default function CampaignsPage() {
                         {c.status_display}
                       </span>
                     </td>
-                    <td className="px-4 py-3" dir="ltr">
-                      {c.total_recipients ? `${c.sent_count} / ${c.total_recipients}` : '—'}
-                      {c.failed_count ? <span className="ms-1 text-xs text-danger">({c.failed_count} فشل)</span> : null}
+                    <td className="px-4 py-3 text-end">
+                      <span className="num">{c.total_recipients ? `${c.sent_count} / ${c.total_recipients}` : '—'}</span>
+                      {c.failed_count ? <span className="ms-1 text-xs text-danger">(<span className="num">{c.failed_count}</span> فشل)</span> : null}
                     </td>
-                    <td className="px-4 py-3" dir="ltr">{rate(c.open_count)}</td>
-                    <td className="px-4 py-3" dir="ltr">{rate(c.click_count)}</td>
+                    <td className="num px-4 py-3">{rate(c.open_count)}</td>
+                    <td className="num px-4 py-3">{rate(c.click_count)}</td>
                     <td className="px-4 py-3 text-xs text-muted">
                       {c.status === 'scheduled' ? `مجدولة: ${fmtDateTime(c.scheduled_at)}` : fmtDateTime(c.sent_at ?? c.created_at)}
                     </td>

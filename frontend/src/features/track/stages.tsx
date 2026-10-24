@@ -167,7 +167,7 @@ export function StageGuide({ info, className }: { info: StageInfo; className?: s
                         : 'bg-surface-hover text-muted',
                     )}
                   >
-                    {done ? <Check className="size-3.5" /> : index + 1}
+                    {done ? <Check className="size-3.5" /> : <span className="num">{index + 1}</span>}
                   </span>
                   <div className={cn(!done && !here && 'opacity-70')}>
                     <p className="text-sm font-medium">

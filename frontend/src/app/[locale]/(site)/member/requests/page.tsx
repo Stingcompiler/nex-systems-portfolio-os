@@ -89,7 +89,7 @@ export default function MyRequestsPage() {
                         t('generalRequest')}
                     </p>
                     <p className="mt-0.5 text-sm text-muted">
-                      <span dir="ltr" className="font-mono">{request.reference_code}</span>
+                      <span dir="ltr" className="num">{request.reference_code}</span>
                       {' · '}
                       {dateFmt.format(new Date(request.created_at))}
                     </p>

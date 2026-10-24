@@ -113,7 +113,7 @@ export function BlogFilters({
               >
                 {category.name}
                 {category.post_count > 0 ? (
-                  <span className="ms-1.5 text-xs opacity-70" dir="ltr">
+                  <span className="num ms-1.5 text-xs opacity-70">
                     {category.post_count}
                   </span>
                 ) : null}

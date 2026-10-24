@@ -62,7 +62,7 @@ export async function PostCard({
           {post.view_count > 0 ? (
             <span className="inline-flex items-center gap-1">
               <Eye className="size-3.5" aria-hidden="true" />
-              <span dir="ltr">{post.view_count}</span>
+              <span className="num">{post.view_count}</span>
             </span>
           ) : null}
         </div>

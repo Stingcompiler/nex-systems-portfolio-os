@@ -173,18 +173,18 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: var(--font-sans), system-ui, sans-serif;
+    font-family: var(--font-ui), system-ui, sans-serif;
     line-height: var(--line-height-body);
   }
 
   /* [بند 1] العناوين تقرأ المتغيّر اللغوي — ولهذا حُذف lineHeight
      من مقاييس display/h1/h2/h3 في tailwind.config.ts.
-     الخط: --font-heading يرث الجسم (Tajawal) — نظام Vezano لا يفصل العناوين. */
+     الخط: --font-display يرث --font-ui ما لم يُعتمد خط عرض (D-0011). */
   h1,
   h2,
   h3,
   h4 {
-    font-family: var(--font-heading), var(--font-sans), system-ui, sans-serif;
+    font-family: var(--font-display, var(--font-ui)), system-ui, sans-serif;
     line-height: var(--line-height-heading);
     text-wrap: balance;
   }
@@ -224,12 +224,20 @@
 }
 
 @layer components {
-  /* §2: كل رقم ومعرّف وتاريخ وهاتف ورابط — أرقام جدولية بخط الجسم، ويبقى
-     LTR معزولًا داخل النص العربي */
-  .num {
+  /* §2 + D-0011: كل رقم ومبلغ وتاريخ ووقت ومعرّف وهاتف ورمز وعدّاد شارة ورقم
+     خطوة. أرقام جدولية بعائلة النص (لا خط ثانٍ: --font-mono غير معرّف فيرث
+     --font-ui)، وLTR معزول داخل النص العربي. الأعمدة الرقمية تُحاذى للنهاية */
+  .num,
+  [data-num] {
+    font-family: var(--font-mono, var(--font-ui)), system-ui, sans-serif;
     font-variant-numeric: tabular-nums;
     direction: ltr;
     unicode-bidi: isolate;
+  }
+
+  td.num,
+  th.num {
+    text-align: end;
   }
 
   /* الأيقونات الاتجاهية فقط — لا الشعارات ولا لقطات الشاشة */
@@ -312,11 +320,6 @@
   }
 
   /* أي مسار أو شيفرة أو معرّف لاتيني داخل نص عربي */
-  .code-inline {
-    direction: ltr;
-    unicode-bidi: isolate;
-    text-align: start;
-  }
 }
 
 /* ظهور الأقسام مع التمرير: الحركة مربوطة بموضع القسم في الشاشة لا بالزمن،

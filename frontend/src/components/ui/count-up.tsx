@@ -44,5 +44,5 @@ export function CountUp({
   }, [value, duration]);
 
   // tabular-nums: الأرقام بعرض ثابت فلا يرتجف العنصر أثناء العدّ
-  return <span className="tabular-nums">{format(shown)}</span>;
+  return <span className="num">{format(shown)}</span>;
 }

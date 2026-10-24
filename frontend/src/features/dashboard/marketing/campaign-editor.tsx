@@ -343,7 +343,7 @@ export function CampaignEditor({ id }: { id?: number }) {
                 <p className="text-xs text-warning">احفظ التغييرات لتحديث العدد.</p>
               ) : audience.data ? (
                 <>
-                  <p className="text-3xl font-semibold" dir="ltr">{audience.data.total}</p>
+                  <p className="num text-3xl font-semibold">{audience.data.total}</p>
                   <p className="text-xs text-muted" dir="ltr">AR {audience.data.ar} · EN {audience.data.en}</p>
                 </>
               ) : (
@@ -426,7 +426,7 @@ export function CampaignEditor({ id }: { id?: number }) {
                   ) : (
                     <div className="rounded border border-warning/40 bg-warning/10 p-3 text-sm">
                       <p className="mb-3">
-                        سيُرسل إلى <strong dir="ltr">{audience.data?.total}</strong> مشترك على دفعات ولا يمكن التراجع بعد بدء الإرسال. متأكد؟
+                        سيُرسل إلى <strong className="num">{audience.data?.total}</strong> مشترك على دفعات ولا يمكن التراجع بعد بدء الإرسال. متأكد؟
                       </p>
                       <div className="flex gap-2">
                         <button type="button" onClick={() => setConfirmSend(false)} className="min-h-10 flex-1 rounded border border-border text-sm">تراجع</button>
@@ -528,7 +528,7 @@ function CampaignStatsPanel({ stats, campaign }: { stats?: CampaignStats; campai
           <div className="h-2 overflow-hidden rounded-full bg-surface-hover">
             <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${progress}%` }} />
           </div>
-          <p className="mt-1 text-xs text-muted" dir="ltr">{campaign.sent_count + campaign.failed_count} / {campaign.total_recipients}</p>
+          <p className="num mt-1 text-xs text-muted">{campaign.sent_count + campaign.failed_count} / {campaign.total_recipients}</p>
         </div>
       ) : null}
       <dl className="grid grid-cols-2 gap-2 text-sm">

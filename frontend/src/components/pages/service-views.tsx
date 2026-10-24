@@ -144,7 +144,7 @@ export async function ServiceDetailView({
                 <div className="mb-5">
                   <p className="text-sm text-muted">{t('priceFrom')}</p>
                   <p className="mt-1 text-h1 font-bold leading-none">
-                    <span className="code-inline inline">{price}</span>
+                    <span className="num inline">{price}</span>
                   </p>
                   <p className="mt-1 text-xs text-muted">
                     {service.price_note || t('forWholeProject')}

@@ -84,7 +84,7 @@ export default async function ProcessPage({
               <li key={step.id}>
                 <Card className="flex flex-col gap-4 sm:flex-row sm:items-start">
                   <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-soft font-bold text-primary">
-                    <span dir="ltr">{index + 1}</span>
+                    <span className="num">{index + 1}</span>
                   </span>
                   <div className="flex-1">
                     <div className="flex flex-wrap items-baseline justify-between gap-2">

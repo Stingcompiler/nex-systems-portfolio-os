@@ -119,7 +119,7 @@ export default function MessagesPage() {
                   </p>
                   <p className="mt-0.5 text-sm text-muted">
                     {message.reference_code ? (
-                      <span dir="ltr" className="font-mono">
+                      <span dir="ltr" className="num">
                         {message.reference_code}
                       </span>
                     ) : null}

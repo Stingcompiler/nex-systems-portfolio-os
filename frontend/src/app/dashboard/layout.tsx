@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { IBM_Plex_Mono, IBM_Plex_Sans_Arabic } from 'next/font/google';
+import { IBM_Plex_Sans_Arabic } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import type { CSSProperties, ReactNode } from 'react';
 
@@ -20,21 +20,13 @@ import dashboardMessages from '@/messages/ar.json';
  * فلكلٍّ عنصر <html> باتجاهه ولغته. لا يوجد `app/layout.tsx` مشترك،
  * فيصبح كل فرع جذرًا مستقلًا.
  */
-// نظام Vezano: IBM Plex Sans Arabic للجسم والعناوين (اللوحة عربية فقط)، وIBM Plex Mono
-// للأرقام والمعرّفات.
+// D-0011: IBM Plex Sans Arabic وحده للنص والعناوين والأرقام (اللوحة عربية فقط).
 const arabic = IBM_Plex_Sans_Arabic({
   subsets: ['arabic', 'latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-arabic',
   display: 'swap',
   preload: false,
-});
-
-const mono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-mono',
-  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -65,9 +57,9 @@ export default function DashboardRootLayout({ children }: { children: ReactNode 
       lang="ar"
       dir="rtl"
       suppressHydrationWarning
-      className={`${arabic.variable} ${mono.variable}`}
+      className={arabic.variable}
       style={
-        { '--font-sans': 'var(--font-arabic)', '--font-heading': 'var(--font-arabic)' } as CSSProperties
+        { '--font-ui': 'var(--font-arabic)', '--font-display': 'var(--font-arabic)' } as CSSProperties
       }
     >
       <head>

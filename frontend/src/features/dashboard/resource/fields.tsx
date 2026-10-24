@@ -435,7 +435,7 @@ function JsonListField({ field, values, setValue, errors }: FieldProps) {
             <div className="mb-2 flex items-center gap-2">
               <GripVertical className="size-4 text-muted" aria-hidden="true" />
               <span className="text-xs font-medium text-muted">
-                عنصر <span dir="ltr">{index + 1}</span>
+                عنصر <span className="num">{index + 1}</span>
               </span>
               <div className="ms-auto flex gap-1">
                 <button

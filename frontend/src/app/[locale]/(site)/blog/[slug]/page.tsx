@@ -140,7 +140,7 @@ export default async function PostPage({
                 {post.view_count > 0 ? (
                   <span className="inline-flex items-center gap-1">
                     <Eye className="size-4" aria-hidden="true" />
-                    <span dir="ltr">{post.view_count}</span>
+                    <span className="num">{post.view_count}</span>
                   </span>
                 ) : null}
               </div>

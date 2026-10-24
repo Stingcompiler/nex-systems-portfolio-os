@@ -161,7 +161,7 @@ export default function RequestDetailPage() {
       <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-h2 font-semibold" dir="ltr">
+            <h1 className="num text-h2 font-semibold">
               {data.reference_code}
             </h1>
             <Badge tone={STATUS_TONE[data.status] ?? 'default'}>{data.status_display}</Badge>
@@ -248,7 +248,7 @@ export default function RequestDetailPage() {
                     <Download className="size-6 shrink-0 text-primary" aria-hidden="true" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate-line text-sm font-medium">{file.original_name}</p>
-                      <p className="code-inline text-xs text-muted">{formatBytes(file.size)}</p>
+                      <p className="num text-xs text-muted">{formatBytes(file.size)}</p>
                     </div>
                     <a
                       href={file.file_url}

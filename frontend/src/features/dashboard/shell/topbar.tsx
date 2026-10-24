@@ -152,8 +152,9 @@ export function DashboardTopbar({ onOpenMenu }: { onOpenMenu: () => void }) {
         >
           <Bell className="size-5" aria-hidden="true" />
           {unread > 0 ? (
-            <span className="absolute end-1.5 top-1.5 grid min-w-4 place-items-center rounded-full bg-danger px-1 text-[10px] font-bold text-white">
-              <span dir="ltr">{unread > 99 ? '99+' : unread}</span>
+            // B3: لا نص دون 12px — عدّاد الشارة بحجم الحد الأدنى ورقم جدولي
+            <span className="absolute end-1 top-1 grid min-w-5 place-items-center rounded-full bg-danger px-1 text-xs font-semibold leading-5 text-white">
+              <span className="num">{unread > 99 ? '99+' : unread}</span>
             </span>
           ) : null}
         </Link>

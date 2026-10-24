@@ -56,7 +56,7 @@ export function Section({
  * هو أداة الهوية الهندسية للموقع: يستثمر IBM Plex Mono كعلامة «أنظمة»
  * ويحلّ محلّ الشريط الزخرفي العام الذي كان يظهر فوق كل عنوان — ذاك
  * الشريط لا يحمل معلومة، وكان أوضح أثر «قالب جاهز» بعد البطل.
- * الرقم يُرسم LTR عمدًا (code-inline) كي لا ينقلب الترقيم في RTL.
+ * الرقم يُرسم LTR عمدًا (.num) كي لا ينقلب الترقيم في RTL.
  */
 export function Eyebrow({
   index,
@@ -77,7 +77,7 @@ export function Eyebrow({
       )}
     >
       {index !== undefined ? (
-        <span className="code-inline inline" aria-hidden="true">
+        <span className="num inline" aria-hidden="true">
           {String(index).padStart(2, '0')}
         </span>
       ) : null}
@@ -123,12 +123,12 @@ export function SectionHeader({
           className={cn(align === 'center' && 'justify-center')}
         />
         <Heading
-          className={cn('font-bold', Heading === 'h1' ? 'text-h1' : 'text-h2')}
+          className={cn('font-bold', Heading === 'h1' ? 'text-h1' : 'text-section-title')}
         >
           {title}
         </Heading>
         {subtitle ? (
-          <p className="mt-4 max-w-[52ch] text-body-lg text-muted">{subtitle}</p>
+          <p className="mt-4 max-w-[52ch] text-lead text-muted">{subtitle}</p>
         ) : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}

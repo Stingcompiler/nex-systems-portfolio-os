@@ -85,7 +85,7 @@ export async function Footer({ settings }: { settings: SiteSettings | null }) {
           <div className="col-span-2 lg:col-span-1 lg:pe-8">
             <div className="flex items-center gap-2">
               <SiteMark settings={settings} size={32} />
-              <span className="text-lg font-bold">{siteName}</span>
+              <span className="font-heading text-lg font-bold">{siteName}</span>
             </div>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
               {settings?.tagline || t('tagline')}

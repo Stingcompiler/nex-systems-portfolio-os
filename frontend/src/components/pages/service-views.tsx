@@ -143,7 +143,7 @@ export async function ServiceDetailView({
               {price ? (
                 <div className="mb-5">
                   <p className="text-sm text-muted">{t('priceFrom')}</p>
-                  <p className="mt-1 text-h1 font-bold leading-none">
+                  <p className="mt-1 text-h1 font-semibold leading-none">
                     <span className="num inline">{price}</span>
                   </p>
                   <p className="mt-1 text-xs text-muted">

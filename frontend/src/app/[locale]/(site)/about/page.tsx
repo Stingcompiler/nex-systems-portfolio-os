@@ -219,7 +219,7 @@ export default async function AboutPage({
             <ol className="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
               {steps.map((step, index) => (
                 <li key={step.id} className="flex gap-4">
-                  <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary-soft text-sm font-bold text-primary">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary-soft text-sm font-semibold text-primary">
                     <span className="num inline">{index + 1}</span>
                   </span>
                   <div>

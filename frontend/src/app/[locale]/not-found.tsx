@@ -13,7 +13,7 @@ export default async function NotFound() {
 
   return (
     <Container className="flex min-h-dvh flex-col items-center justify-center py-20 text-center">
-      <p className="text-display font-bold text-primary/30">404</p>
+      <p className="font-heading text-display font-bold text-primary/30">404</p>
       <h1 className="mt-2 text-h1 font-semibold">{t('title')}</h1>
       <p className="mt-3 max-w-prose text-muted">{t('body')}</p>
 

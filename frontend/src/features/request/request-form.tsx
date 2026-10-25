@@ -340,7 +340,7 @@ export function RequestForm({
               <li key={name} className="flex flex-1 items-center gap-2">
                 <span
                   className={cn(
-                    'grid size-7 shrink-0 place-items-center rounded-full text-xs font-bold',
+                    'grid size-7 shrink-0 place-items-center rounded-full text-xs font-semibold',
                     step >= index
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-surface-hover text-muted',

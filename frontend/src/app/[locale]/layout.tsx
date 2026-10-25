@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { IBM_Plex_Sans, IBM_Plex_Sans_Arabic } from 'next/font/google';
+import { Alexandria, IBM_Plex_Sans, IBM_Plex_Sans_Arabic, Montserrat } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
@@ -20,15 +20,17 @@ import { SITE_NAME_FALLBACK } from '@/lib/constants/site';
 // فلا يوجد أي طلب خارجي وقت التشغيل. `font-display: swap` وارتداد
 // next/font المضبوط المقاسات يمنعان قفز التخطيط.
 //
-// Design Reference §2 والقرار D-0011 (الخيار أ): عائلة واحدة للنص والأرقام —
-// IBM Plex Sans Arabic للعربية وIBM Plex Sans للاتينية، 400–700. لا خط ثانٍ:
-// الأرقام والمعرّفات جدولية بالعائلة نفسها (.num)، والعناوين ترث النص.
+// D-0011 + D-0012: النص والأزرار والتنقل والنماذج والأرقام بعائلة Plex
+// (IBM Plex Sans Arabic / IBM Plex Sans، 400/500/600)، وعناوين الموقع h1–h4
+// بخط عرض (Alexandria للعربية / Montserrat للإنجليزية، 600/700). اللوحة
+// تبقى على Plex وحده. الأرقام (.num) بـ Plex جدولي حتى داخل العناوين.
 //
 // بلا preload: الـCSS مضمّن في الصفحة (inlineCss)، فالمتصفح يكتشف
 // @font-face فورًا ويجلب الأوجه المستخدمة فقط.
 const arabic = IBM_Plex_Sans_Arabic({
   subsets: ['arabic', 'latin'],
-  weight: ['400', '500', '600', '700'],
+  // بلا 700: الوزن العريض للعناوين وحدها، وهي بخط العرض
+  weight: ['400', '500', '600'],
   variable: '--font-arabic',
   display: 'swap',
   preload: false,
@@ -36,8 +38,26 @@ const arabic = IBM_Plex_Sans_Arabic({
 
 const latin = IBM_Plex_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '500', '600'],
   variable: '--font-latin',
+  display: 'swap',
+  preload: false,
+});
+
+// خط العرض: يحمل اللاتينية أيضًا فكلمة إنجليزية داخل عنوان عربي (اسم منتج)
+// تبقى بالعائلة نفسها بدل الارتداد إلى خط النظام
+const displayArabic = Alexandria({
+  subsets: ['arabic', 'latin'],
+  weight: ['600', '700'],
+  variable: '--font-display-ar',
+  display: 'swap',
+  preload: false,
+});
+
+const displayLatin = Montserrat({
+  subsets: ['latin'],
+  weight: ['600', '700'],
+  variable: '--font-display-en',
   display: 'swap',
   preload: false,
 });
@@ -113,19 +133,21 @@ export default async function LocaleLayout({
     getSiteSettings(locale as Locale),
   ]);
 
-  // الخط يتبدّل حسب اللغة: Plex Sans Arabic للعربية وPlex Sans للإنجليزية،
-  // والعناوين ترث النص (--font-display = --font-ui).
+  // الخطوط تتبدّل حسب اللغة: النص Plex Arabic/Plex Sans، والعناوين
+  // Alexandria/Montserrat (D-0012)
   const fontVariable =
     locale === 'ar' ? 'var(--font-arabic)' : 'var(--font-latin)';
+  const displayVariable =
+    locale === 'ar' ? 'var(--font-display-ar)' : 'var(--font-display-en)';
 
   return (
     <html
       lang={locale}
       dir={getDirection(locale)}
       suppressHydrationWarning
-      className={`${arabic.variable} ${latin.variable}`}
+      className={`${arabic.variable} ${latin.variable} ${displayArabic.variable} ${displayLatin.variable}`}
       style={
-        { '--font-ui': fontVariable, '--font-display': fontVariable } as CSSProperties
+        { '--font-ui': fontVariable, '--font-display': displayVariable } as CSSProperties
       }
     >
       <head>

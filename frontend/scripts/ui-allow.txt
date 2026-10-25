@@ -6,7 +6,7 @@ resource/resource-form.tsx | border-b-2 | خط التبويب النشط (مؤش
 comments/comments-section.tsx | border-s-2 | خط الاقتباس للردود المتداخلة
 track/track-detail.tsx | border-s-4 | تمييز رد فريق ستينج سيستم عن كلام العميل (دلالة المؤلف)
 crm/client-replies.tsx | border-s-4 | تمييز رد الفريق عن رد العميل (دلالة المؤلف)
-about/page.tsx | place-items-center rounded-lg bg-primary-soft text-sm font-bold | رقم الخطوة الترتيبي لا أيقونة
+about/page.tsx | place-items-center rounded-lg bg-primary-soft text-sm font-semibold | رقم الخطوة الترتيبي لا أيقونة
 shell/sidebar.tsx | animate-pulse | هيكل تحميل: عملية جارية فعلًا
 resource/resource-page.tsx | animate-pulse | هيكل تحميل: عملية جارية فعلًا
 ui/states.tsx | animate-pulse | هيكل تحميل: عملية جارية فعلًا

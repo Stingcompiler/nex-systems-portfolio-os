@@ -29,7 +29,7 @@ export async function AuthShell({
           <div className="mb-6 text-center">
             <Link
               href="/"
-              className="mx-auto mb-4 inline-flex items-center gap-2 text-lg font-bold"
+              className="mx-auto mb-4 inline-flex items-center gap-2 font-heading text-lg font-bold"
             >
               <SiteMark settings={settings} size={36} />
               {siteName}

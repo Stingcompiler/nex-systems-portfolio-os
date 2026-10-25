@@ -10,6 +10,9 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const ALLOWED_FONTS = new Set(['IBM_Plex_Sans', 'IBM_Plex_Sans_Arabic']);
+// D-0012: خط العرض للموقع التعريفي وحده — لا داخل اللوحة
+const DISPLAY_FONTS = new Set(['Alexandria', 'Montserrat']);
+const DISPLAY_FONTS_FILE = 'src/app/[locale]/layout.tsx';
 // الملف الوحيد المسموح له بأسلوب مضمّن: يُرسم خارج التخطيطات بلا CSS الموقع
 const INLINE_STYLE_OK = new Set(['src/app/global-error.tsx']);
 // تعبير يبدأ بمسار متغير وينتهي بحقل رقمي، أو رقم خطوة (index + 1)
@@ -35,7 +38,8 @@ for (const file of walk('src')) {
     const font = line.match(/import \{([^}]+)\} from 'next\/font\/google'/);
     if (font) {
       for (const name of font[1].split(',').map((x) => x.trim()).filter(Boolean)) {
-        if (!ALLOWED_FONTS.has(name)) report(`عائلة خارج القرار D-0011: ${name}`);
+        const display = DISPLAY_FONTS.has(name) && file === DISPLAY_FONTS_FILE;
+        if (!ALLOWED_FONTS.has(name) && !display) report(`عائلة خارج القرارين D-0011/D-0012: ${name}`);
       }
     }
     if (/@font-face|fonts\.googleapis/.test(line)) report('تحميل خط خارج next/font');

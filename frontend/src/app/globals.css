@@ -179,14 +179,23 @@
 
   /* [بند 1] العناوين تقرأ المتغيّر اللغوي — ولهذا حُذف lineHeight
      من مقاييس display/h1/h2/h3 في tailwind.config.ts.
-     الخط: --font-display يرث --font-ui ما لم يُعتمد خط عرض (D-0011). */
+     الخط: --font-display — Alexandria/Montserrat في الموقع (D-0012)، وPlex في اللوحة. */
   h1,
   h2,
   h3,
-  h4 {
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display, var(--font-ui)), system-ui, sans-serif;
     line-height: var(--line-height-heading);
     text-wrap: balance;
+  }
+
+  /* Plex في الموقع حتى 600 فقط (D-0012): التشديد داخل النص 600 لا 700،
+     فلا يُرسم وزن عريض مُصطنع */
+  b,
+  strong {
+    font-weight: 600;
   }
 
   /* [بند 5] القاعدة مربوطة باللغة لا بالاتجاه، وبلا !important —

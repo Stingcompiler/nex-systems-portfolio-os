@@ -186,7 +186,7 @@ export default async function CaseStudyDetailPage({
               {caseStudy.development_phases.map((phase, index) => (
                 <li key={index}>
                   <Card className="h-full">
-                    <span className="mb-2 inline-flex size-7 items-center justify-center rounded-full bg-primary-soft text-xs font-bold text-primary">
+                    <span className="mb-2 inline-flex size-7 items-center justify-center rounded-full bg-primary-soft text-xs font-semibold text-primary">
                       <span className="num">{index + 1}</span>
                     </span>
                     <h3 className="mb-1 font-semibold">{phase.title}</h3>

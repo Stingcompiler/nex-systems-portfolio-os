@@ -146,7 +146,7 @@ export async function ServiceDetailView({
                   <p className="mt-1 text-h1 font-semibold leading-none">
                     <span className="num inline">{price}</span>
                   </p>
-                  <p className="mt-1 text-xs text-muted">
+                  <p className="mt-1 text-sm text-muted">
                     {service.price_note || t('forWholeProject')}
                   </p>
                 </div>
@@ -188,7 +188,7 @@ export async function ServiceDetailView({
                 ) : null}
               </div>
 
-              <p className="mt-4 text-center text-xs text-muted">
+              <p className="mt-4 text-center text-sm text-muted">
                 <Link href="/contact" className="hover:text-foreground hover:underline">
                   {t('notSureScope')}
                 </Link>

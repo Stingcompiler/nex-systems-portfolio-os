@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, ArrowRight, Check, LoaderCircle, MessageCircle, Pencil } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, ChevronDown, LoaderCircle, MessageCircle, Pencil } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
@@ -355,7 +355,8 @@ export function RequestForm({
                 </span>
                 <span
                   className={cn(
-                    'hidden text-sm font-medium sm:block',
+                    // الاسم ظاهر على الجوال أيضًا: الرقم وحده لا يقول ما الخطوة
+                    'text-xs font-medium sm:text-sm',
                     step >= index ? 'text-foreground' : 'text-muted',
                   )}
                 >
@@ -410,6 +411,15 @@ export function RequestForm({
 
         {step === 2 ? (
           <StepBody title={t('step2Title')} subtitle={t('step2Help')} headingRef={headingRef}>
+            {/* الخطوة اختيارية: التخطي في أعلاها لا بعد تمرير طويل على الجوال */}
+            <button
+              type="button"
+              onClick={() => goTo(3)}
+              className="-mt-3 inline-flex min-h-11 items-center gap-1.5 self-start text-sm font-medium text-primary hover:underline"
+            >
+              {t('skipStep')}
+              <ArrowRight className="size-4 flip-rtl" aria-hidden="true" />
+            </button>
             <SelectField
               label={t('sectorLabel')}
               options={sectors}
@@ -417,8 +427,21 @@ export function RequestForm({
               onChange={(value) => set('sector', value)}
               placeholder={t('sectorPlaceholder')}
             />
-            <fieldset>
-              <legend className="mb-1 text-sm font-medium">{t('scopeLabel')}</legend>
+            {/* الوحدات الست خلف إفصاح: تظهر لمن يحتاجها، ومفتوحة إن اختير منها شيء */}
+            <details className="group rounded-xl border border-border" open={selectedModules.length > 0 || undefined}>
+              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-medium [&::-webkit-details-marker]:hidden">
+                <span>
+                  {t('scopeLabel')}
+                  {selectedModules.length ? (
+                    <span className="ms-2 text-muted">
+                      (<span className="num">{selectedModules.length}</span>)
+                    </span>
+                  ) : null}
+                </span>
+                <ChevronDown className="size-4 text-muted transition-transform group-open:rotate-180 motion-reduce:transition-none" aria-hidden="true" />
+              </summary>
+            <fieldset className="border-t border-border p-4">
+              <legend className="sr-only">{t('scopeLabel')}</legend>
               <p className="mb-3 text-sm text-muted">{t('scopeHelp')}</p>
               <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {modules.map((module) => {
@@ -453,6 +476,7 @@ export function RequestForm({
                 })}
               </div>
             </fieldset>
+            </details>
             <div>
               <ChoiceGrid
                 label={t('budgetSectionLabel')}
@@ -494,6 +518,7 @@ export function RequestForm({
                 type="tel"
                 dir="ltr"
                 autoComplete="tel"
+                placeholder={t('phonePlaceholder')}
                 value={form.phone}
                 onChange={(value) => set('phone', value)}
                 error={errors.phone}
@@ -558,6 +583,15 @@ export function RequestForm({
           <div role="alert" className="mt-6 rounded-lg border border-danger/40 bg-danger-soft p-3 text-sm">
             {formError}
           </div>
+        ) : null}
+
+        {step === STEPS ? (
+          <p className="mt-6 text-sm text-muted">
+            {t('privacyNote')}{' '}
+            <Link href="/privacy-policy" className="font-medium text-primary hover:underline">
+              {t('privacyLink')}
+            </Link>
+          </p>
         ) : null}
 
         <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
@@ -825,6 +859,7 @@ function TextField({
   optional,
   error,
   invalid,
+  placeholder,
 }: {
   label: string;
   value: string;
@@ -837,6 +872,8 @@ function TextField({
   error?: string;
   /** تمييز الحقل دون رسالة خاصة به (الخطأ مشترك بين حقلين) */
   invalid?: boolean;
+  /** مثال للصيغة فقط، لا معلومة أساسية */
+  placeholder?: string;
 }) {
   const id = useId();
   const errorId = `${id}-error`;
@@ -853,6 +890,7 @@ function TextField({
         type={type}
         dir={dir}
         autoComplete={autoComplete}
+        placeholder={placeholder}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         aria-invalid={hasError || undefined}

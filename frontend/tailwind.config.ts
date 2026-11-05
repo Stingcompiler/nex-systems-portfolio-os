@@ -103,7 +103,8 @@ const config: Config = {
         // نص البطاقات والجداول في المرجع
         card: ['0.8125rem', { lineHeight: '1.6' }],
         // التسميات الصغيرة (شارات، تواريخ، عناوين أعمدة)
-        label: ['0.75rem', { lineHeight: '1.6' }],
+        // 13px لا 12: بيانات المشاريع والخدمات كانت تُقرأ باهتة صغيرة (مراجعة 2026-11)
+        label: ['0.8125rem', { lineHeight: '1.6' }],
         // سطر الجذب فوق عناوين الأقسام — بلا تباعد أحرف: يفصل الحروف العربية المتصلة
         eyebrow: ['0.875rem', { lineHeight: '1.25' }],
       },
@@ -217,7 +218,8 @@ const config: Config = {
         'fade-up': 'fade-up var(--duration-normal) ease-out both',
         float: 'float 6s ease-in-out infinite',
         'float-reverse': 'float-reverse 7s ease-in-out infinite',
-        rise: 'rise 650ms cubic-bezier(0.22, 1, 0.36, 1) both',
+        // قصيرة: العنوان مقروء خلال ~0.4s لا ثانية (مراجعة 2026-11)
+        rise: 'rise 320ms cubic-bezier(0.22, 1, 0.36, 1) both',
         draw: 'draw 500ms ease-out both',
         pop: 'pop 450ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
         confetti: 'confetti 1100ms cubic-bezier(0.15, 0.6, 0.35, 1) both',

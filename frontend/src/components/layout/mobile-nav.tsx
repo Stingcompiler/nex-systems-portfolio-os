@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, ArrowRight, Menu, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ChevronDown, Menu, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -166,45 +166,6 @@ export function MobileNav({
         </div>
 
         <nav aria-label={t('menu')} className="min-h-0 flex-1 overflow-y-auto p-3">
-          {sectors.length ? (
-            <div className="mb-3 border-b border-border pb-3">
-              <p className="mb-2 px-3 text-xs font-semibold text-muted">{t('forWhichSector')}</p>
-              {/* عمود واحد: الدرج ضيق (~300px) فيلتف الاسم في عمودين على ثلاثة أسطر */}
-              <ul className="flex flex-col gap-0.5">
-                {sectors.map((sector, index) => {
-                  const Icon = sectorIcon(sector.slug, sector.sector);
-                  const href = `/solutions/${sector.slug}`;
-                  const active = isActivePath(pathname, href);
-                  return (
-                    // البنود تتبع الدرج تباعًا وهو ينزلق — لا كتلة تظهر دفعة واحدة
-                    <li
-                      key={sector.slug}
-                      className="motion-safe:animate-fade-up"
-                      style={{ animationDelay: `${90 + index * 35}ms` }}
-                    >
-                      <Link
-                        href={href}
-                        aria-current={active ? 'page' : undefined}
-                        className={cn(
-                          'flex min-h-11 items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium leading-snug',
-                          active ? 'bg-primary-soft text-primary' : 'hover:bg-surface-hover',
-                        )}
-                      >
-                        <Icon className="size-4 shrink-0 text-primary" aria-hidden="true" />
-                        {sector.label}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-              <Link
-                href="/solutions"
-                className="mt-1 flex min-h-11 items-center px-3 text-sm font-medium text-primary hover:underline"
-              >
-                {t('allSolutions')}
-              </Link>
-            </div>
-          ) : null}
           <ul className="flex flex-col gap-0.5">
             {items.map((item, index) => {
               const active = isActivePath(pathname, item.href);
@@ -212,7 +173,8 @@ export function MobileNav({
                 <li
                   key={item.href}
                   className="motion-safe:animate-fade-up"
-                  style={{ animationDelay: `${90 + (sectors.length + index) * 35}ms` }}
+                  // تتابع قصير (≤ 200ms للقائمة كلها): المحتوى يظهر مع الدرج لا بعده
+                  style={{ animationDelay: `${40 + index * 25}ms` }}
                 >
                   <Link
                     href={item.href}
@@ -235,6 +197,52 @@ export function MobileNav({
               );
             })}
           </ul>
+
+          {/* القطاعات بعد الروابط الأساسية، مطويّة: ستة بنود قبل «أعمالنا» كانت
+              تؤخر ما يبحث عنه أغلب الزوار. تُفتح وحدها على صفحة حل قطاعي */}
+          {sectors.length ? (
+            <details
+              className="group mt-3 border-t border-border pt-3"
+              open={pathname.includes('/solutions') || undefined}
+            >
+              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-3 text-base font-medium hover:bg-surface-hover [&::-webkit-details-marker]:hidden">
+                {t('sectorsMenu')}
+                <ChevronDown
+                  className="size-4 shrink-0 text-muted transition-transform group-open:rotate-180 motion-reduce:transition-none"
+                  aria-hidden="true"
+                />
+              </summary>
+              {/* عمود واحد: الدرج ضيق (~300px) فيلتف الاسم في عمودين على ثلاثة أسطر */}
+              <ul className="mt-1 flex flex-col gap-0.5">
+                {sectors.map((sector) => {
+                  const Icon = sectorIcon(sector.slug, sector.sector);
+                  const href = `/solutions/${sector.slug}`;
+                  const active = isActivePath(pathname, href);
+                  return (
+                    <li key={sector.slug}>
+                      <Link
+                        href={href}
+                        aria-current={active ? 'page' : undefined}
+                        className={cn(
+                          'flex min-h-11 items-center gap-3 rounded-lg px-3 py-1.5 text-sm font-medium leading-snug',
+                          active ? 'bg-primary-soft text-primary' : 'hover:bg-surface-hover',
+                        )}
+                      >
+                        <Icon className="size-4 shrink-0 text-primary" aria-hidden="true" />
+                        {sector.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+              <Link
+                href="/solutions"
+                className="mt-1 flex min-h-11 items-center px-3 text-sm font-medium text-primary hover:underline"
+              >
+                {t('allSolutions')}
+              </Link>
+            </details>
+          ) : null}
 
           {/* سطر هادئ لعميل قائم: تواصل ومتابعة طلب — لا بوزن صفحات الموقع */}
           {secondaryItems.length ? (

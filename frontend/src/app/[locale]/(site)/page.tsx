@@ -23,7 +23,6 @@ import {
   getServices,
   getSiteSettings,
   getSolutions,
-  getStats,
   getTechnologies,
   getTestimonials,
 } from '@/lib/api/queries';
@@ -78,7 +77,6 @@ export default async function HomePage({
   const [
     settings,
     loadedSections,
-    stats,
     services,
     solutions,
     projects,
@@ -90,7 +88,6 @@ export default async function HomePage({
   ] = await Promise.all([
     getSiteSettings(locale),
     getSections(locale, 'home'),
-    getStats(locale),
     getServices(locale, { page_size: 6 }),
     getSolutions(locale, { page_size: 6 }),
     getFeaturedProjects(locale),
@@ -115,7 +112,7 @@ export default async function HomePage({
    *
    * ثلاثة مفاتيح لا تُرسم على الرئيسية مهما كانت قيمتها في اللوحة:
    * - intro: جملة واحدة عن المالك لا تستحق قسمًا — صفحة «نبذة» تحملها.
-   * - stats: البطل يعرض الأرقام نفسها قبله بشاشة واحدة.
+   * - stats: أرقام تعدّ محتوى الموقع لا تثبت خبرة — لا تُعرض حتى تتوفر أرقام عمل حقيقية.
    * - case_studies: تكرّر مشروعًا معروضًا في القسم السابق مباشرة؛
    *   بطاقة المشروع تحمل شارة «دراسة حالة» بدلًا من ذلك.
    */
@@ -128,7 +125,6 @@ export default async function HomePage({
           <HeroSection
             section={section}
             settings={settings}
-            stats={stats}
             preview={heroPreview}
             locale={locale}
           />

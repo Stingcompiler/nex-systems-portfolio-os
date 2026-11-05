@@ -298,7 +298,7 @@
       "desktop": "Desktop app",
       "system": "Management system",
       "existing": "Improve existing system",
-      "api": "REST API",
+      "api": "System integration (API)",
       "hosting": "Hosting",
       "consulting": "Consulting & analysis",
       "unsure": "Not sure"
@@ -350,7 +350,7 @@
       "contact": "Contact & review"
     },
     "scopeLabel": "What does the project include?",
-    "scopeHelp": "Pick what you need now — scope can grow later without a rebuild.",
+    "scopeHelp": "Pick what you need now — we design the system to grow with you later.",
     "detailsLabel": "Anything else to add?",
     "budgetSectionLabel": "Budget range",
     "budgetHelp": "A rough estimate only — non-binding, it just helps us suggest a realistic scope.",
@@ -376,8 +376,8 @@
         "desc": "Catalog & cart"
       },
       "pwa": {
-        "title": "Installable PWA",
-        "desc": "Works offline"
+        "title": "App installed from the browser",
+        "desc": "No app store needed, and it works offline (PWA)"
       }
     },
     "stepOf": "Step {step} of {total}",
@@ -404,7 +404,11 @@
       "phone": "The phone number looks incomplete.",
       "network": "The request could not be sent. Your answers are still on this page; check your connection and try again."
     },
-    "trackInAccount": "Track it in your account"
+    "trackInAccount": "Track it in your account",
+    "skipStep": "Skip this step",
+    "phonePlaceholder": "+249 912 345 678",
+    "privacyNote": "We use your contact details only to reply to your request, and never share them.",
+    "privacyLink": "Privacy policy"
   },
   "blog": {
     "title": "Blog",

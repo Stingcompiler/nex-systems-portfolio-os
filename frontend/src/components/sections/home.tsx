@@ -57,11 +57,9 @@ async function resolveTitle(section: PageSection) {
 export async function HeroSection({
   section,
   settings,
-  stats,
   preview,
 }: SectionProps & {
   settings: SiteSettings | null;
-  stats: Stat[];
   /** لقطة حقيقية من نظام سلّمناه — يراه الزائر قبل أن يقرأ أي وعد */
   preview?: ProjectListItem | null;
 }) {
@@ -73,7 +71,6 @@ export async function HeroSection({
 
   const words = title.trim().split(/\s+/);
   const highlight = words.length > 1;
-  const heroStats = stats.slice(0, 3);
   const trust = Object.values(t.raw('trust') as Record<string, string>);
   const whatsapp = settings?.whatsapp
     ? whatsappLink(settings.whatsapp, settings.whatsapp_default_message)
@@ -104,7 +101,7 @@ export async function HeroSection({
                       'inline-block motion-safe:animate-rise',
                       highlight && index === words.length - 1 && 'text-primary',
                     )}
-                    style={{ animationDelay: `${80 + index * 70}ms` }}
+                    style={{ animationDelay: `${index * 25}ms` }}
                   >
                     {word}
                   </span>
@@ -117,7 +114,7 @@ export async function HeroSection({
           {subtitle ? (
             <p
               className="mt-6 max-w-prose text-lead text-muted motion-safe:animate-fade-up lg:mx-auto"
-              style={{ animationDelay: `${words.length * 70 + 150}ms` }}
+              style={{ animationDelay: `${words.length * 25 + 50}ms` }}
             >
               {subtitle}
             </p>
@@ -125,7 +122,7 @@ export async function HeroSection({
 
           <div
             className="mt-8 flex flex-wrap gap-3 motion-safe:animate-fade-up lg:justify-center"
-            style={{ animationDelay: `${words.length * 70 + 250}ms` }}
+            style={{ animationDelay: `${words.length * 25 + 83}ms` }}
           >
             <ButtonLink href="/request-quote" size="lg">
               {section.cta_label || t('ctaPrimary')}
@@ -151,7 +148,7 @@ export async function HeroSection({
           {/* شريط الثقة: ثلاثة التزامات بلا بطاقات — إيقاع مختلف عن بقية الأقسام */}
           <ul
             aria-label={t('trustLabel')}
-            style={{ animationDelay: `${words.length * 70 + 350}ms` }}
+            style={{ animationDelay: `${words.length * 25 + 116}ms` }}
             className="motion-safe:animate-fade-up mt-10 flex flex-col gap-3 border-t border-border pt-6 text-sm font-medium sm:flex-row sm:flex-wrap sm:gap-x-8 lg:justify-center"
           >
             {trust.map((item) => (
@@ -162,27 +159,15 @@ export async function HeroSection({
             ))}
           </ul>
 
-          {/* الأرقام سطر هادئ ثانوي: الدليل هو اللقطة والمشاريع، لا العدّ */}
-          {heroStats.length ? (
-            <dl className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted lg:justify-center">
-              {heroStats.map((stat) => (
-                <div key={stat.id} className="flex items-baseline gap-1.5">
-                  <dt className="sr-only">{stat.label}</dt>
-                  <dd className="font-semibold num text-foreground">
-                    <span className="num inline">{stat.value}</span>
-                    {stat.suffix}
-                  </dd>
-                  <dd>{stat.label}</dd>
-                </div>
-              ))}
-            </dl>
-          ) : null}
+          {/* بلا أرقام في البطل: «خدمات منشورة» و«حلول قطاعية» تعدّ محتوى الموقع
+              لا تثبت خبرة (مراجعة 2026-11). يعود سطر أرقام حين تتوفر أرقام عمل
+              حقيقية — عملاء، أنظمة قيد التشغيل — من «الإحصائيات» في اللوحة */}
         </div>
 
         {preview?.cover_image ? (
           <figure
             className="motion-safe:animate-fade-up mx-auto mt-12 max-w-5xl"
-            style={{ animationDelay: `${words.length * 70 + 450}ms` }}
+            style={{ animationDelay: `${words.length * 25 + 150}ms` }}
           >
             <Link
               href={`/projects/${preview.slug}`}

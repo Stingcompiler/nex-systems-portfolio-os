@@ -33,7 +33,8 @@ export function Section({
     <section
       id={id}
       className={cn(
-        'py-16 sm:py-24',
+        // أقل بنحو الخمس على الشاشة الواسعة: الأعمال تظهر أبكر
+        'py-14 sm:py-20',
         tone === 'muted' && 'border-y border-border bg-surface',
         // `dark:` هنا = الوضع الداكن العام فقط: Tailwind يولّدها كـ :is(.dark *)
         // أي سليل عنصر .dark، والقسم ليس سليل نفسه.
